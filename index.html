@@ -324,6 +324,7 @@ ol.steps a { color: var(--accent) }
   <section class="wanted" id="wanted" hidden aria-labelledby="wanted-h">
     <h2 id="wanted-h">Got footage? Help fill the gaps</h2>
     <p>Everything listed below has no video on this site yet. If you have any of it, especially <b>off-air recordings of rage or Countdown, without archive watermarks</b>, we'd love to hear from you. Home tapes are perfect: the rage logo is fine, watermarks and timers from footage libraries aren't.</p>
+    <p><b>Spotted a wrong video?</b> Some clips here are our best guess at what rage showed (we first had the Ed Sullivan Show version of the Jackson 5's live "I Want You Back", when rage actually aired American Bandstand). If you know a video on the site isn't the one rage played, open that song and press <b>"Wrong video? Send us the right one"</b>, or use the button below.</p>
     <div class="actions"><button class="btn primary" id="wanted-go" type="button">Tell us what you have</button><span class="count" id="wanted-n"></span></div>
     <div class="edit" id="wanted-admin" hidden>
       <h3>Contact form (admin)</h3>
@@ -1174,8 +1175,10 @@ ol.steps a { color: var(--accent) }
     s.y.split(",").filter(Boolean).forEach(p => { const [k, c] = p.split(":"); counts[+k] = +c; });
     yearlyChart($("d-chart"), counts, 500, 120, 4);
     $("d-yt").href = "https://www.youtube.com/results?search_query=" + encodeURIComponent(`${s.a} ${s.t}`);
-    { const m = media.get(s.id); $("d-help").hidden = !!(m && (m.yt || m.video)); }
-    $("d-help").onclick = () => openFootage(`${s.a} – ${s.t}${s.l ? ` (${s.l})` : ""}`);
+    { const m = media.get(s.id), has = !!(m && (m.yt || m.video));
+      $("d-help").hidden = false;
+      $("d-help").textContent = has ? "Wrong video? Send us the right one" : "Have this clip? Let us know";
+      $("d-help").onclick = () => openFootage(`${s.a} – ${s.t}${s.l ? ` (${s.l})` : ""}`, has); }
     $("d-artist").onclick = () => { qTouched = true; $("q").value = s.a; $("dlg").close(); setType("all"); setMode("songs"); apply(); window.scrollTo({ top: 0 }); };
     $("d-copy").textContent = "Copy";
     status("");
@@ -1522,9 +1525,11 @@ ol.steps a { color: var(--accent) }
     $("wanted-admin").hidden = !admin;
     if (admin) $("wanted-form").value = effective("settings").formUrl || "";
   }
-  function openFootage(entry) {
+  function openFootage(entry, wrong) {
     if (!formUrl()) { if ($("dlg").open) $("dlg").close(); location.hash = "wanted"; return; }
-    $("ff-form").reset(); $("ff-entry").value = entry || ""; $("ff-status").textContent = ""; $("ff-status").className = "status"; $("ff-send").disabled = false;
+    $("ff-form").reset(); $("ff-entry").value = entry ? entry + (wrong ? " [WRONG VIDEO]" : "") : ""; $("ff-status").textContent = ""; $("ff-status").className = "status"; $("ff-send").disabled = false;
+    $("ff-title").textContent = wrong ? "Wrong video? Tell us the right one" : "Tell us what you have";
+    $("ff-what").placeholder = wrong ? "Which video did rage actually show, and how do you know? (e.g. 'it was the American Bandstand performance, I have the 2025 broadcast')" : "";
     if ($("dlg").open) $("dlg").close();
     $("ff").showModal(); (entry ? $("ff-what") : $("ff-entry")).focus();
   }
