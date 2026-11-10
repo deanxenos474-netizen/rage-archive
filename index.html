@@ -230,6 +230,11 @@ footer a { color: var(--accent) }
 footer .admin { font: inherit; color: var(--muted); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer }
 .linkbtn { font: inherit; font-size: 13px; color: var(--accent); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; justify-self: start }
 .secret { -webkit-text-security: disc }
+.wanted { border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin: 10px 0 16px; display: grid; gap: 8px }
+.wanted h2 { margin: 0; font: 800 20px/1.15 var(--display) }
+.wanted p { margin: 0; max-width: 75ch; color: var(--fg) }
+.wanted .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap }
+.edit textarea { font: 14px var(--body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; resize: vertical }
 .edit .lbl2 { font-size: 13px; color: var(--muted); display: grid; gap: 4px }
 ol.steps { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px }
 ol.steps a { color: var(--accent) }
@@ -287,6 +292,7 @@ ol.steps a { color: var(--accent) }
           <button class="chip" id="t-songs" aria-pressed="false">Songs</button>
           <button class="chip" id="t-misc" aria-pressed="false">Interviews &amp; clips</button>
           <button class="chip" id="t-media" aria-pressed="false">With video</button>
+          <button class="chip" id="t-need" aria-pressed="false">Needs a video</button>
         </div>
       </div>
       <nav class="letters" id="letters" aria-label="Jump to letter"></nav>
@@ -315,6 +321,17 @@ ol.steps a { color: var(--accent) }
 </div>
 
 <main class="wrap">
+  <section class="wanted" id="wanted" hidden aria-labelledby="wanted-h">
+    <h2 id="wanted-h">Got footage? Help fill the gaps</h2>
+    <p>Everything listed below has no video on this site yet. If you have any of it, especially <b>off-air recordings of rage or Countdown, without archive watermarks</b>, we'd love to hear from you. Home tapes are perfect: the rage logo is fine, watermarks and timers from footage libraries aren't.</p>
+    <p><b>Please don't upload anything you don't have the right to share.</b> Just tell us what you have and we'll work out the rest together.</p>
+    <div class="actions"><button class="btn primary" id="wanted-go" type="button">Tell us what you have</button><span class="count" id="wanted-n"></span></div>
+    <div class="edit" id="wanted-admin" hidden>
+      <h3>Contact form (admin)</h3>
+      <p class="hint">Make a free form at <a href="https://formspree.io" target="_blank" rel="noopener" style="color:var(--accent)">formspree.io</a> and paste its link here (it looks like https://formspree.io/f/abcdwxyz). Messages then go to the email address you signed up with. It isn't shown on the site. Save, then Publish.</p>
+      <div class="line"><input type="url" id="wanted-form" placeholder="https://formspree.io/f/…" autocomplete="off" aria-label="Form link"><button class="btn primary" id="wanted-save" type="button">Save</button></div>
+    </div>
+  </section>
   <div id="list" role="list"><div class="loading">Loading 61,036 songs…</div></div>
   <div id="bcast" hidden><div class="loading">Loading broadcasts…</div></div>
   <div id="upc" hidden><div class="loading">Loading upcoming playlists…</div></div>
@@ -325,6 +342,7 @@ ol.steps a { color: var(--accent) }
     <a href="https://www.abc.net.au/rage/playlist" target="_blank" rel="noopener">abc.net.au/rage/playlist</a> (2007 to now). For each week the fuller source was used.
     About 20 weeks between 2012 and 2023 are missing from both. Videos play from YouTube. A fan archive, not affiliated with the ABC.
     <span id="media-note"></span>
+    <a href="#wanted" style="color:var(--accent)">Got footage? Help fill the gaps</a> ·
     <button class="admin" id="adm-open" type="button">Admin login</button>
   </footer>
 </main>
@@ -357,6 +375,7 @@ ol.steps a { color: var(--accent) }
     <div class="actions">
       <button class="btn" id="d-artist">All by this artist</button>
       <a class="btn" id="d-yt" target="_blank" rel="noopener">Find on YouTube</a>
+      <button class="btn" id="d-help" type="button" hidden>Have this clip? Let us know</button>
     </div>
     <section class="edit" id="d-info" hidden aria-label="Song details">
       <h3>Song details</h3>
@@ -430,6 +449,26 @@ ol.steps a { color: var(--accent) }
       </div>
       <div><p class="lbl" id="tv-qlbl">Running order</p><ol class="queue" id="tv-queue"></ol></div>
     </div>
+  </div>
+</dialog>
+
+<!-- someone has footage we're missing -->
+<dialog id="ff" aria-labelledby="ff-title">
+  <div class="d-in">
+    <div class="d-head nocover">
+      <div><h2 id="ff-title">Tell us what you have</h2><p>We read every message and reply by email.</p></div>
+      <button class="x" id="ff-close" aria-label="Close">×</button>
+    </div>
+    <form class="edit" id="ff-form">
+      <label class="lbl2" for="ff-entry">Which entry or broadcast?<input type="text" id="ff-entry" name="entry" autocomplete="off" required maxlength="300"></label>
+      <label class="lbl2" for="ff-what">What do you have? (where it's from, e.g. taped off rage in 2009, and the quality)<textarea id="ff-what" name="message" rows="4" required maxlength="3000"></textarea></label>
+      <label class="lbl2" for="ff-link">Link to it, if it's online (optional)<input type="url" id="ff-link" name="link" autocomplete="off" maxlength="500"></label>
+      <label class="lbl2" for="ff-name">Your name<input type="text" id="ff-name" name="name" autocomplete="name" maxlength="100"></label>
+      <label class="lbl2" for="ff-email">Your email, so we can reply<input type="email" id="ff-email" name="email" autocomplete="email" required maxlength="200"></label>
+      <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true">
+      <div class="actions"><button class="btn primary" id="ff-send" type="submit">Send</button></div>
+      <p class="status" id="ff-status" role="status"></p>
+    </form>
   </div>
 </dialog>
 
@@ -536,16 +575,16 @@ ol.steps a { color: var(--accent) }
 
   /* ---------- covers, videos and merges (media.json + edits) ---------- */
   const DRAFT_KEY = "rage-media-drafts", TOKEN_KEY = "rage-gh-token";
-  const emptyDrafts = () => ({ media: {}, merges: {}, edits: {}, includes: {} });
+  const emptyDrafts = () => ({ media: {}, merges: {}, edits: {}, includes: {}, settings: {} });
   let published = emptyDrafts();
   let drafts = emptyDrafts();
   try {
     const raw = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
-    if (raw && (raw.media || raw.merges || raw.edits || raw.includes)) drafts = { media: raw.media || {}, merges: raw.merges || {}, edits: raw.edits || {}, includes: raw.includes || {} };
+    if (raw && (raw.media || raw.merges || raw.edits || raw.includes || raw.settings)) drafts = { media: raw.media || {}, merges: raw.merges || {}, edits: raw.edits || {}, includes: raw.includes || {}, settings: raw.settings || {} };
     else if (raw) drafts.media = raw;           // older format: just media
   } catch {}
   const saveDrafts = () => { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(drafts)); } catch {} };
-  const nDrafts = () => Object.keys(drafts.media).length + Object.keys(drafts.merges).length + Object.keys(drafts.edits).length + Object.keys(drafts.includes).length;
+  const nDrafts = () => Object.keys(drafts.media).length + Object.keys(drafts.merges).length + Object.keys(drafts.edits).length + Object.keys(drafts.includes).length + Object.keys(drafts.settings).length;
   // published data, plus this browser's unpublished changes when logged in as admin
   const effective = kind => { const out = {}; for (const [k, v] of Object.entries({ ...published[kind], ...(admin ? drafts[kind] : {}) })) if (v) out[k] = v; return out; };
 
@@ -654,7 +693,9 @@ ol.steps a { color: var(--accent) }
       if (s.hidden) continue;
       if (type === "songs" && s.misc) continue;
       if (type === "misc" && !s.misc) continue;
-      if (type === "media" && !(media.get(s.id) && (media.get(s.id).yt || media.get(s.id).video))) continue;
+      const vid = media.get(s.id) && (media.get(s.id).yt || media.get(s.id).video);
+      if (type === "media" && !vid) continue;
+      if (type === "need" && vid) continue;
       if (terms.length && !terms.every(t => s.hay.includes(t))) continue;
       view.push(i);
     }
@@ -899,6 +940,7 @@ ol.steps a { color: var(--accent) }
     if (m) openLink(m[1], +m[2], +m[3]).catch(() => {});
     else if (h === "broadcasts") setMode("broadcasts", false);
     else if (h === "upcoming") setMode("upcoming", false);
+    else if (h === "wanted") { setMode("songs", true); setType("need"); if (S.length) apply(); window.scrollTo({ top: 0 }); }
     else if (h === "songs" || !h) setMode("songs", true);
   }
   addEventListener("hashchange", routeHash);
@@ -1133,6 +1175,8 @@ ol.steps a { color: var(--accent) }
     s.y.split(",").filter(Boolean).forEach(p => { const [k, c] = p.split(":"); counts[+k] = +c; });
     yearlyChart($("d-chart"), counts, 500, 120, 4);
     $("d-yt").href = "https://www.youtube.com/results?search_query=" + encodeURIComponent(`${s.a} ${s.t}`);
+    { const m = media.get(s.id); $("d-help").hidden = !!(m && (m.yt || m.video)); }
+    $("d-help").onclick = () => openFootage(`${s.a} – ${s.t}${s.l ? ` (${s.l})` : ""}`);
     $("d-artist").onclick = () => { qTouched = true; $("q").value = s.a; $("dlg").close(); setType("all"); setMode("songs"); apply(); window.scrollTo({ top: 0 }); };
     $("d-copy").textContent = "Copy";
     status("");
@@ -1385,6 +1429,7 @@ ol.steps a { color: var(--accent) }
 
   // the edit bar
   function updateBar() {
+    if (type === "need") showWanted();
     const bar = $("edbar");
     bar.hidden = !admin;
     document.body.style.paddingBottom = admin ? "70px" : "";
@@ -1395,7 +1440,7 @@ ol.steps a { color: var(--accent) }
     $("edbar-n").textContent = n ? `${n} change${n === 1 ? "" : "s"} not published yet` : "Edit mode: open any song to fix its name, add a video or merge a duplicate";
     $("edbar-pub").disabled = !n; $("edbar-dl").disabled = !n; $("edbar-x").disabled = !n;
   }
-  const fileJSON = () => JSON.stringify({ saved: new Date().toISOString(), media: effective("media"), merges: effective("merges"), edits: effective("edits"), includes: effective("includes") }, null, 1);
+  const fileJSON = () => JSON.stringify({ saved: new Date().toISOString(), media: effective("media"), merges: effective("merges"), edits: effective("edits"), includes: effective("includes"), settings: effective("settings") }, null, 1);
   $("edbar-dl").onclick = () => {
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([fileJSON()], { type: "application/json" }));
@@ -1435,7 +1480,7 @@ ol.steps a { color: var(--accent) }
     $("edbar-pub").disabled = true; $("edbar-n").textContent = "Publishing…";
     try {
       await publish(token);
-      published = { media: effective("media"), merges: effective("merges"), edits: effective("edits"), includes: effective("includes") };
+      published = { media: effective("media"), merges: effective("merges"), edits: effective("edits"), includes: effective("includes"), settings: effective("settings") };
       drafts = emptyDrafts(); saveDrafts(); refreshAll();
       $("edbar-n").textContent = "Published. Saved to GitHub; everyone sees it within a few minutes.";
       return true;
@@ -1462,6 +1507,49 @@ ol.steps a { color: var(--accent) }
     await doPublish(t);
   };
   $("gh-close").onclick = () => $("gh").close();
+
+  /* ---------- "Got footage?": the wanted list and the contact form ----------
+     The form posts to a form service (e.g. Formspree) whose link the owner pastes in as admin; it's stored in
+     media.json "settings", so the owner's email address never appears on the site. */
+  const formUrl = () => { const u = effective("settings").formUrl; return u && safeLink(u) && u.startsWith("https://") ? u : null; };
+  function showWanted() {
+    const on = type === "need";
+    $("wanted").hidden = !on;
+    if (!on) return;
+    let n = 0, total = 0; for (const s of S) { if (s.hidden) continue; total++; const m = media.get(s.id); if (!(m && (m.yt || m.video))) n++; }
+    $("wanted-n").textContent = total ? `${fmt(n)} of ${fmt(total)} entries still need a video` : "";
+    $("wanted-go").disabled = !formUrl();
+    $("wanted-go").textContent = formUrl() ? "Tell us what you have" : "Contact form coming soon";
+    $("wanted-admin").hidden = !admin;
+    if (admin) $("wanted-form").value = effective("settings").formUrl || "";
+  }
+  function openFootage(entry) {
+    if (!formUrl()) { if ($("dlg").open) $("dlg").close(); location.hash = "wanted"; return; }
+    $("ff-form").reset(); $("ff-entry").value = entry || ""; $("ff-status").textContent = ""; $("ff-status").className = "status"; $("ff-send").disabled = false;
+    if ($("dlg").open) $("dlg").close();
+    $("ff").showModal(); (entry ? $("ff-what") : $("ff-entry")).focus();
+  }
+  $("wanted-go").onclick = () => openFootage("");
+  $("ff-close").onclick = () => $("ff").close();
+  $("ff-form").addEventListener("submit", async e => {
+    e.preventDefault();
+    const url = formUrl(); if (!url) return;
+    const st = (t, k) => { $("ff-status").textContent = t; $("ff-status").className = "status" + (k ? " " + k : ""); };
+    $("ff-send").disabled = true; st("Sending…");
+    try {
+      const fd = new FormData($("ff-form")); fd.append("_subject", "rage archive footage: " + ($("ff-entry").value || "general"));
+      const r = await fetch(url, { method: "POST", body: fd, headers: { Accept: "application/json" } });
+      if (!r.ok) throw new Error(r.status);
+      st("Thanks! Your message has been sent. We'll get back to you by email.", "ok");
+    } catch { st("That didn't send. Check your connection and try again.", "err"); $("ff-send").disabled = false; }
+  });
+  $("wanted-save").onclick = () => {
+    const u = $("wanted-form").value.trim();
+    if (u && !(safeLink(u) && u.startsWith("https://"))) { $("wanted-form").focus(); return; }
+    if (u) drafts.settings.formUrl = u; else if (published.settings.formUrl) drafts.settings.formUrl = null; else delete drafts.settings.formUrl;
+    saveDrafts(); refreshAll(); showWanted();
+    $("wanted-save").textContent = "Saved, now Publish"; setTimeout(() => { $("wanted-save").textContent = "Save"; }, 2500);
+  };
 
   /* ---------- admin login ----------
      admin.json holds a salted PBKDF2-SHA256 fingerprint of the admin password, never the password.
@@ -1539,9 +1627,10 @@ ol.steps a { color: var(--accent) }
   /* ---------- filters ---------- */
   function setType(t) {
     type = t;
-    for (const [id, v] of [["t-all", "all"], ["t-songs", "songs"], ["t-misc", "misc"], ["t-media", "media"]]) $(id).setAttribute("aria-pressed", String(v === t));
+    for (const [id, v] of [["t-all", "all"], ["t-songs", "songs"], ["t-misc", "misc"], ["t-media", "media"], ["t-need", "need"]]) $(id).setAttribute("aria-pressed", String(v === t));
+    showWanted();
   }
-  for (const [id, v] of [["t-all", "all"], ["t-songs", "songs"], ["t-misc", "misc"], ["t-media", "media"]]) $(id).onclick = () => { setType(v); apply(); };
+  for (const [id, v] of [["t-all", "all"], ["t-songs", "songs"], ["t-misc", "misc"], ["t-media", "media"], ["t-need", "need"]]) $(id).onclick = () => { setType(v); apply(); setHash(v === "need" ? "wanted" : "songs"); };
   $("sort").addEventListener("change", e => { sort = e.target.value; try { localStorage.setItem("rage-sort", sort); } catch {} apply(); window.scrollTo({ top: 0 }); });
   let deb; $("q").addEventListener("input", () => { clearTimeout(deb); deb = setTimeout(apply, 140); });
   // browser autofill sometimes drops a saved value into the search right after loading; clear anything not typed by the visitor
@@ -1574,7 +1663,7 @@ ol.steps a { color: var(--accent) }
     const ok = all.filter(d => d && typeof d === "object" && d.media);
     if (!ok.length) { $("media-note").textContent = "Videos didn't load. Reload the page to try again."; return; }
     const d = ok.reduce((best, x) => (x.saved || "") > (best.saved || "") ? x : best);   // newest publish (copies without a stamp count as oldest)
-    published = { media: d.media || {}, merges: d.merges || {}, edits: d.edits || {}, includes: d.includes || {} };
+    published = { media: d.media || {}, merges: d.merges || {}, edits: d.edits || {}, includes: d.includes || {}, settings: d.settings || {} };
   });
   const songsP = fetch("songs.json", { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
     const A = d.artists, L = d.labels;
