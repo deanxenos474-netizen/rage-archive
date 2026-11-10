@@ -148,13 +148,15 @@ dialog::backdrop { background: rgb(5 6 14 / .6) }
 .player video { width: 100%; max-height: 62vh; display: block; background: #000; object-fit: contain }
 .player .ytbox { width: 100%; aspect-ratio: 16 / 9; max-height: 62vh; background: #000 }
 .ytbox iframe { width: 100%; height: 100%; display: block; border: 0 }
-.player:fullscreen { border-radius: 0; display: grid; place-items: center; width: 100vw; height: 100vh }
-.player:fullscreen video { max-height: none; height: 100vh }
-.player:fullscreen .ytbox { width: 100vw; height: 100vh; max-height: none; aspect-ratio: auto }
+.player:fullscreen, .player.fakefs { border-radius: 0; display: grid; place-items: center; width: 100vw; height: 100vh }
+.player.fakefs { position: fixed; inset: 0; z-index: 1000; height: 100dvh }   /* phones without real fullscreen (iPhone) */
+.player:fullscreen video, .player.fakefs video { max-height: none; height: 100%; width: 100% }
+.player:fullscreen .ytbox, .player.fakefs .ytbox { width: 100vw; height: 100%; max-height: none; aspect-ratio: auto }
+html.nofsscroll, html.nofsscroll body { overflow: hidden }
 .ov { position: absolute; pointer-events: none; overflow: visible }
 .ov text { fill: #fff; font-family: "Eurostile Demi", "Eurostile", "Microgramma", "Arial Narrow", sans-serif; white-space: pre }
 .fsb { position: absolute; top: 8px; right: 8px; font: 500 12px var(--body); color: #fff; background: rgb(0 0 0 / .55); border: 1px solid rgb(255 255 255 / .35); border-radius: 6px; padding: 5px 8px; cursor: pointer; z-index: 2 }
-.player:fullscreen .fsb { top: max(12px, env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px)) }
+.player:fullscreen .fsb, .player.fakefs .fsb { top: max(12px, env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px)) }
 /* our own clean player chrome: a click-anywhere play/pause layer over the video, no YouTube or browser controls */
 .thumb.bumper img { object-fit: contain; padding: 6px; background: #000 }
 .player .poster { position: absolute; inset: 0; background: #000 center / contain no-repeat }
@@ -394,6 +396,7 @@ ol.steps a { color: var(--accent) }
           <button class="btn" id="tv-prev">‹ Previous</button>
           <button class="btn primary" id="tv-next">Next ›</button>
           <button class="btn" id="tv-song">Song details</button>
+          <button class="btn" id="tv-fs">⛶ Fullscreen</button>
         </div>
       </div>
       <div><p class="lbl" id="tv-qlbl">Running order</p><ol class="queue" id="tv-queue"></ol></div>
@@ -871,12 +874,25 @@ ol.steps a { color: var(--accent) }
     v.addEventListener("play", () => { if (P.kind === "video") setPlaying(true); });
     v.addEventListener("pause", () => { if (P.kind === "video") setPlaying(false); });
     const ro = new ResizeObserver(layout); ro.observe(wrap);
-    wrap.querySelector(".fsb").onclick = () => {
-      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
-      else wrap.requestFullscreen?.().catch(() => {});
-    };
-    const onFs = () => { if (P.stop) return; wrap.querySelector(".fsb").textContent = document.fullscreenElement === wrap ? "Exit fullscreen" : "Fullscreen"; requestAnimationFrame(layout); };
-    document.addEventListener("fullscreenchange", onFs);
+    // fullscreen: the real thing where the browser allows it, otherwise fill the window (iPhone)
+    const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
+    const isFs = () => fsEl() === wrap || wrap.classList.contains("fakefs");
+    function setFake(on) { wrap.classList.toggle("fakefs", on); document.documentElement.classList.toggle("nofsscroll", on); onFs(); }
+    function toggleFs() {
+      if (wrap.classList.contains("fakefs")) return setFake(false);
+      if (fsEl()) { (document.exitFullscreen || document.webkitExitFullscreen).call(document)?.catch?.(() => {}); return; }
+      const req = wrap.requestFullscreen || wrap.webkitRequestFullscreen;
+      if (!req || document.fullscreenEnabled === false && !document.webkitFullscreenEnabled) return setFake(true);
+      try { const r = req.call(wrap); r?.catch?.(() => { if (!isFs()) setFake(true); }); } catch { setFake(true); }
+      const t = P.fsTry = (P.fsTry || 0) + 1; P.fsSeen = false;
+      setTimeout(() => { if (!P.stop && P.fsTry === t && !P.fsSeen && !isFs()) setFake(true); }, 1200);   // some in-app browsers never answer the request
+    }
+    wrap.querySelector(".fsb").onclick = toggleFs;
+    shield.addEventListener("dblclick", toggleFs);
+    const onFs = () => { if (P.stop) return; if (fsEl() === wrap) P.fsSeen = true; const on = isFs(); wrap.querySelector(".fsb").textContent = on ? "Exit fullscreen" : "Fullscreen"; opts.onFs?.(on); requestAnimationFrame(layout); };
+    const onKey = e => { if (e.key === "Escape" && wrap.classList.contains("fakefs")) { e.preventDefault(); setFake(false); } };
+    document.addEventListener("fullscreenchange", onFs); document.addEventListener("webkitfullscreenchange", onFs);
+    document.addEventListener("keydown", onKey, true);
 
     function load(m, song, autoplay) {
       P.m = m || {}; P.L = P.m.bare ? Infinity : Number.isFinite(+P.m.logoAt) ? +P.m.logoAt : 8.2;   // bare: titles/credits, no logo or caption
@@ -916,12 +932,14 @@ ol.steps a { color: var(--accent) }
     }
     function destroy() {
       P.stop = true; cancelAnimationFrame(P.raf); clearInterval(P.iv); ro.disconnect();
-      document.removeEventListener("fullscreenchange", onFs);
+      document.removeEventListener("fullscreenchange", onFs); document.removeEventListener("webkitfullscreenchange", onFs);
+      document.removeEventListener("keydown", onKey, true);
+      if (wrap.classList.contains("fakefs")) document.documentElement.classList.remove("nofsscroll");
       try { P.yt && P.yt.destroy(); } catch {}
       if (document.fullscreenElement === wrap) document.exitFullscreen().catch(() => {});
       host.innerHTML = "";
     }
-    return { load, destroy };
+    return { load, destroy, toggleFs };
   }
 
   /* ---------- one song ---------- */
@@ -1010,7 +1028,9 @@ ol.steps a { color: var(--accent) }
     $("tv-sub").textContent = `${up ? "Upcoming · " : ""}${dow(b.date)} ${fmtDate(b.date)} · ${nv} of ${songs.length} songs have videos`;
     $("tv-queue").innerHTML = items.map((it, k) => `<li><button data-k="${k}"${canPlay(it) ? "" : " disabled"}>${tvThumb(it)}<span class="t"><span class="a">${esc(it.a)}</span><span class="s">${esc(it.t)}${canPlay(it) ? "" : " · no video yet"}</span></span></button></li>`).join("");
     if (tv) tv.player.destroy();
-    tv = { items, playable, nsongs: songs.length, nv, pos: 0, player: makePlayer($("tv-player"), { onEnded: () => step(1), onError: () => setTimeout(() => step(1), 1500) }) };
+    tv = { items, playable, nsongs: songs.length, nv, pos: 0, player: makePlayer($("tv-player"), { onEnded: () => step(1), onError: () => setTimeout(() => step(1), 1500),
+      onFs: on => { $("tv-fs").textContent = on ? "⛶ Exit fullscreen" : "⛶ Fullscreen"; } }) };
+    $("tv-fs").textContent = "⛶ Fullscreen";
     if (!$("tv").open) $("tv").showModal();
     play(0, true);
   }
@@ -1029,6 +1049,14 @@ ol.steps a { color: var(--accent) }
   }
   function step(d) { if (tv && tv.pos + d >= 0 && tv.pos + d < tv.playable.length) play(tv.pos + d, true); }
   $("tv-prev").onclick = () => step(-1);
+  $("tv-fs").onclick = () => tv && tv.player.toggleFs();
+  // keyboard while watching: F fullscreen, arrow keys previous / next
+  $("tv").addEventListener("keydown", e => {
+    if (!tv || e.target.closest("input, select, textarea") || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.key === "f" || e.key === "F") { e.preventDefault(); tv.player.toggleFs(); }
+    else if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
+  });
   $("tv-next").onclick = () => step(1);
   $("tv-song").onclick = () => { const it = tv && tv.items[tv.playable[tv.pos]]; if (it && it.i != null) { $("tv").close(); openDetail(it.i); } };
   $("tv-queue").addEventListener("click", e => { const bt = e.target.closest("button[data-k]"); if (bt && !bt.disabled) play(tv.playable.indexOf(+bt.dataset.k), true); });
