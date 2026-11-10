@@ -1395,7 +1395,7 @@ ol.steps a { color: var(--accent) }
     $("edbar-n").textContent = n ? `${n} change${n === 1 ? "" : "s"} not published yet` : "Edit mode: open any song to fix its name, add a video or merge a duplicate";
     $("edbar-pub").disabled = !n; $("edbar-dl").disabled = !n; $("edbar-x").disabled = !n;
   }
-  const fileJSON = () => JSON.stringify({ media: effective("media"), merges: effective("merges"), edits: effective("edits"), includes: effective("includes") }, null, 1);
+  const fileJSON = () => JSON.stringify({ saved: new Date().toISOString(), media: effective("media"), merges: effective("merges"), edits: effective("edits"), includes: effective("includes") }, null, 1);
   $("edbar-dl").onclick = () => {
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([fileJSON()], { type: "application/json" }));
@@ -1437,7 +1437,7 @@ ol.steps a { color: var(--accent) }
       await publish(token);
       published = { media: effective("media"), merges: effective("merges"), edits: effective("edits"), includes: effective("includes") };
       drafts = emptyDrafts(); saveDrafts(); refreshAll();
-      $("edbar-n").textContent = "Published. Live for everyone in about a minute.";
+      $("edbar-n").textContent = "Published. Saved to GitHub; everyone sees it within a few minutes.";
       return true;
     } catch (e) {
       if (e.code === "token") { try { localStorage.removeItem(TOKEN_KEY); } catch {} openGh("GitHub didn't accept the token. It may have expired or be missing the Contents permission."); }
@@ -1556,8 +1556,26 @@ ol.steps a { color: var(--accent) }
   try { const s = localStorage.getItem("rage-sort"); if (s) { sort = s; $("sort").value = s; } } catch {}
 
   /* ---------- load ---------- */
-  const mediaP = fetch("media.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : {}).catch(() => { $("media-note").textContent = "Videos didn't load. Reload the page to try again."; return {}; })
-    .then(d => { published = { media: (d && d.media) || {}, merges: (d && d.merges) || {}, edits: (d && d.edits) || {}, includes: (d && d.includes) || {} }; });
+  /* Published edits (media.json) are read from up to three places and the newest copy wins:
+     - this site's own copy: only updates after GitHub finishes copying the site to its servers, which can be slow or fail
+     - GitHub's stored file (raw.githubusercontent.com): updated a few minutes after every Publish, whatever that copy step does
+     - the owner's browser, with the GitHub token saved: GitHub's API, which is up to the second */
+  const getJSON = (url, opt) => fetch(url, opt).then(r => r.ok ? r.json() : null).catch(() => null);
+  const mediaSources = () => {
+    const { owner, repo } = repoInfo(), list = [];
+    let tok = null; try { tok = localStorage.getItem(TOKEN_KEY); } catch {}
+    // most up to date first: on a tie (older files have no time stamp) the earlier one in this list wins
+    if (tok) list.push(getJSON(`https://api.github.com/repos/${owner}/${repo}/contents/media.json?ref=main`, { cache: "no-store", headers: { Authorization: `Bearer ${tok}`, Accept: "application/vnd.github.raw+json" } }));
+    list.push(getJSON(`https://raw.githubusercontent.com/${owner}/${repo}/main/media.json`, { cache: "no-cache" }));
+    list.push(getJSON("media.json", { cache: "no-cache" }));
+    return list;
+  };
+  const mediaP = Promise.all(mediaSources()).then(all => {
+    const ok = all.filter(d => d && typeof d === "object" && d.media);
+    if (!ok.length) { $("media-note").textContent = "Videos didn't load. Reload the page to try again."; return; }
+    const d = ok.reduce((best, x) => (x.saved || "") > (best.saved || "") ? x : best);   // newest publish (copies without a stamp count as oldest)
+    published = { media: d.media || {}, merges: d.merges || {}, edits: d.edits || {}, includes: d.includes || {} };
+  });
   const songsP = fetch("songs.json", { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
     const A = d.artists, L = d.labels;
     S = d.songs.map((r, i) => {
