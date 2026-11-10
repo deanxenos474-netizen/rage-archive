@@ -27,7 +27,8 @@
    "artist": "Michael Jackson",
    "title": "Rockin' Robin",
    "yt": "5lt-Ik4pPl4",
-   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/6c/3c/86/6c3c860b-0e0a-f016-1adc-44d8e3ff0144/00602537386796.rgb.jpg/1423x1411bb-100.jpg"
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/6c/3c/86/6c3c860b-0e0a-f016-1adc-44d8e3ff0144/00602537386796.rgb.jpg/1423x1411bb-100.jpg",
+   "aspect": "4:3"
   },
   "14d0ea524138": {
    "artist": "The Jacksons",
