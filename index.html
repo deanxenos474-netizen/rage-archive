@@ -386,7 +386,8 @@ ol.steps a { color: var(--accent) }
           <option value="16:9-in-4:3">16:9 inside a 4:3 video (black bars top &amp; bottom)</option>
         </select>
       </label>
-      <label class="f" for="f-logo">rage logo appears at <input type="number" id="f-logo" autocomplete="off" min="0" max="600" step="0.1" value="8.2"> seconds</label>
+      <label class="f" for="f-logo" id="f-logo-l">rage logo appears at <input type="number" id="f-logo" autocomplete="off" min="0" max="600" step="0.1" value="8.2"> seconds</label>
+      <label class="f" for="f-burned" style="text-transform:none;letter-spacing:0;font:13px/1.35 var(--body);align-items:flex-start"><input type="checkbox" id="f-burned" style="margin-top:2px"> The rage logo and caption are already in this video (recorded off air), so don't add them</label>
       <div class="actions"><button class="btn primary" id="ed-save">Save</button><button class="btn danger" id="ed-clear">Remove video &amp; cover</button></div>
       <p class="hint">Pick the shape that matches what you see, so the logo and caption sit inside the picture.</p>
     </section>
@@ -991,7 +992,7 @@ ol.steps a { color: var(--accent) }
     document.addEventListener("keydown", onKey, true);
 
     function load(m, song, autoplay) {
-      P.m = m || {}; P.L = P.m.bare ? Infinity : Number.isFinite(+P.m.logoAt) ? +P.m.logoAt : 8.2;   // bare: titles/credits, no logo or caption
+      P.m = m || {}; P.L = P.m.bare || P.m.burned ? Infinity : Number.isFinite(+P.m.logoAt) ? +P.m.logoAt : 8.2;   // bare: titles/credits; burned: logo already in the video
       l1.textContent = (song.a || "").toUpperCase(); l2.textContent = song.t || ""; P.noArt = song.kind === "clip";
       img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0");
       setPlaying(false); setLoading(!!autoplay); showPoster(false); problem(""); wrap.classList.remove("paused"); wrap.classList.toggle("yt", !!P.m.yt);
@@ -1083,7 +1084,7 @@ ol.steps a { color: var(--accent) }
     const cov = $("d-cover"), src = coverSrc(m, s.kind === "clip");
     $("d-cover").closest(".d-head").classList.toggle("noart", s.kind === "clip");
     cov.innerHTML = src ? `<img src="${esc(src)}" alt="" onerror="this.remove()">` : esc((sortKey(s.a)[0] || "#").toUpperCase());
-    const key = JSON.stringify([s.id, m.yt, m.video, m.aspect, m.logoAt, s.kind, m.cover]);
+    const key = JSON.stringify([s.id, m.yt, m.video, m.aspect, m.logoAt, m.burned, s.kind, m.cover]);
     if (songKey !== key) {           // don't restart a playing video when nothing about it changed
       songKey = key;
       if (songPlayer) { songPlayer.destroy(); songPlayer = null; }
@@ -1099,6 +1100,7 @@ ol.steps a { color: var(--accent) }
       $("f-cover").placeholder = s.kind === "clip" ? "Clips don't show album art: this entry uses a frame from its video" : "Cover image link (leave empty to use the YouTube thumbnail)";
       $("f-aspect").value = m.aspect || "16:9";
       $("f-logo").value = m.logoAt != null ? m.logoAt : 8.2;
+      $("f-burned").checked = !!m.burned; $("f-logo").disabled = !!m.burned;
     }
   }
   $("dlg").addEventListener("close", () => { if ($("dlg").open) return; if (songPlayer) { songPlayer.destroy(); songPlayer = null; } songKey = ""; });
@@ -1201,10 +1203,12 @@ ol.steps a { color: var(--accent) }
     if (coverRaw) entry.cover = coverRaw;
     if ($("f-aspect").value !== "16:9") entry.aspect = $("f-aspect").value;
     if (logo !== 8.2) entry.logoAt = logo;
+    if ($("f-burned").checked) entry.burned = true;
     drafts.media[s.id] = (entry.yt || entry.video || entry.cover) ? entry : null;
     saveDrafts(); refreshAll();
     status("Saved. Click Publish at the bottom to put it live for everyone.", "ok");
   });
+  $("f-burned").addEventListener("change", () => { $("f-logo").disabled = $("f-burned").checked; });
   $("ed-clear").addEventListener("click", () => {
     drafts.media[S[cur].id] = null; saveDrafts(); refreshAll();
     status("Removed. Click Publish at the bottom to put the change live.", "ok");
