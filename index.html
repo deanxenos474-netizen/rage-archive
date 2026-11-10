@@ -1123,11 +1123,22 @@ ol.steps a { color: var(--accent) }
         showPoster(true);
         P.kind = "yt"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = false;
         if (P.yt && P.ytReady) { try { if (P.mutedByUs) { P.yt.unMute(); P.mutedByUs = false; } } catch {} autoplay ? P.yt.loadVideoById(P.m.yt) : P.yt.cueVideoById(P.m.yt); }
-        else {
-          P.pending = { id: P.m.yt, autoplay };
-          if (!P.yt) loadYT().then(YT => {
-            if (P.stop) return;
-            const first = P.pending;
+        else { P.pending = { id: P.m.yt, autoplay }; if (!P.yt) makeYT(); }
+      } else if (P.m.video) {
+        P.kind = "video"; ytbox.hidden = true; try { P.yt && P.ytReady && P.yt.pauseVideo(); } catch {}
+        v.hidden = false; v.src = P.m.video; if (autoplay) v.play().catch(() => {});
+      }
+      requestAnimationFrame(layout);
+    }
+    /* builds the YouTube player. Called as soon as a video is needed, or early by prepare() so the player is already
+       built (with the next video cued, never playing) while a titles clip runs; that removes a few seconds of waiting. */
+    function makeYT(cueId) {
+      if (P.yt || P.ytMaking) return; P.ytMaking = true;
+      loadYT().then(YT => {
+            P.ytMaking = false;
+            if (P.stop || P.yt) return;
+            const first = P.pending || { id: cueId, autoplay: false };
+            if (!first.id) return;
             P.yt = new YT.Player(wrap.querySelector(".ytel"), {
               videoId: first.id, width: "100%", height: "100%",
               playerVars: { controls: 0, disablekb: 1, fs: 0, rel: 0, playsinline: 1, modestbranding: 1, iv_load_policy: 3, cc_load_policy: 0, autoplay: first.autoplay ? 1 : 0 },
@@ -1144,16 +1155,16 @@ ol.steps a { color: var(--accent) }
                   else if (e.data === 0) { if (P.endFired) return; P.endFired = true; P.want = false; setPlaying(false); showPoster(true); opts.onEnded?.(); }
                   else if ((e.data === 5 || e.data === -1) && !P.want) { setPlaying(false); showPoster(true); }
                 },
-                onError: e => { P.want = false; setAd(false); setLoading(false); problem(YT_ERR[e.data] || `YouTube couldn't play this video (error ${e.data}).`); opts.onError?.(); },
+                onError: e => { if (P.kind !== "yt") return; P.want = false; setAd(false); setLoading(false); problem(YT_ERR[e.data] || `YouTube couldn't play this video (error ${e.data}).`); opts.onError?.(); },
               },
             });
-          }).catch(() => { ytbox.innerHTML = `<div class="vload">YouTube didn't load. Check your connection and try again.</div>`; });
-        }
-      } else if (P.m.video) {
-        P.kind = "video"; ytbox.hidden = true; try { P.yt && P.ytReady && P.yt.pauseVideo(); } catch {}
-        v.hidden = false; v.src = P.m.video; if (autoplay) v.play().catch(() => {});
-      }
-      requestAnimationFrame(layout);
+      }).catch(() => { P.ytMaking = false; ytbox.innerHTML = `<div class="vload">YouTube didn't load. Check your connection and try again.</div>`; });
+    }
+    // get YouTube ready for a video that's coming up next, without playing it
+    function prepare(m) {
+      if (!m || !m.yt || P.stop) return;
+      if (!P.yt) return makeYT(m.yt);
+      if (P.ytReady && P.kind !== "yt") { try { P.yt.cueVideoById(m.yt); } catch {} }
     }
     function destroy() {
       P.stop = true; cancelAnimationFrame(P.raf); clearInterval(P.iv); ro.disconnect();
@@ -1164,7 +1175,7 @@ ol.steps a { color: var(--accent) }
       if (document.fullscreenElement === wrap) document.exitFullscreen().catch(() => {});
       host.innerHTML = "";
     }
-    return { load, destroy, toggleFs };
+    return { load, prepare, destroy, toggleFs };
   }
 
   /* ---------- one song ---------- */
@@ -1270,7 +1281,9 @@ ol.steps a { color: var(--accent) }
     if (!tv) return;
     tv.pos = Math.max(0, Math.min(tv.playable.length - 1, p));
     const k = tv.playable[tv.pos], it = tv.items[k];
-    tv.player.load(it.bumper ? it.m : mediaFor(it.sid), it.bumper ? { a: "", t: "" } : it, autoplay);
+    const m = it.bumper ? it.m : mediaFor(it.sid);
+    tv.player.load(m, it.bumper ? { a: "", t: "" } : it, autoplay);
+    if (!(m && m.yt)) { const nk = tv.playable[tv.pos + 1], nx = nk != null && tv.items[nk]; if (nx && !nx.bumper) tv.player.prepare(mediaFor(nx.sid)); }
     const vidNo = tv.playable.slice(0, tv.pos + 1).filter(j => !tv.items[j].bumper).length;
     $("tv-now").innerHTML = it.bumper ? `rage – ${esc(it.t)}<small>${it.bumper === "intro" ? `Then ${tv.nv} music video${tv.nv === 1 ? "" : "s"}` : "End of the broadcast"}</small>`
       : `${esc(it.a)} – ${esc(it.t)}<small>Video ${vidNo} of ${tv.nv} · song ${k} in the running order</small>`;
