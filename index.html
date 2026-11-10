@@ -168,7 +168,6 @@ ol.tracks .tr.noart { grid-template-columns: 34px minmax(0, 1fr) auto }
 .queue li button.noart { grid-template-columns: minmax(0, 1fr) }
 .d-head.noart { grid-template-columns: minmax(0, 1fr) auto } .d-head.noart .d-cover { display: none }
 .tag.vid { color: var(--hot); border-color: var(--hot) }
-.tag.ver { color: var(--ok); border-color: var(--ok) }
 .verified { margin: 6px 0 0; color: var(--ok); font: 500 13px var(--body) }
 .thumb.bumper img { object-fit: contain; padding: 6px; background: #000 }
 .player .poster { position: absolute; inset: 0; background: #000 center / contain no-repeat }
@@ -326,7 +325,7 @@ ol.steps a { color: var(--accent) }
   <section class="wanted" id="wanted" hidden aria-labelledby="wanted-h">
     <h2 id="wanted-h">Got footage? Help fill the gaps</h2>
     <p>Everything listed below has no video on this site yet. If you have any of it, especially <b>off-air recordings of rage or Countdown, without archive watermarks</b>, we'd love to hear from you. Home tapes are perfect: the rage logo is fine, watermarks and timers from footage libraries aren't.</p>
-    <p><b>Spotted a wrong video?</b> Some clips here are our best guess at what rage showed. If you know a video on the site isn't the one rage played, open that song and press <b>"Wrong video? Send us the right one"</b>, or use the button below. Videos marked <b>✓ verified</b> are confirmed as the exact clip rage showed.</p>
+    <p><b>Spotted a wrong video?</b> Some clips here are our best guess at what rage showed. If you know a video on the site isn't the one rage played, open that song and press <b>"Wrong video? Send us the right one"</b>, or use the button below.</p>
     <div class="actions"><button class="btn primary" id="wanted-go" type="button">Tell us what you have</button><span class="count" id="wanted-n"></span></div>
     <div class="edit" id="wanted-admin" hidden>
       <h3>Contact form (admin)</h3>
@@ -411,7 +410,7 @@ ol.steps a { color: var(--accent) }
       </label>
       <label class="f" for="f-logo" id="f-logo-l">rage logo appears at <input type="number" id="f-logo" autocomplete="off" min="0" max="600" step="0.1" value="8.2"> seconds</label>
       <label class="f" for="f-burned" style="text-transform:none;letter-spacing:0;font:13px/1.35 var(--body);align-items:flex-start"><input type="checkbox" id="f-burned" style="margin-top:2px"> The rage logo and caption are already in this video (recorded off air), so don't add them</label>
-      <label class="f" for="f-verified" style="text-transform:none;letter-spacing:0;font:13px/1.35 var(--body);align-items:flex-start"><input type="checkbox" id="f-verified" style="margin-top:2px"> Confirmed: this is the exact clip rage showed (shows a ✓ Verified badge and hides the "Wrong video?" button)</label>
+      <label class="f" for="f-verified" style="text-transform:none;letter-spacing:0;font:13px/1.35 var(--body);align-items:flex-start"><input type="checkbox" id="f-verified" style="margin-top:2px"> Confirmed: this is the exact clip rage showed (shows "✓ Verified" in the song window and hides the "Wrong video?" button)</label>
       <div class="actions"><button class="btn primary" id="ed-save">Save</button><button class="btn danger" id="ed-clear">Remove video &amp; cover</button></div>
       <p class="hint">Pick the shape that matches what you see, so the logo and caption sit inside the picture.</p>
     </section>
@@ -550,8 +549,6 @@ ol.steps a { color: var(--accent) }
   const tagHTML = k => KINDS[k] ? `<span class="tag ${k}">${KINDS[k]}</span>` : "";
   // clips have no square, so the square's "has a video" dot becomes a small tag
   const vidTag = sid => { if (!isClipId(sid)) return ""; const m = mediaFor(sid); return m && (m.yt || m.video) ? '<span class="tag vid">video</span>' : ""; };
-  // a video the owner has confirmed is the one rage showed
-  const verTag = sid => { const m = mediaFor(sid); return m && m.verified && (m.yt || m.video) ? '<span class="tag ver" title="Confirmed: this is the clip rage showed">✓ verified</span>' : ""; };
 
   let S = [], view = [], type = "all", sort = "artist", mode = "songs";
   const idIndex = new Map();                 // song id -> index in S
@@ -738,7 +735,7 @@ ol.steps a { color: var(--accent) }
       el.className = "item" + (s.kind === "clip" ? " noart" : ""); el.setAttribute("role", "listitem"); el.style.top = (k * ROW) + "px"; el.dataset.i = view[k];
       const y1 = Math.floor(s.first / 1e4), y2 = Math.floor(s.last / 1e4);
       const yrs = y1 === y2 ? String(y1) : `${y1}–${String(y2).slice(2)}`;
-      el.innerHTML = `${thumbHTML(s.id, s.a)}<span class="t"><span class="a">${esc(s.a)}${tagHTML(s.kind)}${vidTag(s.id)}${verTag(s.id)}</span><span class="s">${esc(s.t)}${s.l ? ` <i>${esc(s.l)}</i>` : ""}</span></span><span class="n">${fmt(s.n)}×<small>${yrs}</small></span>`;
+      el.innerHTML = `${thumbHTML(s.id, s.a)}<span class="t"><span class="a">${esc(s.a)}${tagHTML(s.kind)}${vidTag(s.id)}</span><span class="s">${esc(s.t)}${s.l ? ` <i>${esc(s.l)}</i>` : ""}</span></span><span class="n">${fmt(s.n)}×<small>${yrs}</small></span>`;
       listEl.appendChild(el); pool.set(k, el);
     }
   }
@@ -809,7 +806,7 @@ ol.steps a { color: var(--accent) }
     const nv = items.filter(hasVideo).length;
     const watch = `<div class="bwatch"><button class="btn primary" data-watch="${key}"${nv ? "" : " disabled"}>▶ Watch this broadcast</button><button class="btn" data-copy="${linkOf(b, up)}">Copy link</button><span>${nv ? `${nv} of ${items.length} have music videos` : "No music videos added for these songs yet"}</span></div>`;
     const lis = items.map(it => {
-      const inner = `${thumbHTML(it.sid, it.a)}<span class="t"><span class="a">${esc(it.a)}${tagHTML(it.kind)}${it.i == null ? "" : vidTag(it.sid) + verTag(it.sid)}${it.i == null ? '<span class="tag new">new</span>' : ""}</span><span class="s">${esc(it.t)}${it.l ? ` <i>${esc(it.l)}</i>` : ""}</span></span><span class="n">${it.i == null ? "" : fmt(it.n) + "×"}</span>`;
+      const inner = `${thumbHTML(it.sid, it.a)}<span class="t"><span class="a">${esc(it.a)}${tagHTML(it.kind)}${it.i == null ? "" : vidTag(it.sid)}${it.i == null ? '<span class="tag new">new</span>' : ""}</span><span class="s">${esc(it.t)}${it.l ? ` <i>${esc(it.l)}</i>` : ""}</span></span><span class="n">${it.i == null ? "" : fmt(it.n) + "×"}</span>`;
       const cls = "tr" + (it.kind === "clip" ? " noart" : "");
       return it.i == null ? `<li><div class="${cls}">${inner}</div></li>` : `<li><button class="${cls}" data-s="${it.i}">${inner}</button></li>`;
     }).join("");
