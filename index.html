@@ -162,6 +162,12 @@ html.nofsscroll, html.nofsscroll body { overflow: hidden }
 .fsb { position: absolute; top: 8px; right: 8px; font: 500 12px var(--body); color: #fff; background: rgb(0 0 0 / .55); border: 1px solid rgb(255 255 255 / .35); border-radius: 6px; padding: 5px 8px; cursor: pointer; z-index: 2 }
 .player:fullscreen .fsb, .player.fakefs .fsb { top: max(12px, env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px)) }
 /* our own clean player chrome: a click-anywhere play/pause layer over the video, no YouTube or browser controls */
+/* clips: no square at all; the text takes its place */
+.item.noart { grid-template-columns: minmax(0, 1fr) auto }
+ol.tracks .tr.noart { grid-template-columns: 34px minmax(0, 1fr) auto }
+.queue li button.noart { grid-template-columns: minmax(0, 1fr) }
+.d-head.noart { grid-template-columns: minmax(0, 1fr) auto } .d-head.noart .d-cover { display: none }
+.tag.vid { color: var(--hot); border-color: var(--hot) }
 .thumb.bumper img { object-fit: contain; padding: 6px; background: #000 }
 .player .poster { position: absolute; inset: 0; background: #000 center / contain no-repeat }
 .player .shield { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; background: transparent; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent }
@@ -490,6 +496,8 @@ ol.steps a { color: var(--accent) }
   const KINDS = { song: "", live: "live", clip: "clip", special: "special", other: "other" };   // type -> tag shown
   const isMisc = k => k === "clip" || k === "special" || k === "other";                          // "Interviews & clips" filter
   const tagHTML = k => KINDS[k] ? `<span class="tag ${k}">${KINDS[k]}</span>` : "";
+  // clips have no square, so the square's "has a video" dot becomes a small tag
+  const vidTag = sid => { if (!isClipId(sid)) return ""; const m = mediaFor(sid); return m && (m.yt || m.video) ? '<span class="tag vid">video</span>' : ""; };
 
   let S = [], view = [], type = "all", sort = "artist", mode = "songs";
   const idIndex = new Map();                 // song id -> index in S
@@ -597,6 +605,7 @@ ol.steps a { color: var(--accent) }
 
   /* ---------- thumbnails ---------- */
   function thumbHTML(sid, artist) {
+    if (isClipId(sid)) return "";     // clips have no square
     const m = mediaFor(sid);
     const play = m && (m.yt || m.video) ? '<span class="play" aria-label="Has video"></span>' : "";
     const src = coverSrc(m, isClipId(sid));
@@ -647,10 +656,10 @@ ol.steps a { color: var(--accent) }
       if (pool.has(k)) continue;
       const s = S[view[k]];
       const el = document.createElement("button");
-      el.className = "item"; el.setAttribute("role", "listitem"); el.style.top = (k * ROW) + "px"; el.dataset.i = view[k];
+      el.className = "item" + (s.kind === "clip" ? " noart" : ""); el.setAttribute("role", "listitem"); el.style.top = (k * ROW) + "px"; el.dataset.i = view[k];
       const y1 = Math.floor(s.first / 1e4), y2 = Math.floor(s.last / 1e4);
       const yrs = y1 === y2 ? String(y1) : `${y1}–${String(y2).slice(2)}`;
-      el.innerHTML = `${thumbHTML(s.id, s.a)}<span class="t"><span class="a">${esc(s.a)}${tagHTML(s.kind)}</span><span class="s">${esc(s.t)}${s.l ? ` <i>${esc(s.l)}</i>` : ""}</span></span><span class="n">${fmt(s.n)}×<small>${yrs}</small></span>`;
+      el.innerHTML = `${thumbHTML(s.id, s.a)}<span class="t"><span class="a">${esc(s.a)}${tagHTML(s.kind)}${vidTag(s.id)}</span><span class="s">${esc(s.t)}${s.l ? ` <i>${esc(s.l)}</i>` : ""}</span></span><span class="n">${fmt(s.n)}×<small>${yrs}</small></span>`;
       listEl.appendChild(el); pool.set(k, el);
     }
   }
@@ -714,8 +723,9 @@ ol.steps a { color: var(--accent) }
     const nv = items.filter(hasVideo).length;
     const watch = `<div class="bwatch"><button class="btn primary" data-watch="${key}"${nv ? "" : " disabled"}>▶ Watch this broadcast</button><span>${nv ? `${nv} of ${items.length} have music videos` : "No music videos added for these songs yet"}</span></div>`;
     const lis = items.map(it => {
-      const inner = `${thumbHTML(it.sid, it.a)}<span class="t"><span class="a">${esc(it.a)}${tagHTML(it.kind)}${it.i == null ? '<span class="tag new">new</span>' : ""}</span><span class="s">${esc(it.t)}${it.l ? ` <i>${esc(it.l)}</i>` : ""}</span></span><span class="n">${it.i == null ? "" : fmt(it.n) + "×"}</span>`;
-      return it.i == null ? `<li><div class="tr">${inner}</div></li>` : `<li><button class="tr" data-s="${it.i}">${inner}</button></li>`;
+      const inner = `${thumbHTML(it.sid, it.a)}<span class="t"><span class="a">${esc(it.a)}${tagHTML(it.kind)}${it.i == null ? "" : vidTag(it.sid)}${it.i == null ? '<span class="tag new">new</span>' : ""}</span><span class="s">${esc(it.t)}${it.l ? ` <i>${esc(it.l)}</i>` : ""}</span></span><span class="n">${it.i == null ? "" : fmt(it.n) + "×"}</span>`;
+      const cls = "tr" + (it.kind === "clip" ? " noart" : "");
+      return it.i == null ? `<li><div class="${cls}">${inner}</div></li>` : `<li><button class="${cls}" data-s="${it.i}">${inner}</button></li>`;
     }).join("");
     el.insertAdjacentHTML("beforeend", `${watch}<ol class="tracks">${lis}</ol>${b.url ? `<p class="src">Original playlist: <a href="${esc(b.url)}" target="_blank" rel="noopener">${esc(b.url.replace(/^https?:\/\//, ""))}</a></p>` : ""}`);
   }
@@ -1071,6 +1081,7 @@ ol.steps a { color: var(--accent) }
     if (cur < 0) return;
     const s = S[cur], m = media.get(s.id) || {};
     const cov = $("d-cover"), src = coverSrc(m, s.kind === "clip");
+    $("d-cover").closest(".d-head").classList.toggle("noart", s.kind === "clip");
     cov.innerHTML = src ? `<img src="${esc(src)}" alt="" onerror="this.remove()">` : esc((sortKey(s.a)[0] || "#").toUpperCase());
     const key = JSON.stringify([s.id, m.yt, m.video, m.aspect, m.logoAt, s.kind, m.cover]);
     if (songKey !== key) {           // don't restart a playing video when nothing about it changed
@@ -1119,7 +1130,7 @@ ol.steps a { color: var(--accent) }
     const playable = items.map((it, k) => canPlay(it) ? k : -1).filter(k => k >= 0);
     $("tv-title").textContent = b.kind ? b.sp : (b.title || "Playlist");
     $("tv-sub").textContent = `${up ? "Upcoming · " : ""}${dow(b.date)} ${fmtDate(b.date)} · ${nv} of ${songs.length} songs have videos`;
-    $("tv-queue").innerHTML = items.map((it, k) => `<li><button data-k="${k}"${canPlay(it) ? "" : " disabled"}>${tvThumb(it)}<span class="t"><span class="a">${esc(it.a)}</span><span class="s">${esc(it.t)}${canPlay(it) ? "" : " · no video yet"}</span></span></button></li>`).join("");
+    $("tv-queue").innerHTML = items.map((it, k) => `<li><button data-k="${k}"${!it.bumper && it.kind === "clip" ? ' class="noart"' : ""}${canPlay(it) ? "" : " disabled"}>${tvThumb(it)}<span class="t"><span class="a">${esc(it.a)}</span><span class="s">${esc(it.t)}${canPlay(it) ? "" : " · no video yet"}</span></span></button></li>`).join("");
     if (tv) tv.player.destroy();
     tv = { items, playable, nsongs: songs.length, nv, pos: 0, player: makePlayer($("tv-player"), { onEnded: () => step(1), onError: () => setTimeout(() => step(1), 1500),
       onFs: on => { $("tv-fs").textContent = on ? "⛶ Exit fullscreen" : "⛶ Fullscreen"; } }) };
