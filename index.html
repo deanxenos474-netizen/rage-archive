@@ -212,6 +212,7 @@ footer { color: var(--muted); font-size: 13px; padding-block: 0 60px; max-width:
 footer a { color: var(--accent) }
 footer .admin { font: inherit; color: var(--muted); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer }
 .linkbtn { font: inherit; font-size: 13px; color: var(--accent); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; justify-self: start }
+.secret { -webkit-text-security: disc }
 .edit .lbl2 { font-size: 13px; color: var(--muted); display: grid; gap: 4px }
 ol.steps { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px }
 ol.steps a { color: var(--accent) }
@@ -413,20 +414,22 @@ ol.steps a { color: var(--accent) }
       <div><h2 id="adm-title">Admin login</h2><p>For the site owner. Everyone else can browse and watch without logging in.</p></div>
       <button class="x" id="adm-close" aria-label="Close">×</button>
     </div>
-    <section class="edit" id="adm-login">
+    <form class="edit" id="adm-login" autocomplete="on">
+      <input type="text" name="username" autocomplete="username" value="rage admin" style="display:none" aria-hidden="true" tabindex="-1">
       <div class="line"><input type="password" id="adm-pw" placeholder="Admin password" autocomplete="current-password" aria-label="Admin password"><button class="btn primary" id="adm-go">Log in</button></div>
       <p class="status" id="adm-status" role="status"></p>
       <button class="linkbtn" id="adm-forgot" type="button">Forgot the password? Set a new one with your GitHub token</button>
-    </section>
-    <section class="edit" id="adm-set" hidden>
+    </form>
+    <form class="edit" id="adm-set" hidden>
+      <input type="text" name="username" autocomplete="username" value="rage admin" style="display:none" aria-hidden="true" tabindex="-1">
       <h3 id="adm-set-h">Set the admin password</h3>
       <p class="hint" id="adm-set-hint">This needs your GitHub token, so only you can do it. The site stores a scrambled fingerprint of the password, never the password itself.</p>
-      <label class="lbl2" for="adm-tok" id="adm-tok-l"><span>GitHub token, the same one Publish uses. To make one: <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener" style="color:var(--accent)">new fine-grained token</a>, only the rage-archive repository, Contents set to Read and write.</span><input type="password" id="adm-tok" placeholder="github_pat_…" autocomplete="off"></label>
+      <label class="lbl2" for="adm-tok" id="adm-tok-l"><span>GitHub token, the same one Publish uses. To make one: <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener" style="color:var(--accent)">new fine-grained token</a>, only the rage-archive repository, Contents set to Read and write.</span><input type="text" class="secret" id="adm-tok" placeholder="github_pat_…" autocomplete="off" spellcheck="false"></label>
       <label class="lbl2" for="adm-new">New password<input type="password" id="adm-new" autocomplete="new-password"></label>
       <label class="lbl2" for="adm-new2">Type it again<input type="password" id="adm-new2" autocomplete="new-password"></label>
       <div class="actions"><button class="btn primary" id="adm-setgo">Save password &amp; log in</button></div>
       <p class="status" id="adm-set-status" role="status"></p>
-    </section>
+    </form>
   </div>
 </dialog>
 
@@ -444,7 +447,7 @@ ol.steps a { color: var(--accent) }
       <li>Click <b>Generate token</b>, copy it, and paste it below.</li>
     </ol>
     <section class="edit">
-      <div class="line"><input type="password" id="gh-token" placeholder="github_pat_…" autocomplete="off" aria-label="GitHub token"><button class="btn primary" id="gh-save">Save &amp; publish</button></div>
+      <div class="line"><input type="text" class="secret" id="gh-token" placeholder="github_pat_…" autocomplete="off" spellcheck="false" aria-label="GitHub token"><button class="btn primary" id="gh-save">Save &amp; publish</button></div>
       <p class="hint">The token stays in this browser only. It's never added to the site's files. You can delete it on GitHub any time.</p>
       <p class="status" id="gh-status" role="status"></p>
     </section>
@@ -971,7 +974,7 @@ ol.steps a { color: var(--accent) }
     s.y.split(",").filter(Boolean).forEach(p => { const [k, c] = p.split(":"); counts[+k] = +c; });
     yearlyChart($("d-chart"), counts, 500, 120, 4);
     $("d-yt").href = "https://www.youtube.com/results?search_query=" + encodeURIComponent(`${s.a} ${s.t}`);
-    $("d-artist").onclick = () => { $("q").value = s.a; $("dlg").close(); setType("all"); setMode("songs"); apply(); window.scrollTo({ top: 0 }); };
+    $("d-artist").onclick = () => { qTouched = true; $("q").value = s.a; $("dlg").close(); setType("all"); setMode("songs"); apply(); window.scrollTo({ top: 0 }); };
     $("d-copy").textContent = "Copy";
     status("");
     renderMedia();
@@ -1299,13 +1302,14 @@ ol.steps a { color: var(--accent) }
     } catch { admMsg("adm-status", "This browser can't check passwords here. Use the site's https:// address.", "err"); }
     $("adm-go").disabled = false;
   }
-  $("adm-go").onclick = tryLogin;
-  $("adm-pw").addEventListener("keydown", e => { if (e.key === "Enter") tryLogin(); });
+  $("adm-login").addEventListener("submit", tryLogin);     // the Log in button and Enter both submit the form
+  // the login boxes are real forms (so Chrome's password saver keeps to them); Enter clicks their button, never reloads the page
+  for (const f of document.querySelectorAll("form")) f.addEventListener("submit", e => e.preventDefault());
   $("adm-forgot").onclick = () => openAdmin(true);
   $("adm-close").onclick = () => $("adm").close();
   $("adm-open").onclick = () => admin ? $("edbar").scrollIntoView() : openAdmin(false);
   $("edbar-out").onclick = () => setAdmin(false);
-  $("adm-setgo").onclick = async () => {
+  $("adm-set").addEventListener("submit", async () => {
     let tok = null; try { tok = localStorage.getItem(TOKEN_KEY); } catch {}
     if (!$("adm-tok-l").hidden) tok = $("adm-tok").value.trim();
     const pw = $("adm-new").value;
@@ -1327,7 +1331,7 @@ ol.steps a { color: var(--accent) }
       else admMsg("adm-set-status", `Didn't save: ${e.message}`, "err");
     }
     $("adm-setgo").disabled = false;
-  };
+  });
 
   /* ---------- filters ---------- */
   function setType(t) {
@@ -1337,6 +1341,13 @@ ol.steps a { color: var(--accent) }
   for (const [id, v] of [["t-all", "all"], ["t-songs", "songs"], ["t-misc", "misc"], ["t-media", "media"]]) $(id).onclick = () => { setType(v); apply(); };
   $("sort").addEventListener("change", e => { sort = e.target.value; try { localStorage.setItem("rage-sort", sort); } catch {} apply(); window.scrollTo({ top: 0 }); });
   let deb; $("q").addEventListener("input", () => { clearTimeout(deb); deb = setTimeout(apply, 140); });
+  // browser autofill sometimes drops a saved value into the search right after loading; clear anything not typed by the visitor
+  let qTouched = false;
+  for (const ev of ["keydown", "pointerdown", "paste", "drop", "focus"]) $("q").addEventListener(ev, () => { qTouched = true; });
+  const qStart = Date.now(), qGuard = setInterval(() => {
+    if (qTouched || Date.now() - qStart > 8000) return clearInterval(qGuard);
+    if ($("q").value) { $("q").value = ""; if (S.length) apply(); }
+  }, 250);
   addEventListener("scroll", () => requestAnimationFrame(render), { passive: true });
   addEventListener("resize", () => requestAnimationFrame(render));
   try { const s = localStorage.getItem("rage-sort"); if (s) { sort = s; $("sort").value = s; } } catch {}
