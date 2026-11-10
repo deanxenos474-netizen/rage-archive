@@ -406,6 +406,7 @@ ol.steps a { color: var(--accent) }
           <option value="4:3">4:3 (YouTube shows black bars at the sides)</option>
           <option value="4:3-in-16:9">4:3 inside a 16:9 video (bars built into the video)</option>
           <option value="16:9-in-4:3">16:9 inside a 4:3 video (black bars top &amp; bottom)</option>
+          <option value="2.20:1">2.20:1 extra-wide film</option>
         </select>
       </label>
       <label class="f" for="f-logo" id="f-logo-l">rage logo appears at <input type="number" id="f-logo" autocomplete="off" min="0" max="600" step="0.1" value="8.2"> seconds</label>
@@ -958,6 +959,9 @@ ol.steps a { color: var(--accent) }
               l1: { x: 135.6, y: 909, size: 69.3, sx: 0.775 }, l2: { x: 134.8, y: 974, size: 54.7, sx: 0.947 } },
     "16:9": { W: 1920, logo: { x: 195, y: 836, width: 458, height: 152 },
               l1: { x: 195, y: 886, size: 77.1, sx: 0.79 },  l2: { x: 197, y: 965.5, size: 58.8, sx: 0.944 } },
+    // 2.20:1 extra-wide film: the 16:9 logo and caption at the same size, from the picture's left edge
+    "2.20:1": { W: 2376, logo: { x: 195, y: 836, width: 458, height: 152 },
+              l1: { x: 195, y: 886, size: 77.1, sx: 0.79 },  l2: { x: 197, y: 965.5, size: 58.8, sx: 0.944 } },
   };
   let ytReady = null;
   function loadYT() {
@@ -1031,7 +1035,7 @@ ol.steps a { color: var(--accent) }
       const el = frameEl(); if (!el) return;
       const bw = el.clientWidth, bh = el.clientHeight; if (!bw || !bh) return;
       const shape = P.m.aspect || "16:9";
-      const fileAR = P.kind === "yt" ? (shape === "4:3" || shape === "16:9-in-4:3" ? 4 / 3 : 16 / 9) : (v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : 16 / 9);
+      const fileAR = P.kind === "yt" ? (shape === "4:3" || shape === "16:9-in-4:3" ? 4 / 3 : shape === "2.20:1" ? 2.2 : 16 / 9) : (v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : 16 / 9);
       const cw = Math.min(bw, bh * fileAR), ch = cw / fileAR;
       const ifr = P.kind === "yt" && ytbox.querySelector("iframe");
       if (ifr && wrap.classList.contains("admode")) Object.assign(ifr.style, { width: bw + "px", height: bh + "px", left: "0px", top: "0px" });   // an ad: shown whole
@@ -1042,7 +1046,7 @@ ol.steps a { color: var(--accent) }
       let x = el.offsetLeft + (bw - cw) / 2, y = el.offsetTop + (bh - ch) / 2, w = cw, h = ch;
       if (shape === "4:3-in-16:9") { w = h * 4 / 3; x += (cw - w) / 2; }
       if (shape === "16:9-in-4:3") { h = w * 9 / 16; y += (ch - h) / 2; }
-      const G = shape.startsWith("4:3") ? GEO["4:3"] : GEO["16:9"];
+      const G = shape.startsWith("4:3") ? GEO["4:3"] : GEO[shape] || GEO["16:9"];
       Object.assign(svg.style, { left: x + "px", top: y + "px", width: w + "px", height: h + "px" });
       svg.setAttribute("viewBox", `0 0 ${G.W} 1080`);
       svg.setAttribute("preserveAspectRatio", "none");
