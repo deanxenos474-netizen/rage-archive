@@ -1,1 +1,25 @@
-﻿{"media":{}}
+{
+ "media": {
+  "9abb18780994": {
+   "artist": "The Jackson 5",
+   "title": "I Wonder Who's Loving Her Now",
+   "yt": "N9U9A4_cgyI",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/dc/5d/6d/dc5d6d8e-61dc-401b-80a6-c2a745fe048a/08UMGIM28826.rgb.jpg/1400x1400bb-100.jpg",
+   "aspect": "4:3-in-16:9",
+   "logoAt": 7.2
+  }
+ },
+ "merges": {
+  "7f9c6325842c": "9abb18780994",
+  "c05b89063ab1": "f74f3317b546",
+  "f74f3317b546": "a2cbe46da97b"
+ },
+ "edits": {
+  "7f9c6325842c": {
+   "a": "The Jackson 5"
+  },
+  "a2cbe46da97b": {
+   "a": "The Jackson 5"
+  }
+ }
+}
