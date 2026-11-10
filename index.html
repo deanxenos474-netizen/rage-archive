@@ -216,7 +216,7 @@ ol.steps a { color: var(--accent) }
     <div>
       <p class="kicker">ABC rage playlists · Jan 1998 to now<span id="s-upd"></span></p>
       <h1>Every song on <em>rage</em></h1>
-      <p class="stats"><span><b id="s-songs">61,036</b> songs &amp; clips</span><span><b id="s-plays">436,016</b> plays</span><span><b id="s-lists">5,852</b> broadcasts</span></p>
+      <p class="stats"><span><b id="s-songs">61,036</b> songs &amp; clips</span><span><b id="s-plays">436,016</b> plays</span><span><b id="s-lists">5,852</b> broadcasts</span><span><b id="s-vids">0/61,036</b> with videos</span></p>
     </div>
     <figure class="signal">
       <figcaption>Plays logged per year</figcaption>
@@ -921,8 +921,15 @@ ol.steps a { color: var(--accent) }
 
   /* ---------- edit mode: videos, covers, merges, publishing ---------- */
   const status = (msg, kind) => { $("ed-status").textContent = msg; $("ed-status").className = "status" + (kind ? " " + kind : ""); };
+  function updateVideoCount() {
+    let total = 0, withVid = 0;
+    for (const s of S) { if (s.hidden) continue; total++; const m = media.get(s.id); if (m && (m.yt || m.video)) withVid++; }
+    $("s-vids").textContent = `${fmt(withVid)}/${fmt(total)}`;
+    $("s-vids").parentElement.title = total ? `${(withVid / total * 100).toFixed(1)}% of entries have a music video` : "";
+  }
   function refreshAll() {
     applyMerges();
+    updateVideoCount();
     if (S.length) {
       apply(); refreshOpenBroadcasts();
       if ($("dlg").open && cur >= 0) {        // redraw the open song (numbers may have changed), keeping the message
