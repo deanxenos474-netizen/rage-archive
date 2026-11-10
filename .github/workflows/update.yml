@@ -1,0 +1,46 @@
+name: Update playlists
+
+# Every day at 7am and 7pm Australian Eastern time, and whenever started by hand from the Actions tab.
+on:
+  schedule:
+    - cron: "0 21 * * *"
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: update-playlists
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch new and upcoming playlists from the ABC
+        working-directory: tools
+        run: python update.py
+
+      - name: Publish if anything changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet; then
+            echo "No new playlists."
+            exit 0
+          fi
+          git config user.name "rage-archive-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Update playlists $(date -u +%Y-%m-%d)"
+          git push
+          # pushes made by this workflow don't start a Pages build by themselves, so ask for one
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" || true

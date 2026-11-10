@@ -1,16 +1,22 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Every Song on rage</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Every song, interview and clip played on ABC's rage since 1998, with play counts, every broadcast's playlist, and the music videos.">
+<link rel="icon" href="rage-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: a late-night TV guide. Masthead with the yearly signal, sticky control strip, then either the song index or the broadcast log. */
+/* Layout: a late-night TV guide. Masthead with the yearly signal, sticky control strip, then the song index, the broadcast log, or what's coming up. */
 :root {
   --bg: #f2f3f9; --surface: #ffffff; --raise: #e7e9f4; --fg: #141729; --muted: #5b6183;
   --line: #d6d9ea; --accent: #1b66d1; --hot: #c3246c; --bar: #9fb9e6; --ok: #1d7a4c; --bad: #b3261e;
   --display: "Bricolage Grotesque", "Arial Black", system-ui, sans-serif;
   --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  color-scheme: light;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #0b0d18; --surface: #12152a; --raise: #1a1e37; --fg: #e8ebf8; --muted: #8d94b8;
@@ -20,8 +26,11 @@
   --line: #262b4a; --accent: #6ab6ff; --hot: #ff5ea8; --bar: #33508a; --ok: #5fd39a; --bad: #ff8a80; color-scheme: dark }
 
 * { box-sizing: border-box }
-body { background: var(--bg); color: var(--fg); font: 15px/1.45 var(--body); }
+html { padding-top: env(safe-area-inset-top, 0px) }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.45 var(--body); }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg) }
+img { max-width: 100% }
+[hidden] { display: none !important }
 .wrap { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
 button { font: inherit }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
@@ -38,9 +47,10 @@ h1 em { font-style: normal; background: linear-gradient(100deg, var(--accent), v
 .signal svg { width: 100%; height: auto; display: block }
 
 /* view switch */
-.views { display: flex; gap: 4px; border-bottom: 1px solid var(--line) }
-.views button { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted); font-weight: 600; padding: 10px 14px; cursor: pointer; margin-bottom: -1px }
+.views { display: flex; gap: 4px; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none }
+.views button { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted); font-weight: 600; padding: 10px 14px; cursor: pointer; margin-bottom: -1px; white-space: nowrap }
 .views button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--hot) }
+.views .pill { font: 500 11px var(--mono); color: var(--bg); background: var(--hot); border-radius: 999px; padding: 1px 6px; margin-left: 6px; vertical-align: 1px }
 
 /* controls */
 .controls { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); padding-block: 12px 10px }
@@ -77,10 +87,11 @@ label.f { display: flex; align-items: center; gap: 8px; font: 500 12px var(--mon
 .n { text-align: right; font: 500 15px var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap }
 .n small { display: block; font-size: 11px; color: var(--muted); font-weight: 400 }
 .tag { font: 500 10px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--hot); border: 1px solid currentColor; border-radius: 4px; padding: 2px 4px; margin-left: 6px; vertical-align: 2px }
+.tag.new { color: var(--accent) }
 .empty, .loading { padding: 40px 6px; color: var(--muted) }
 
 /* broadcasts */
-#bcast { margin-block: 10px 60px }
+#bcast, #upc { margin-block: 10px 60px }
 .month { font: 800 22px/1 var(--display); margin: 26px 0 8px; display: flex; align-items: baseline; gap: 10px }
 .month small { font: 400 12px var(--mono); color: var(--muted) }
 details.bc { border-bottom: 1px solid var(--line) }
@@ -96,19 +107,24 @@ details.bc > summary:hover { background: var(--raise) }
 .dates button.sp { border-color: var(--hot) }
 .bn { font: 400 12px var(--mono); color: var(--muted); white-space: nowrap }
 details.bc[open] > summary { background: var(--raise) }
+.bwatch { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 12px 6px 4px; font: 400 12px var(--mono); color: var(--muted) }
 ol.tracks { list-style: none; margin: 0; padding: 4px 0 14px; counter-reset: tr }
 ol.tracks li { counter-increment: tr }
-ol.tracks button { width: 100%; display: grid; grid-template-columns: 34px 40px minmax(0, 1fr) auto; gap: 10px; align-items: center; text-align: left; color: inherit; background: none; border: 0; padding: 5px 6px; cursor: pointer; border-radius: 6px }
-ol.tracks button:hover { background: var(--raise) }
-ol.tracks button::before { content: counter(tr); font: 400 12px var(--mono); color: var(--muted); text-align: right }
+ol.tracks .tr { width: 100%; display: grid; grid-template-columns: 34px 40px minmax(0, 1fr) auto; gap: 10px; align-items: center; text-align: left; color: inherit; background: none; border: 0; padding: 5px 6px; border-radius: 6px }
+ol.tracks button.tr { cursor: pointer }
+ol.tracks button.tr:hover { background: var(--raise) }
+ol.tracks .tr::before { content: counter(tr); font: 400 12px var(--mono); color: var(--muted); text-align: right }
 .src { font: 400 12px var(--mono); padding: 0 6px 12px; }
 .src a { color: var(--accent) }
+.note { color: var(--muted); font-size: 14px; max-width: 70ch; margin: 18px 6px 0 }
 
-/* detail */
+/* dialogs */
 dialog { width: min(600px, calc(100vw - 32px)); max-height: calc(100dvh - 48px); border: 1px solid var(--line); border-radius: 16px; background: var(--surface); color: var(--fg); padding: 0 }
-dialog::backdrop { background: rgb(5 6 14 / .55) }
+dialog.wide { width: min(980px, calc(100vw - 24px)) }
+dialog::backdrop { background: rgb(5 6 14 / .6) }
 .d-in { padding: 22px; display: grid; gap: 16px }
 .d-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: start }
+.d-head.nocover { grid-template-columns: minmax(0, 1fr) auto }
 .d-cover { width: 96px; height: 96px; border-radius: 10px; background: var(--raise); overflow: hidden; display: grid; place-items: center; font: 800 34px var(--display); color: var(--muted) }
 .d-cover img { width: 100%; height: 100%; object-fit: cover; display: block }
 .d-head h2 { font: 800 24px/1.1 var(--display); margin: 0; text-wrap: balance; overflow-wrap: anywhere }
@@ -120,61 +136,85 @@ dialog::backdrop { background: rgb(5 6 14 / .55) }
 .facts dd { margin: 2px 0 0; font: 500 16px var(--mono); font-variant-numeric: tabular-nums }
 .lbl { margin: 0 0 6px; font: 500 10px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted) }
 .d-chart svg { width: 100%; height: auto; display: block }
+.dates { display: flex; flex-wrap: wrap; gap: 6px; max-height: 132px; overflow-y: auto }
+.dates button { font: 400 12px var(--mono); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 4px 7px; cursor: pointer; font-variant-numeric: tabular-nums }
+.dates button:hover { border-color: var(--accent) }
+
+/* player + rage overlay */
 @font-face { font-family: "Eurostile Demi"; src: url("eurostile-demi.otf") format("opentype"); font-display: swap }
 .player { position: relative; background: #000; border-radius: 10px; overflow: hidden }
 .player video { width: 100%; max-height: 62vh; display: block; background: #000; object-fit: contain }
-.player:fullscreen { border-radius: 0; display: grid; place-items: center }
+.player .ytbox { width: 100%; aspect-ratio: 16 / 9; max-height: 62vh; background: #000 }
+.ytbox iframe { width: 100%; height: 100%; display: block; border: 0 }
+.player:fullscreen { border-radius: 0; display: grid; place-items: center; width: 100vw; height: 100vh }
 .player:fullscreen video { max-height: none; height: 100vh }
+.player:fullscreen .ytbox { width: 100vw; height: 100vh; max-height: none; aspect-ratio: auto }
 .ov { position: absolute; pointer-events: none; overflow: visible }
 .ov text { fill: #fff; font-family: "Eurostile Demi", "Eurostile", "Microgramma", "Arial Narrow", sans-serif; white-space: pre }
-.player.yt .ytbox { width: 100%; aspect-ratio: 16 / 9; max-height: 62vh; background: #000 }
-.ytbox iframe { width: 100%; height: 100%; display: block; border: 0 }
-.player.yt:fullscreen .ytbox { width: 100vw; height: 100vh; max-height: none; aspect-ratio: auto }
+.fsb { position: absolute; top: 8px; right: 8px; font: 500 12px var(--body); color: #fff; background: rgb(0 0 0 / .55); border: 1px solid rgb(255 255 255 / .35); border-radius: 6px; padding: 5px 8px; cursor: pointer; z-index: 2 }
+.player:fullscreen .fsb { top: max(12px, env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px)) }
+.vload { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font: 500 13px var(--mono); background: rgb(0 0 0 / .6); text-align: center; padding: 16px }
+
+/* watch-a-broadcast */
+.tvgrid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start }
+.tvnow { margin: 10px 0 0; font-weight: 600 }
+.tvnow small { display: block; font: 400 12px var(--mono); color: var(--muted); font-weight: 400 }
+.tvctl { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap }
+.queue { list-style: none; margin: 0; padding: 0; max-height: 58vh; overflow-y: auto; border: 1px solid var(--line); border-radius: 10px }
+.queue li button { width: 100%; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 10px; align-items: center; text-align: left; color: inherit; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 6px 8px; cursor: pointer }
+.queue li button:disabled { cursor: default; opacity: .45 }
+.queue li button[aria-current="true"] { background: var(--raise); box-shadow: inset 3px 0 0 var(--hot) }
+
+/* editing */
+.edit { border: 1px dashed var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 10px }
+.edit h3 { margin: 0; font: 700 14px var(--body) }
+.edit .hint { margin: 0; color: var(--muted); font-size: 13px }
+.edit input[type="url"], .edit input[type="search"], .edit input[type="password"] { flex: 1; min-width: 0; font: 14px var(--body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px }
+.edit input[type="number"] { width: 6em; font: 14px var(--body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px }
+.edit select { font: 14px var(--body) }
+.picks { display: grid; gap: 4px }
+.picks button { text-align: left; color: inherit; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; cursor: pointer; font-size: 14px }
+.picks button:hover { border-color: var(--accent) }
+.picks small { color: var(--muted); font-family: var(--mono); font-size: 12px }
+.status { font-size: 13px; min-height: 1.2em; margin: 0 }
+.status.ok { color: var(--ok) } .status.err { color: var(--bad) }
 .edbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--fg); color: var(--bg);
   padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
   display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 14px }
 .edbar span { flex: 1 1 200px }
 .edbar .btn { background: var(--bg); color: var(--fg) }
-.vload { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font: 500 13px var(--mono); background: rgb(0 0 0 / .6) }
-.edit input[type="number"] { width: 6em; font: 14px var(--body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px }
-.fsb { position: absolute; top: 8px; right: 8px; font: 500 12px var(--body); color: #fff; background: rgb(0 0 0 / .55); border: 1px solid rgb(255 255 255 / .35); border-radius: 6px; padding: 5px 8px; cursor: pointer }
-.player:fullscreen .fsb { top: max(12px, env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px)) }
-.edit select { font: 14px var(--body) }
+.edbar .btn.go { background: var(--hot); color: #fff; border-color: var(--hot) }
 .line { display: flex; gap: 8px; align-items: stretch }
 .line code { flex: 1; min-width: 0; font: 13px var(--mono); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; overflow-x: auto; white-space: nowrap; user-select: all }
 .btn { font: 500 13px var(--body); color: var(--fg); background: var(--raise); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px }
 .btn:hover { border-color: var(--accent) }
 .btn.primary { background: var(--fg); color: var(--bg); border-color: var(--fg) }
 .btn.danger { color: var(--bad) }
-.btn:disabled { opacity: .5; cursor: progress }
+.btn:disabled { opacity: .5; cursor: default }
 .actions { display: flex; flex-wrap: wrap; gap: 8px }
-.dates { display: flex; flex-wrap: wrap; gap: 6px; max-height: 132px; overflow-y: auto }
-.dates button { font: 400 12px var(--mono); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 4px 7px; cursor: pointer; font-variant-numeric: tabular-nums }
-.dates button:hover { border-color: var(--accent) }
-.edit { border: 1px dashed var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 10px }
-.edit h3 { margin: 0; font: 700 14px var(--body) }
-.edit .hint { margin: 0; color: var(--muted); font-size: 13px }
-.edit input[type="url"] { flex: 1; min-width: 0; font: 14px var(--body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px }
-.status { font-size: 13px; min-height: 1.2em; margin: 0 }
-.status.ok { color: var(--ok) } .status.err { color: var(--bad) }
-.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0) }
-footer { color: var(--muted); font-size: 13px; padding-block: 0 40px; max-width: 70ch }
+footer { color: var(--muted); font-size: 13px; padding-block: 0 60px; max-width: 70ch }
 footer a { color: var(--accent) }
+ol.steps { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px }
+ol.steps a { color: var(--accent) }
 
-@media (max-width: 700px) {
+@media (max-width: 760px) {
   header { grid-template-columns: minmax(0, 1fr); padding-block: 24px 14px }
   details.bc > summary { grid-template-columns: 92px minmax(0, 1fr); }
   .bn { grid-column: 2 }
   .d-cover { width: 72px; height: 72px }
   .facts dd { font-size: 14px }
+  .tvgrid { grid-template-columns: minmax(0, 1fr) }
+  .queue { max-height: 40vh }
 }
-@media (prefers-reduced-motion: no-preference) { .item, ol.tracks button { transition: background .12s } }
+@media (prefers-reduced-motion: no-preference) { .item, ol.tracks button.tr { transition: background .12s } }
 </style>
+</head>
+<body>
 
 <div class="wrap">
   <header>
     <div>
-      <p class="kicker">ABC rage playlists · Jan 1998 to now</p>
+      <p class="kicker">ABC rage playlists · Jan 1998 to now<span id="s-upd"></span></p>
       <h1>Every song on <em>rage</em></h1>
       <p class="stats"><span><b id="s-songs">61,036</b> songs &amp; clips</span><span><b id="s-plays">436,016</b> plays</span><span><b id="s-lists">5,852</b> broadcasts</span></p>
     </div>
@@ -186,6 +226,7 @@ footer a { color: var(--accent) }
   <nav class="views" role="tablist" aria-label="View">
     <button role="tab" id="v-songs" aria-selected="true">Songs A–Z</button>
     <button role="tab" id="v-bc" aria-selected="false">By broadcast date</button>
+    <button role="tab" id="v-up" aria-selected="false">Upcoming<span class="pill" id="up-n" hidden></span></button>
   </nav>
 </div>
 
@@ -208,7 +249,7 @@ footer a { color: var(--accent) }
           <button class="chip" id="t-all" aria-pressed="true">All</button>
           <button class="chip" id="t-songs" aria-pressed="false">Songs</button>
           <button class="chip" id="t-misc" aria-pressed="false">Interviews &amp; clips</button>
-          <button class="chip" id="t-media" aria-pressed="false">With cover or video</button>
+          <button class="chip" id="t-media" aria-pressed="false">With video</button>
         </div>
       </div>
       <nav class="letters" id="letters" aria-label="Jump to letter"></nav>
@@ -230,26 +271,34 @@ footer a { color: var(--accent) }
       </div>
       <div class="count" id="bcount">Loading broadcasts…</div>
     </div>
+    <div id="ctl-up" hidden>
+      <div class="count" id="ucount" style="margin-top:0">Loading upcoming playlists…</div>
+    </div>
   </div>
 </div>
 
-<div class="wrap">
+<main class="wrap">
   <div id="list" role="list"><div class="loading">Loading 61,036 songs…</div></div>
   <div id="bcast" hidden><div class="loading">Loading broadcasts…</div></div>
+  <div id="upc" hidden><div class="loading">Loading upcoming playlists…</div></div>
   <footer>
     Every appearance in a published playlist counts as one play, including mornings, specials, guest programmers and ABC Entertains repeats.
+    New playlists are added automatically every day; ones the ABC posts ahead of time show under Upcoming and count once they air.
     Sources: <a href="https://github.com/patrickgalbraith/rageagain" target="_blank" rel="noopener">RageAgain's playlist archive</a> (1998 to Aug 2024) and
     <a href="https://www.abc.net.au/rage/playlist" target="_blank" rel="noopener">abc.net.au/rage/playlist</a> (2007 to now). For each week the fuller source was used.
     About 20 weeks between 2012 and 2023 are missing from both. Videos play from YouTube. A fan archive, not affiliated with the ABC.
     <span id="media-note"></span>
   </footer>
-</div>
+</main>
+
 <div class="edbar" id="edbar" hidden role="region" aria-label="Edit mode">
   <span id="edbar-n">Edit mode</span>
+  <button class="btn go" id="edbar-pub" disabled>Publish</button>
   <button class="btn" id="edbar-dl" disabled>Download media.json</button>
   <button class="btn" id="edbar-x" disabled>Discard changes</button>
 </div>
 
+<!-- one song -->
 <dialog id="dlg" aria-labelledby="d-title">
   <div class="d-in">
     <div class="d-head">
@@ -270,8 +319,8 @@ footer a { color: var(--accent) }
       <button class="btn" id="d-artist">All by this artist</button>
       <a class="btn" id="d-yt" target="_blank" rel="noopener">Find on YouTube</a>
     </div>
-    <section class="edit" id="d-edit" hidden aria-label="Cover and video">
-      <h3>Cover &amp; video</h3>
+    <section class="edit" id="d-edit" hidden aria-label="Video and cover">
+      <h3>Video &amp; cover</h3>
       <div class="line"><input type="url" id="f-link" placeholder="YouTube link (or a direct .mp4 link)" aria-label="Video link"></div>
       <div class="line"><input type="url" id="f-cover" placeholder="Cover image link (leave empty to use the YouTube thumbnail)" aria-label="Cover image link"></div>
       <label class="f" for="f-aspect" style="flex-wrap:wrap">Picture shape
@@ -283,9 +332,59 @@ footer a { color: var(--accent) }
         </select>
       </label>
       <label class="f" for="f-logo">rage logo appears at <input type="number" id="f-logo" min="0" max="600" step="0.1" value="8.2"> seconds</label>
-      <div class="actions"><button class="btn primary" id="ed-save">Save</button><button class="btn danger" id="ed-clear">Remove cover &amp; video</button></div>
-      <p class="hint">The logo and caption sit inside the picture, so pick the shape that matches what you see. Saved changes show in this browser straight away; download media.json from the bar at the bottom and upload it to GitHub to publish them for everyone.</p>
-      <p class="status" id="ed-status" role="status"></p>
+      <div class="actions"><button class="btn primary" id="ed-save">Save</button><button class="btn danger" id="ed-clear">Remove video &amp; cover</button></div>
+      <p class="hint">Pick the shape that matches what you see, so the logo and caption sit inside the picture.</p>
+    </section>
+    <section class="edit" id="d-merge" hidden aria-label="Duplicates">
+      <h3>Duplicate entry?</h3>
+      <p class="hint" id="m-hint">If this is the same song as another entry, find the original and merge this one into it. Its plays, broadcast dates and video move across.</p>
+      <div class="line"><input type="search" id="m-q" placeholder="Search for the original entry" aria-label="Search for the original entry" autocomplete="off"></div>
+      <div class="picks" id="m-picks"></div>
+      <div id="m-members"></div>
+    </section>
+    <p class="status" id="ed-status" role="status"></p>
+  </div>
+</dialog>
+
+<!-- watch a whole broadcast -->
+<dialog id="tv" class="wide" aria-labelledby="tv-title">
+  <div class="d-in">
+    <div class="d-head nocover">
+      <div><h2 id="tv-title"></h2><p id="tv-sub"></p></div>
+      <button class="x" id="tv-close" aria-label="Close">×</button>
+    </div>
+    <div class="tvgrid">
+      <div>
+        <div id="tv-player"></div>
+        <p class="tvnow" id="tv-now"></p>
+        <div class="tvctl">
+          <button class="btn" id="tv-prev">‹ Previous</button>
+          <button class="btn primary" id="tv-next">Next ›</button>
+          <button class="btn" id="tv-song">Song details</button>
+        </div>
+      </div>
+      <div><p class="lbl" id="tv-qlbl">Running order</p><ol class="queue" id="tv-queue"></ol></div>
+    </div>
+  </div>
+</dialog>
+
+<!-- connect GitHub for one-click publishing -->
+<dialog id="gh" aria-labelledby="gh-title">
+  <div class="d-in">
+    <div class="d-head nocover">
+      <div><h2 id="gh-title">Connect to GitHub</h2><p>So the Publish button can update the site directly. You only do this once per browser.</p></div>
+      <button class="x" id="gh-close" aria-label="Close">×</button>
+    </div>
+    <ol class="steps">
+      <li>Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub → new fine-grained token</a> (signed in as you).</li>
+      <li>Name it "rage site", set an expiry, and under <b>Repository access</b> choose <b>Only select repositories → <span id="gh-repo"></span></b>.</li>
+      <li>Under <b>Permissions → Repository permissions</b>, set <b>Contents</b> to <b>Read and write</b>. Nothing else is needed.</li>
+      <li>Click <b>Generate token</b>, copy it, and paste it below.</li>
+    </ol>
+    <section class="edit">
+      <div class="line"><input type="password" id="gh-token" placeholder="github_pat_…" autocomplete="off" aria-label="GitHub token"><button class="btn primary" id="gh-save">Save &amp; publish</button></div>
+      <p class="hint">The token stays in this browser only. It's never added to the site's files. You can delete it on GitHub any time.</p>
+      <p class="status" id="gh-status" role="status"></p>
     </section>
   </div>
 </dialog>
@@ -305,11 +404,15 @@ footer a { color: var(--accent) }
   const sortKey = s => fold(s).replace(/^[^a-z0-9]+/, "");
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
   const safeLink = u => { try { const x = new URL(u); return x.protocol === "https:" || x.protocol === "http:" ? x.href : null; } catch { return null; } };
+  const editMode = new URLSearchParams(location.search).has("edit");
 
   let S = [], view = [], type = "all", sort = "artist", mode = "songs";
-  let B = null, bLoading = null, plays = null;          // broadcasts + per-song broadcast index
-  const media = new Map();                               // song id -> {yt, video, cover, aspect, logoAt}
-  const listEl = $("list"), bEl = $("bcast");
+  const idIndex = new Map();                 // song id -> index in S
+  let B = null, U = [], bLoading = null, plays = null;
+  const media = new Map();                   // song id -> {yt, video, cover, aspect, logoAt} (effective, after merges)
+  let mergeTo = new Map();                   // song index -> index it's merged into (resolved)
+  let members = new Map();                   // song index -> [indexes merged into it]
+  const listEl = $("list"), bEl = $("bcast"), uEl = $("upc");
   const ROW = 60;
 
   /* ---------- charts ---------- */
@@ -327,14 +430,73 @@ footer a { color: var(--accent) }
     svg.innerHTML = out;
   }
 
+  /* ---------- covers, videos and merges (media.json + edits) ---------- */
+  const DRAFT_KEY = "rage-media-drafts", TOKEN_KEY = "rage-gh-token";
+  let published = { media: {}, merges: {} };
+  let drafts = { media: {}, merges: {} };
+  try {
+    const raw = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
+    if (raw && (raw.media || raw.merges)) drafts = { media: raw.media || {}, merges: raw.merges || {} };
+    else if (raw) drafts.media = raw;           // older format: just media
+  } catch {}
+  const saveDrafts = () => { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(drafts)); } catch {} };
+  const nDrafts = () => Object.keys(drafts.media).length + Object.keys(drafts.merges).length;
+  const effective = kind => { const out = {}; for (const [k, v] of Object.entries({ ...published[kind], ...drafts[kind] })) if (v) out[k] = v; return out; };
+
+  function ytId(u) {
+    const m = /(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/))([A-Za-z0-9_-]{11})/.exec(u || "");
+    return m ? m[1] : (/^[A-Za-z0-9_-]{11}$/.test(u || "") ? u : null);
+  }
+  function coverSrc(m) {
+    if (!m) return null;
+    if (m.cover && safeLink(m.cover)) return m.cover;
+    if (m.yt) return `https://i.ytimg.com/vi/${m.yt}/hqdefault.jpg`;
+    return null;
+  }
+  const canon = i => mergeTo.has(i) ? mergeTo.get(i) : i;
+  const mediaFor = sid => { const i = idIndex.get(sid); return media.get(i != null ? S[canon(i)].id : sid); };
+
+  function applyMerges() {
+    // reset every song to its own numbers, then fold each duplicate into its original
+    for (const s of S) { s.n = s.n0; s.first = s.first0; s.last = s.last0; s.y = s.y0; s.hidden = false; }
+    mergeTo = new Map(); members = new Map();
+    const raw = effective("merges");
+    const resolve = i => { const seen = new Set([i]); let c = i;
+      for (let k = 0; k < 20; k++) { const t = raw[S[c].id]; const ti = t != null ? idIndex.get(t) : undefined; if (ti == null || seen.has(ti)) break; seen.add(ti); c = ti; }
+      return c; };
+    for (const sid of Object.keys(raw)) {
+      const i = idIndex.get(sid); if (i == null) continue;
+      const c = resolve(i); if (c === i) continue;
+      mergeTo.set(i, c);
+      if (!members.has(c)) members.set(c, []);
+      members.get(c).push(i);
+    }
+    for (const [c, list] of members) {
+      const s = S[c], yc = {};
+      const add = str => (str || "").split(",").filter(Boolean).forEach(p => { const [k, v] = p.split(":"); yc[k] = (yc[k] || 0) + +v; });
+      add(s.y0);
+      for (const i of list) { const d = S[i]; d.hidden = true; s.n += d.n0; s.first = Math.min(s.first, d.first0); s.last = Math.max(s.last, d.last0); add(d.y0); }
+      s.y = Object.keys(yc).map(Number).sort((a, b) => a - b).map(k => `${k}:${yc[k]}`).join(",");
+    }
+    // media follows the original entry; a duplicate's video shows on the original if the original has none
+    media.clear();
+    const em = effective("media");
+    for (const [sid, x] of Object.entries(em)) {
+      if (!(x.yt || x.video || x.cover)) continue;
+      const i = idIndex.get(sid);
+      if (i == null) { media.set(sid, x); continue; }
+      const c = canon(i), cid = S[c].id;
+      if (!media.has(cid) || cid === sid) media.set(cid, x);
+    }
+  }
+
   /* ---------- thumbnails ---------- */
-  function thumbHTML(s) {
-    const m = media.get(s.id);
-    const play = m && (m.yt || m.video) ?'<span class="play" aria-label="Has video"></span>' : "";
+  function thumbHTML(sid, artist) {
+    const m = mediaFor(sid);
+    const play = m && (m.yt || m.video) ? '<span class="play" aria-label="Has video"></span>' : "";
     const src = coverSrc(m);
     if (src) return `<span class="thumb"><img src="${esc(src)}" alt="" loading="lazy" onerror="this.remove()">${play}</span>`;
-    const ch = (sortKey(s.a)[0] || "#").toUpperCase();
-    return `<span class="thumb" aria-hidden="true">${esc(ch)}${play}</span>`;
+    return `<span class="thumb" aria-hidden="true">${esc((sortKey(artist)[0] || "#").toUpperCase())}${play}</span>`;
   }
 
   /* ---------- song list ---------- */
@@ -343,9 +505,10 @@ footer a { color: var(--accent) }
     view = [];
     for (let i = 0; i < S.length; i++) {
       const s = S[i];
+      if (s.hidden) continue;
       if (type === "songs" && s.misc) continue;
       if (type === "misc" && !s.misc) continue;
-      if (type === "media" && !media.has(s.id)) continue;
+      if (type === "media" && !(media.get(s.id) && (media.get(s.id).yt || media.get(s.id).video))) continue;
       if (terms.length && !terms.every(t => s.hay.includes(t))) continue;
       view.push(i);
     }
@@ -360,7 +523,7 @@ footer a { color: var(--accent) }
     const total = view.reduce((t, i) => t + S[i].n, 0);
     $("count").textContent = `${fmt(view.length)} ${view.length === 1 ? "entry" : "entries"} · ${fmt(total)} plays`;
     listEl.style.height = Math.max(view.length * ROW, 120) + "px";
-    const emptyMsg = type === "media" ? "No covers or videos added yet. Open any song and use “Add cover” to start."
+    const emptyMsg = type === "media" ? "No music videos added yet."
       : `Nothing matches “${esc($("q").value)}”. Try fewer words, or just the artist's name.`;
     listEl.innerHTML = view.length ? "" : `<div class="empty">${emptyMsg}</div>`;
     pool.clear();
@@ -382,7 +545,7 @@ footer a { color: var(--accent) }
       el.className = "item"; el.setAttribute("role", "listitem"); el.style.top = (k * ROW) + "px"; el.dataset.i = view[k];
       const y1 = Math.floor(s.first / 1e4), y2 = Math.floor(s.last / 1e4);
       const yrs = y1 === y2 ? String(y1) : `${y1}–${String(y2).slice(2)}`;
-      el.innerHTML = `${thumbHTML(s)}<span class="t"><span class="a">${esc(s.a)}${s.misc ? '<span class="tag">clip</span>' : ""}</span><span class="s">${esc(s.t)}${s.l ? ` <i>${esc(s.l)}</i>` : ""}</span></span><span class="n">${fmt(s.n)}×<small>${yrs}</small></span>`;
+      el.innerHTML = `${thumbHTML(s.id, s.a)}<span class="t"><span class="a">${esc(s.a)}${s.misc ? '<span class="tag">clip</span>' : ""}</span><span class="s">${esc(s.t)}${s.l ? ` <i>${esc(s.l)}</i>` : ""}</span></span><span class="n">${fmt(s.n)}×<small>${yrs}</small></span>`;
       listEl.appendChild(el); pool.set(k, el);
     }
   }
@@ -404,11 +567,13 @@ footer a { color: var(--accent) }
 
   /* ---------- broadcasts ---------- */
   function loadBroadcasts() {
-    if (!bLoading) bLoading = fetch("broadcasts.json").then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
+    if (!bLoading) bLoading = fetch("broadcasts.json", { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
       B = d.lists.map(([date, title, url, tr, sp, kind], i) => ({ i, date, title, url, tr, sp: sp || "", kind: kind || 0, hay: fold(`${title} ${sp || ""}`) }));
+      U = (d.upcoming || []).map(([date, title, url, rows, sp, kind], i) => ({ i, date, title, url, rows, sp: sp || "", kind: kind || 0 }));
       plays = new Map();
       B.forEach(b => b.tr.forEach(si => { let a = plays.get(si); if (!a) plays.set(si, a = []); if (a[a.length - 1] !== b.i) a.push(b.i); }));
       $("s-lists").textContent = fmt(B.length);
+      $("up-n").hidden = !U.length; $("up-n").textContent = U.length;
       const years = [...new Set(B.map(b => Math.floor(b.date / 1e4)))].sort((a, b) => b - a);
       $("year").innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join("");
       const last = B[B.length - 1].date;
@@ -421,6 +586,38 @@ footer a { color: var(--accent) }
   let bkind = "all";
   const spHTML = b => b.kind ? `<span class="badge${b.kind === 2 ? " guest" : ""}">${b.kind === 2 ? "Guest programmer" : "Special"}</span>${esc(b.sp)}<small>${esc(b.title || "Playlist")}</small>` : esc(b.title || "Playlist");
 
+  // a broadcast's running order as display items (aired: song indexes; upcoming: rows with their own text)
+  function itemsOf(b, upcoming) {
+    if (!upcoming) return b.tr.map(si => { const c = canon(si), s = S[c]; return { i: c, sid: s.id, a: s.a, t: s.t, l: s.l, n: s.n, misc: s.misc }; });
+    return b.rows.map(([a, t, l, sid]) => {
+      const i = idIndex.get(sid); const c = i != null ? canon(i) : null;
+      return c != null ? { i: c, sid: S[c].id, a: S[c].a, t: S[c].t, l: S[c].l, n: S[c].n, misc: S[c].misc } : { i: null, sid, a, t, l, n: 0, misc: 0 };
+    });
+  }
+  const hasVideo = it => { const m = mediaFor(it.sid); return !!(m && (m.yt || m.video)); };
+
+  function summaryHTML(b, key, upcoming) {
+    const [, m, d] = ymd(b.date);
+    return `<details class="bc" id="${key}" data-key="${key}"><summary><span class="bd"><b>${dow(b.date)}</b>${d} ${MONTHS[m-1]}</span><span class="bt">${spHTML(b)}</span><span class="bn">${upcoming ? b.rows.length : b.tr.length} songs</span></summary></details>`;
+  }
+  function fillBroadcast(el) {
+    if (el.dataset.filled) return;
+    el.dataset.filled = "1";
+    const key = el.dataset.key, up = key.startsWith("u-");
+    const b = up ? U[+key.slice(2)] : B[+key.slice(2)];
+    const items = itemsOf(b, up);
+    const nv = items.filter(hasVideo).length;
+    const watch = `<div class="bwatch"><button class="btn primary" data-watch="${key}"${nv ? "" : " disabled"}>▶ Watch this broadcast</button><span>${nv ? `${nv} of ${items.length} have music videos` : "No music videos added for these songs yet"}</span></div>`;
+    const lis = items.map(it => {
+      const inner = `${thumbHTML(it.sid, it.a)}<span class="t"><span class="a">${esc(it.a)}${it.misc ? '<span class="tag">clip</span>' : ""}${it.i == null ? '<span class="tag new">new</span>' : ""}</span><span class="s">${esc(it.t)}${it.l ? ` <i>${esc(it.l)}</i>` : ""}</span></span><span class="n">${it.i == null ? "" : fmt(it.n) + "×"}</span>`;
+      return it.i == null ? `<li><div class="tr">${inner}</div></li>` : `<li><button class="tr" data-s="${it.i}">${inner}</button></li>`;
+    }).join("");
+    el.insertAdjacentHTML("beforeend", `${watch}<ol class="tracks">${lis}</ol>${b.url ? `<p class="src">Original playlist: <a href="${esc(b.url)}" target="_blank" rel="noopener">${esc(b.url.replace(/^https?:\/\//, ""))}</a></p>` : ""}`);
+  }
+  function refreshOpenBroadcasts() {
+    document.querySelectorAll("details.bc[data-filled]").forEach(el => { while (el.children.length > 1) el.lastElementChild.remove(); delete el.dataset.filled; if (el.open) fillBroadcast(el); });
+  }
+
   function renderYear(year, openIdx) {
     const q = fold($("bq").value.trim());
     const items = B.filter(b => Math.floor(b.date / 1e4) === year && (!q || b.hay.includes(q))
@@ -432,9 +629,9 @@ footer a { color: var(--accent) }
     const perMonth = {};
     items.forEach(b => { const m = ymd(b.date)[1]; perMonth[m] = (perMonth[m] || 0) + 1; });
     for (const b of items) {
-      const [, m, d] = ymd(b.date);
+      const m = ymd(b.date)[1];
       if (m !== curM) { curM = m; html += `<h2 class="month">${MONTHS_L[m-1]} ${year} <small>${perMonth[m]} broadcast${perMonth[m] === 1 ? "" : "s"}</small></h2>`; }
-      html += `<details class="bc" id="b-${b.i}" data-i="${b.i}"><summary><span class="bd"><b>${dow(b.date)}</b>${d} ${MONTHS[m-1]}</span><span class="bt">${spHTML(b)}</span><span class="bn">${b.tr.length} songs</span></summary></details>`;
+      html += summaryHTML(b, "b-" + b.i, false);
     }
     bEl.innerHTML = html;
     if (openIdx != null) {
@@ -444,16 +641,19 @@ footer a { color: var(--accent) }
         window.scrollTo({ top: y }); }); }
     }
   }
-  function fillBroadcast(el) {
-    if (el.dataset.filled) return;
-    el.dataset.filled = "1";
-    const b = B[+el.dataset.i];
-    const lis = b.tr.map(si => { const s = S[si];
-      return `<li><button data-s="${si}">${thumbHTML(s)}<span class="t"><span class="a">${esc(s.a)}${s.misc ? '<span class="tag">clip</span>' : ""}</span><span class="s">${esc(s.t)}${s.l ? ` <i>${esc(s.l)}</i>` : ""}</span></span><span class="n">${fmt(s.n)}×</span></button></li>`; }).join("");
-    el.insertAdjacentHTML("beforeend", `<ol class="tracks">${lis}</ol>${b.url ? `<p class="src">Original playlist: <a href="${esc(b.url)}" target="_blank" rel="noopener">${esc(b.url.replace(/^https?:\/\//, ""))}</a></p>` : ""}`);
+  function renderUpcoming() {
+    $("ucount").textContent = U.length ? `${U.length} playlist${U.length === 1 ? "" : "s"} posted by the ABC ahead of time · they count as plays once they air` : "Nothing posted yet";
+    if (!U.length) { uEl.innerHTML = `<p class="note">The ABC hasn't posted any playlists ahead of time right now. It usually posts the coming week's on Thursday, and this site checks twice a day.</p>`; return; }
+    uEl.innerHTML = U.map(b => summaryHTML(b, "u-" + b.i, true)).join("");
+    const first = uEl.querySelector("details"); if (first) { first.open = true; fillBroadcast(first); }
   }
-  bEl.addEventListener("toggle", e => { if (e.target.open) fillBroadcast(e.target); }, true);
-  bEl.addEventListener("click", e => { const b = e.target.closest("button[data-s]"); if (b) openDetail(+b.dataset.s); });
+  for (const host of [bEl, uEl]) {
+    host.addEventListener("toggle", e => { if (e.target.open) fillBroadcast(e.target); }, true);
+    host.addEventListener("click", e => {
+      const w = e.target.closest("button[data-watch]"); if (w) { watchBroadcast(w.dataset.watch); return; }
+      const b = e.target.closest("button[data-s]"); if (b) openDetail(+b.dataset.s);
+    });
+  }
   $("year").addEventListener("change", () => { renderYear(+$("year").value); window.scrollTo({ top: 0 }); });
   for (const [id, v] of [["k-all", "all"], ["k-sp", "sp"], ["k-guest", "guest"]]) $(id).onclick = () => {
     bkind = v;
@@ -471,6 +671,7 @@ footer a { color: var(--accent) }
   async function goBroadcast(i) {
     await loadBroadcasts();
     if ($("dlg").open) $("dlg").close();
+    if ($("tv").open) $("tv").close();
     setMode("broadcasts", true);
     const b = B[i];
     $("year").value = String(Math.floor(b.date / 1e4));
@@ -481,15 +682,18 @@ footer a { color: var(--accent) }
   }
 
   /* ---------- mode switch + hash ---------- */
-  let lastHash = null;   // the hash this page set itself; hashchange for it is ignored
-  function setHash(h) { lastHash = h; if (location.hash.slice(1) !== h) location.hash = h; }
+  let lastHash = null;
+  function setHash(h) { lastHash = h; if (location.hash.slice(1) !== h) history.replaceState(null, "", location.pathname + location.search + "#" + h); }
   function setMode(m, quiet) {
     mode = m;
     $("v-songs").setAttribute("aria-selected", String(m === "songs"));
     $("v-bc").setAttribute("aria-selected", String(m === "broadcasts"));
+    $("v-up").setAttribute("aria-selected", String(m === "upcoming"));
     $("ctl-songs").hidden = listEl.hidden = m !== "songs";
     $("ctl-bc").hidden = bEl.hidden = m !== "broadcasts";
+    $("ctl-up").hidden = uEl.hidden = m !== "upcoming";
     if (m === "songs") { if (!quiet) setHash("songs"); requestAnimationFrame(render); }
+    else if (m === "upcoming") { if (!quiet) setHash("upcoming"); loadBroadcasts().then(renderUpcoming).catch(() => { uEl.innerHTML = `<div class="empty">The playlists didn't load. Reload the page to try again.</div>`; }); }
     else if (!quiet) {
       setHash("broadcasts");
       loadBroadcasts().then(() => { if (!bEl.querySelector("details")) { const last = B[B.length - 1]; $("year").value = String(Math.floor(last.date / 1e4)); renderYear(Math.floor(last.date / 1e4), last.i); } })
@@ -498,6 +702,7 @@ footer a { color: var(--accent) }
   }
   $("v-songs").onclick = () => { setMode("songs"); window.scrollTo({ top: 0 }); };
   $("v-bc").onclick = () => { setMode("broadcasts"); window.scrollTo({ top: 0 }); };
+  $("v-up").onclick = () => { setMode("upcoming"); window.scrollTo({ top: 0 }); };
   function routeHash() {
     const h = location.hash.slice(1);
     if (h === lastHash) return;
@@ -505,13 +710,123 @@ footer a { color: var(--accent) }
     const m = /^b-\d{8}-(\d+)$/.exec(h);
     if (m) goBroadcast(+m[1]).catch(() => {});
     else if (h === "broadcasts") setMode("broadcasts", false);
+    else if (h === "upcoming") setMode("upcoming", false);
     else if (h === "songs" || !h) setMode("songs", true);
   }
   addEventListener("hashchange", routeHash);
 
-  /* ---------- detail ---------- */
-  let cur = -1;
+  /* ---------- the player, with the rage logo + caption ----------
+     Geometry measured from two real broadcasts (picture coordinates, 1080 high; x = text origin, y = baseline).
+     Timing from the same clips: logo fades in over 0.55s, fades out 3.75-4.25s after it starts;
+     the caption cuts in 7.35s after the logo and cuts out 16.75s after it. */
+  const GEO = {
+    "4:3":  { W: 1440, logo: { x: 142, y: 821, width: 401, height: 137 },
+              l1: { x: 127, y: 898, size: 65.4, sx: 0.812 }, l2: { x: 130, y: 963.5, size: 52.3, sx: 0.977 } },
+    "16:9": { W: 1920, logo: { x: 195, y: 836, width: 458, height: 152 },
+              l1: { x: 195, y: 886, size: 77.1, sx: 0.79 },  l2: { x: 197, y: 965.5, size: 58.8, sx: 0.944 } },
+  };
+  let ytReady = null;
+  function loadYT() {
+    if (!ytReady) ytReady = new Promise((res, rej) => {
+      if (window.YT && window.YT.Player) return res(window.YT);
+      window.onYouTubeIframeAPIReady = () => res(window.YT);
+      const sc = document.createElement("script"); sc.src = "https://www.youtube.com/iframe_api"; sc.onerror = () => { ytReady = null; rej(new Error("YouTube didn't load")); };
+      document.head.appendChild(sc);
+    });
+    return ytReady;
+  }
+  let fsCounter = 0;
+  function makePlayer(host, opts = {}) {
+    const fid = "capsh" + (++fsCounter);
+    host.innerHTML = `<div class="player"><div class="ytbox" hidden><div class="ytel"></div></div><video playsinline controls preload="metadata" controlsList="nofullscreen" disablepictureinpicture hidden></video>
+      <svg class="ov" aria-hidden="true"><defs><filter id="${fid}" x="-5%" y="-20%" width="115%" height="160%"><feDropShadow dx="4" dy="4" stdDeviation="2.2" flood-color="#000" flood-opacity=".85"/></filter></defs>
+        <image href="rage-logo.png" opacity="0" preserveAspectRatio="none"/><g class="capg" opacity="0" filter="url(#${fid})"><text class="l1"></text><text class="l2"></text></g></svg>
+      <button class="fsb" type="button">Fullscreen</button></div>`;
+    const wrap = host.querySelector(".player"), svg = wrap.querySelector("svg"), ytbox = wrap.querySelector(".ytbox"), v = wrap.querySelector("video");
+    const img = svg.querySelector("image"), capg = svg.querySelector(".capg"), l1 = svg.querySelector(".l1"), l2 = svg.querySelector(".l2");
+    const P = { stop: false, raf: 0, iv: 0, yt: null, ytReady: false, kind: null, m: {}, L: 8.2, pending: null };
+
+    const frameEl = () => P.kind === "yt" ? ytbox : v;
+    const now = () => P.kind === "yt" ? (P.yt && P.ytReady && P.yt.getCurrentTime ? P.yt.getCurrentTime() || 0 : 0) : v.currentTime;
+    function layout() {
+      const el = frameEl(); if (!el) return;
+      const bw = el.clientWidth, bh = el.clientHeight; if (!bw || !bh) return;
+      const shape = P.m.aspect || "16:9";
+      const fileAR = P.kind === "yt" ? (shape === "4:3" || shape === "16:9-in-4:3" ? 4 / 3 : 16 / 9) : (v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : 16 / 9);
+      const cw = Math.min(bw, bh * fileAR), ch = cw / fileAR;
+      let x = el.offsetLeft + (bw - cw) / 2, y = el.offsetTop + (bh - ch) / 2, w = cw, h = ch;
+      if (shape === "4:3-in-16:9") { w = h * 4 / 3; x += (cw - w) / 2; }
+      if (shape === "16:9-in-4:3") { h = w * 9 / 16; y += (ch - h) / 2; }
+      const G = shape.startsWith("4:3") ? GEO["4:3"] : GEO["16:9"];
+      Object.assign(svg.style, { left: x + "px", top: y + "px", width: w + "px", height: h + "px" });
+      svg.setAttribute("viewBox", `0 0 ${G.W} 1080`);
+      svg.setAttribute("preserveAspectRatio", "none");
+      Object.entries(G.logo).forEach(([a, val]) => img.setAttribute(a, val));
+      l1.setAttribute("transform", `translate(${G.l1.x} ${G.l1.y}) scale(${G.l1.sx} 1)`); l1.setAttribute("font-size", G.l1.size);
+      l2.setAttribute("transform", `translate(${G.l2.x} ${G.l2.y}) scale(${G.l2.sx} 1)`); l2.setAttribute("font-size", G.l2.size);
+    }
+    function frame() {
+      const t = now(), L = P.L;
+      const lo = t < L ? 0 : t < L + .55 ? (t - L) / .55 : t < L + 3.75 ? 1 : t < L + 4.25 ? 1 - (t - L - 3.75) / .5 : 0;
+      img.setAttribute("opacity", lo.toFixed(3));
+      capg.setAttribute("opacity", t >= L + 7.35 && t < L + 16.75 ? "1" : "0");
+    }
+    const loop = () => { if (P.stop) return; frame(); P.raf = requestAnimationFrame(loop); };
+    loop();
+    P.iv = setInterval(() => { if (!P.stop) frame(); }, 150);     // keeps going when the tab is in the background
+    v.addEventListener("loadedmetadata", layout);
+    v.addEventListener("ended", () => { if (P.kind === "video") opts.onEnded?.(); });
+    const ro = new ResizeObserver(layout); ro.observe(wrap);
+    wrap.querySelector(".fsb").onclick = () => {
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+      else wrap.requestFullscreen?.().catch(() => {});
+    };
+    const onFs = () => { if (P.stop) return; wrap.querySelector(".fsb").textContent = document.fullscreenElement === wrap ? "Exit fullscreen" : "Fullscreen"; requestAnimationFrame(layout); };
+    document.addEventListener("fullscreenchange", onFs);
+
+    function load(m, song, autoplay) {
+      P.m = m || {}; P.L = Number.isFinite(+P.m.logoAt) ? +P.m.logoAt : 8.2;
+      l1.textContent = (song.a || "").toUpperCase(); l2.textContent = song.t || "";
+      img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0");
+      if (P.m.yt) {
+        P.kind = "yt"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = false;
+        if (P.yt && P.ytReady) { autoplay ? P.yt.loadVideoById(P.m.yt) : P.yt.cueVideoById(P.m.yt); }
+        else {
+          P.pending = { id: P.m.yt, autoplay };
+          if (!P.yt) loadYT().then(YT => {
+            if (P.stop) return;
+            const first = P.pending;
+            P.yt = new YT.Player(wrap.querySelector(".ytel"), {
+              videoId: first.id, width: "100%", height: "100%",
+              playerVars: { fs: 0, rel: 0, playsinline: 1, modestbranding: 1, iv_load_policy: 3, autoplay: first.autoplay ? 1 : 0 },
+              events: {
+                onReady: () => { P.ytReady = true; const p = P.pending; if (p && p.id !== first.id) { p.autoplay ? P.yt.loadVideoById(p.id) : P.yt.cueVideoById(p.id); } layout(); },
+                onStateChange: e => { if (e.data === 0 && P.kind === "yt") opts.onEnded?.(); },
+                onError: () => opts.onError?.(),
+              },
+            });
+          }).catch(() => { ytbox.innerHTML = `<div class="vload">YouTube didn't load. Check your connection and try again.</div>`; });
+        }
+      } else if (P.m.video) {
+        P.kind = "video"; ytbox.hidden = true; try { P.yt && P.ytReady && P.yt.pauseVideo(); } catch {}
+        v.hidden = false; v.src = P.m.video; if (autoplay) v.play().catch(() => {});
+      }
+      requestAnimationFrame(layout);
+    }
+    function destroy() {
+      P.stop = true; cancelAnimationFrame(P.raf); clearInterval(P.iv); ro.disconnect();
+      document.removeEventListener("fullscreenchange", onFs);
+      try { P.yt && P.yt.destroy(); } catch {}
+      if (document.fullscreenElement === wrap) document.exitFullscreen().catch(() => {});
+      host.innerHTML = "";
+    }
+    return { load, destroy };
+  }
+
+  /* ---------- one song ---------- */
+  let cur = -1, songPlayer = null, songKey = "";
   function openDetail(i) {
+    i = canon(i);
     cur = i;
     const s = S[i];
     $("d-title").textContent = s.t;
@@ -521,17 +836,18 @@ footer a { color: var(--accent) }
     $("d-last").textContent = fmtDate(s.last);
     $("d-line").textContent = `${s.a} - ${s.t}${s.l ? ` (${s.l})` : ""} (${fmt(s.n)} ${s.n === 1 ? "Time" : "Times"})`;
     const counts = new Array(Y1 - Y0 + 1).fill(0);
-    s.y.split(",").forEach(p => { const [k, c] = p.split(":"); counts[+k] = +c; });
+    s.y.split(",").filter(Boolean).forEach(p => { const [k, c] = p.split(":"); counts[+k] = +c; });
     yearlyChart($("d-chart"), counts, 500, 120, 4);
     $("d-yt").href = "https://www.youtube.com/results?search_query=" + encodeURIComponent(`${s.a} ${s.t}`);
     $("d-artist").onclick = () => { $("q").value = s.a; $("dlg").close(); setType("all"); setMode("songs"); apply(); window.scrollTo({ top: 0 }); };
     $("d-copy").textContent = "Copy";
-    $("ed-status").textContent = ""; $("ed-status").className = "status";
+    status("");
     renderMedia();
+    renderMergeUI();
     $("d-dates").innerHTML = '<span class="count">Loading…</span>';
     loadBroadcasts().then(() => {
       if (cur !== i) return;
-      const ids = plays.get(i) || [];
+      const ids = [...new Set([i, ...(members.get(i) || [])].flatMap(j => plays.get(j) || []))].sort((a, b) => a - b);
       $("d-dates").innerHTML = ids.length ? ids.map(bi => { const b = B[bi];
         return `<button data-b="${bi}"${b.kind ? ' class="sp"' : ""} title="${esc(b.kind ? `${b.kind === 2 ? "Guest programmer" : "Special"}: ${b.sp}` : b.title)}">${fmtDate(b.date)}</button>`; }).join("")
         : '<span class="count">No broadcast listing found.</span>';
@@ -546,10 +862,10 @@ footer a { color: var(--accent) }
     const cov = $("d-cover"), src = coverSrc(m);
     cov.innerHTML = src ? `<img src="${esc(src)}" alt="" onerror="this.remove()">` : esc((sortKey(s.a)[0] || "#").toUpperCase());
     const key = JSON.stringify([s.id, m.yt, m.video, m.aspect, m.logoAt]);
-    if ($("d-video").dataset.key !== key) {          // don't restart a playing video when nothing about it changed
-      $("d-video").dataset.key = key;
-      stopPlayer();
-      if (m.yt || m.video) buildPlayer($("d-video"), m, s); else $("d-video").innerHTML = "";
+    if (songKey !== key) {           // don't restart a playing video when nothing about it changed
+      songKey = key;
+      if (songPlayer) { songPlayer.destroy(); songPlayer = null; }
+      if (m.yt || m.video) { songPlayer = makePlayer($("d-video")); songPlayer.load(m, s, false); }
     }
     if (editMode) {
       $("f-link").value = m.yt ? "https://www.youtube.com/watch?v=" + m.yt : (m.video || "");
@@ -558,99 +874,7 @@ footer a { color: var(--accent) }
       $("f-logo").value = m.logoAt != null ? m.logoAt : 8.2;
     }
   }
-
-  /* ---------- video player with the rage logo + caption ----------
-     Geometry measured from two real broadcasts (picture coordinates, 1080 high; x = text origin, y = baseline).
-     Timing from the same clips: logo fades in over 0.55s, fades out 3.75–4.25s after it starts;
-     the caption cuts in 7.35s after the logo and cuts out 16.75s after it. */
-  const GEO = {
-    "4:3":  { W: 1440, logo: { x: 142, y: 821, width: 401, height: 137 },
-              l1: { x: 127, y: 898, size: 65.4, sx: 0.812 }, l2: { x: 130, y: 963.5, size: 52.3, sx: 0.977 } },
-    "16:9": { W: 1920, logo: { x: 195, y: 836, width: 458, height: 152 },
-              l1: { x: 195, y: 886, size: 77.1, sx: 0.79 },  l2: { x: 197, y: 965.5, size: 58.8, sx: 0.944 } },
-  };
-  let player = null;
-  function stopPlayer() {
-    if (!player) return;
-    player.stop = true; cancelAnimationFrame(player.raf); clearInterval(player.iv); player.ro?.disconnect();
-    try { player.yt?.destroy(); } catch {}
-    player = null;
-  }
-  let ytReady = null;
-  function loadYT() {
-    if (!ytReady) ytReady = new Promise((res, rej) => {
-      if (window.YT && window.YT.Player) return res(window.YT);
-      window.onYouTubeIframeAPIReady = () => res(window.YT);
-      const sc = document.createElement("script"); sc.src = "https://www.youtube.com/iframe_api"; sc.onerror = () => { ytReady = null; rej(new Error("YouTube didn't load")); };
-      document.head.appendChild(sc);
-    });
-    return ytReady;
-  }
-  function buildPlayer(host, m, s) {
-    const isYT = !!m.yt;
-    host.innerHTML = `<div class="player${isYT ? " yt" : ""}">${isYT ? '<div class="ytbox"><div class="ytel"></div></div>' : '<video controls playsinline preload="metadata" controlsList="nofullscreen" disablepictureinpicture></video>'}
-      <svg class="ov" aria-hidden="true"><defs><filter id="capsh" x="-5%" y="-20%" width="115%" height="160%"><feDropShadow dx="4" dy="4" stdDeviation="2.2" flood-color="#000" flood-opacity=".85"/></filter></defs>
-        <image href="rage-logo.png" opacity="0" preserveAspectRatio="none"/><g class="capg" opacity="0" filter="url(#capsh)"><text class="l1"></text><text class="l2"></text></g></svg>
-      <button class="fsb" type="button">Fullscreen</button></div>`;
-    const wrap = host.querySelector(".player"), svg = wrap.querySelector("svg");
-    const frameEl = isYT ? wrap.querySelector(".ytbox") : wrap.querySelector("video");
-    const v = isYT ? null : frameEl;
-    const img = svg.querySelector("image"), capg = svg.querySelector(".capg"), l1 = svg.querySelector(".l1"), l2 = svg.querySelector(".l2");
-    l1.textContent = s.a.toUpperCase(); l2.textContent = s.t;
-    const P = player = { stop: false, raf: 0, iv: 0, yt: null };
-    const L = Number.isFinite(+m.logoAt) ? +m.logoAt : 8.2;
-    const now = () => isYT ? (P.yt && P.yt.getCurrentTime ? P.yt.getCurrentTime() || 0 : 0) : v.currentTime;
-
-    function layout() {
-      // the box the video is drawn in, then the video file inside it (YouTube and <video> both letterbox to fit)
-      const bw = frameEl.clientWidth, bh = frameEl.clientHeight;
-      let shape = m.aspect || "16:9";
-      let fileAR = isYT ? (shape === "4:3" || shape === "16:9-in-4:3" ? 4 / 3 : 16 / 9) : (v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : 16 / 9);
-      const cw = Math.min(bw, bh * fileAR), ch = cw / fileAR;
-      let x = frameEl.offsetLeft + (bw - cw) / 2, y = frameEl.offsetTop + (bh - ch) / 2, w = cw, h = ch;
-      if (shape === "4:3-in-16:9") { w = h * 4 / 3; x += (cw - w) / 2; }
-      if (shape === "16:9-in-4:3") { h = w * 9 / 16; y += (ch - h) / 2; }
-      const G = shape.startsWith("4:3") ? GEO["4:3"] : GEO["16:9"];
-      Object.assign(svg.style, { left: x + "px", top: y + "px", width: w + "px", height: h + "px" });
-      svg.setAttribute("viewBox", `0 0 ${G.W} 1080`);
-      svg.setAttribute("preserveAspectRatio", "none");
-      Object.entries(G.logo).forEach(([a, val]) => img.setAttribute(a, val));
-      l1.setAttribute("transform", `translate(${G.l1.x} ${G.l1.y}) scale(${G.l1.sx} 1)`); l1.setAttribute("font-size", G.l1.size);
-      l2.setAttribute("transform", `translate(${G.l2.x} ${G.l2.y}) scale(${G.l2.sx} 1)`); l2.setAttribute("font-size", G.l2.size);
-    }
-    function frame() {
-      const t = now();
-      const lo = t < L ? 0 : t < L + .55 ? (t - L) / .55 : t < L + 3.75 ? 1 : t < L + 4.25 ? 1 - (t - L - 3.75) / .5 : 0;
-      img.setAttribute("opacity", lo.toFixed(3));
-      capg.setAttribute("opacity", t >= L + 7.35 && t < L + 16.75 ? "1" : "0");
-    }
-    if (isYT) {
-      // YouTube gives no frame events, so check the time ten times a second (and every frame while visible)
-      P.iv = setInterval(() => { if (!P.stop) frame(); }, 100);
-      const loop = () => { if (P.stop) return; frame(); P.raf = requestAnimationFrame(loop); }; loop();
-      loadYT().then(YT => {
-        if (P.stop) return;
-        P.yt = new YT.Player(wrap.querySelector(".ytel"), {
-          videoId: m.yt, width: "100%", height: "100%",
-          playerVars: { fs: 0, rel: 0, playsinline: 1, modestbranding: 1, iv_load_policy: 3 },
-          events: { onReady: () => { layout(); frame(); } },
-        });
-      }).catch(() => { wrap.querySelector(".ytbox").innerHTML = `<div class="vload">YouTube didn't load. Check your connection and reopen this song.</div>`; });
-    } else {
-      const loop = () => { if (P.stop) return; frame(); if (!v.paused) P.raf = requestAnimationFrame(loop); };
-      v.addEventListener("play", () => { cancelAnimationFrame(P.raf); loop(); });
-      for (const ev of ["seeked", "timeupdate", "pause"]) v.addEventListener(ev, frame);
-      v.addEventListener("loadedmetadata", layout);
-      v.src = m.video;
-    }
-    P.ro = new ResizeObserver(layout); P.ro.observe(wrap); layout();
-    wrap.querySelector(".fsb").onclick = () => {
-      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
-      else wrap.requestFullscreen?.().catch(() => { $("ed-status").textContent = "Fullscreen isn't available in this view."; });
-    };
-    document.addEventListener("fullscreenchange", () => { if (P.stop) return; wrap.querySelector(".fsb").textContent = document.fullscreenElement === wrap ? "Exit fullscreen" : "Fullscreen"; requestAnimationFrame(layout); });
-  }
-  $("dlg").addEventListener("close", () => { if ($("dlg").open) return; stopPlayer(); $("d-video").dataset.key = ""; $("d-video").innerHTML = ""; });
+  $("dlg").addEventListener("close", () => { if ($("dlg").open) return; if (songPlayer) { songPlayer.destroy(); songPlayer = null; } songKey = ""; });
   $("d-close").addEventListener("click", () => $("dlg").close());
   $("dlg").addEventListener("click", e => { if (e.target === $("dlg")) $("dlg").close(); });
   $("d-copy").addEventListener("click", () => {
@@ -659,31 +883,55 @@ footer a { color: var(--accent) }
     try { navigator.clipboard.writeText(txt).then(() => { $("d-copy").textContent = "Copied"; }, fallback); } catch { fallback(); }
   });
 
-  /* ---------- covers & videos: media.json + edit mode ----------
-     media.json maps a song id to { yt, video, cover, aspect, logoAt, artist, title }.
-     Edit mode (?edit in the address) keeps changes in this browser until you download media.json and upload it. */
-  const status = (msg, kind) => { $("ed-status").textContent = msg; $("ed-status").className = "status" + (kind ? " " + kind : ""); };
-  const DRAFT_KEY = "rage-media-drafts";
-  let published = {}, drafts = {};
-  try { drafts = JSON.parse(localStorage.getItem(DRAFT_KEY) || "{}") || {}; } catch { drafts = {}; }
-  const saveDrafts = () => { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(drafts)); } catch {} updateBar(); };
-  function ytId(u) {
-    const m = /(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/))([A-Za-z0-9_-]{11})/.exec(u || "");
-    return m ? m[1] : (/^[A-Za-z0-9_-]{11}$/.test(u || "") ? u : null);
+  /* ---------- watch a whole broadcast ---------- */
+  let tv = null;
+  function watchBroadcast(key) {
+    const up = key.startsWith("u-");
+    const b = up ? U[+key.slice(2)] : B[+key.slice(2)];
+    if (!b) return;
+    const items = itemsOf(b, up);
+    const playable = items.map((it, k) => hasVideo(it) ? k : -1).filter(k => k >= 0);
+    if (!playable.length) return;
+    $("tv-title").textContent = b.kind ? b.sp : (b.title || "Playlist");
+    $("tv-sub").textContent = `${up ? "Upcoming · " : ""}${dow(b.date)} ${fmtDate(b.date)} · ${playable.length} of ${items.length} songs have videos`;
+    $("tv-queue").innerHTML = items.map((it, k) => `<li><button data-k="${k}"${hasVideo(it) ? "" : " disabled"}>${thumbHTML(it.sid, it.a)}<span class="t"><span class="a">${esc(it.a)}</span><span class="s">${esc(it.t)}${hasVideo(it) ? "" : " · no video yet"}</span></span></button></li>`).join("");
+    if (tv) tv.player.destroy();
+    tv = { items, playable, pos: 0, player: makePlayer($("tv-player"), { onEnded: () => step(1), onError: () => setTimeout(() => step(1), 1500) }) };
+    if (!$("tv").open) $("tv").showModal();
+    play(0, true);
   }
-  function coverSrc(m) {
-    if (!m) return null;
-    if (m.cover && safeLink(m.cover)) return m.cover;
-    if (m.yt) return `https://i.ytimg.com/vi/${m.yt}/hqdefault.jpg`;
-    return null;
+  function play(p, autoplay) {
+    if (!tv) return;
+    tv.pos = Math.max(0, Math.min(tv.playable.length - 1, p));
+    const k = tv.playable[tv.pos], it = tv.items[k];
+    tv.player.load(mediaFor(it.sid), it, autoplay);
+    $("tv-now").innerHTML = `${esc(it.a)} – ${esc(it.t)}<small>Video ${tv.pos + 1} of ${tv.playable.length} · song ${k + 1} in the running order</small>`;
+    $("tv-prev").disabled = tv.pos === 0; $("tv-next").disabled = tv.pos === tv.playable.length - 1;
+    $("tv-song").disabled = it.i == null;
+    document.querySelectorAll("#tv-queue button").forEach(bt => bt.setAttribute("aria-current", String(+bt.dataset.k === k)));
+    const curBtn = document.querySelector(`#tv-queue button[data-k="${k}"]`); curBtn?.scrollIntoView({ block: "nearest" });
   }
-  function rebuildMedia() {
-    media.clear();
-    const all = { ...published, ...drafts };
-    for (const [id, x] of Object.entries(all)) if (x && (x.yt || x.video || x.cover)) media.set(id, x);
-  }
-  function refreshAll() { rebuildMedia(); if (S.length) { if (type === "media" && mode === "songs") apply(); else rerenderRows(); refreshOpenBroadcasts(); if ($("dlg").open) renderMedia(); } updateBar(); }
+  function step(d) { if (tv && tv.pos + d >= 0 && tv.pos + d < tv.playable.length) play(tv.pos + d, true); }
+  $("tv-prev").onclick = () => step(-1);
+  $("tv-next").onclick = () => step(1);
+  $("tv-song").onclick = () => { const it = tv && tv.items[tv.playable[tv.pos]]; if (it && it.i != null) { $("tv").close(); openDetail(it.i); } };
+  $("tv-queue").addEventListener("click", e => { const bt = e.target.closest("button[data-k]"); if (bt && !bt.disabled) play(tv.playable.indexOf(+bt.dataset.k), true); });
+  $("tv-close").onclick = () => $("tv").close();
+  $("tv").addEventListener("close", () => { if (tv) { tv.player.destroy(); tv = null; } });
 
+  /* ---------- edit mode: videos, covers, merges, publishing ---------- */
+  const status = (msg, kind) => { $("ed-status").textContent = msg; $("ed-status").className = "status" + (kind ? " " + kind : ""); };
+  function refreshAll() {
+    applyMerges();
+    if (S.length) {
+      apply(); refreshOpenBroadcasts();
+      if ($("dlg").open && cur >= 0) {        // redraw the open song (numbers may have changed), keeping the message
+        const msg = $("ed-status").textContent, cls = $("ed-status").className;
+        openDetail(cur); $("ed-status").textContent = msg; $("ed-status").className = cls;
+      }
+    }
+    updateBar();
+  }
   $("ed-save").addEventListener("click", () => {
     const s = S[cur];
     const raw = $("f-link").value.trim(), coverRaw = $("f-cover").value.trim();
@@ -698,37 +946,125 @@ footer a { color: var(--accent) }
     if (coverRaw) entry.cover = coverRaw;
     if ($("f-aspect").value !== "16:9") entry.aspect = $("f-aspect").value;
     if (logo !== 8.2) entry.logoAt = logo;
-    drafts[s.id] = (entry.yt || entry.video || entry.cover) ? entry : null;
+    drafts.media[s.id] = (entry.yt || entry.video || entry.cover) ? entry : null;
     saveDrafts(); refreshAll();
-    status("Saved in this browser. Download media.json from the bar at the bottom to publish it.", "ok");
+    status("Saved. Click Publish at the bottom to put it live for everyone.", "ok");
   });
   $("ed-clear").addEventListener("click", () => {
-    drafts[S[cur].id] = null; saveDrafts(); refreshAll();
-    status("Removed in this browser. Download media.json to publish the change.", "ok");
+    drafts.media[S[cur].id] = null; saveDrafts(); refreshAll();
+    status("Removed. Click Publish at the bottom to put the change live.", "ok");
   });
-  function mergedMedia() {
-    const out = {};
-    for (const [id, x] of Object.entries({ ...published, ...drafts })) if (x) out[id] = x;
-    return out;
+
+  // merging duplicates
+  function renderMergeUI() {
+    if (!editMode || cur < 0) return;
+    const s = S[cur], mem = members.get(cur) || [];
+    $("m-q").value = ""; $("m-picks").innerHTML = "";
+    $("m-members").innerHTML = mem.length ? `<p class="lbl">Merged into this entry</p><div class="picks">${mem.map(i => `<button data-un="${i}">${esc(S[i].a)} – ${esc(S[i].t)} <small>${fmt(S[i].n0)} play${S[i].n0 === 1 ? "" : "s"} · click to unmerge</small></button>`).join("")}</div>` : "";
   }
+  let mdeb;
+  $("m-q").addEventListener("input", () => { clearTimeout(mdeb); mdeb = setTimeout(() => {
+    const terms = fold($("m-q").value.trim()).split(/\s+/).filter(Boolean);
+    if (!terms.length) { $("m-picks").innerHTML = ""; return; }
+    const hits = [];
+    for (let i = 0; i < S.length && hits.length < 200; i++) if (i !== cur && !S[i].hidden && terms.every(t => S[i].hay.includes(t))) hits.push(i);
+    hits.sort((a, b) => S[b].n - S[a].n);
+    $("m-picks").innerHTML = hits.slice(0, 8).map(i => `<button data-into="${i}">${esc(S[i].a)} – ${esc(S[i].t)} <small>${fmt(S[i].n)} play${S[i].n === 1 ? "" : "s"} · merge into this</small></button>`).join("") || '<p class="hint">No matching entries.</p>';
+  }, 150); });
+  $("m-picks").addEventListener("click", e => {
+    const bt = e.target.closest("button[data-into]"); if (!bt) return;
+    const dup = S[cur], into = S[+bt.dataset.into];
+    drafts.merges[dup.id] = into.id;
+    // move this entry's video/cover to the original if the original doesn't have one
+    const dm = media.get(dup.id), im = media.get(into.id);
+    if (dm && !im) { drafts.media[into.id] = { ...dm, artist: into.a, title: into.t }; drafts.media[dup.id] = null; }
+    saveDrafts(); refreshAll();
+    status(`Merged into “${into.a} – ${into.t}”. Click Publish to put it live.`, "ok");
+  });
+  $("m-members").addEventListener("click", e => {
+    const bt = e.target.closest("button[data-un]"); if (!bt) return;
+    const d = S[+bt.dataset.un];
+    drafts.merges[d.id] = published.merges[d.id] ? null : undefined;
+    if (drafts.merges[d.id] === undefined) delete drafts.merges[d.id];
+    saveDrafts(); refreshAll();
+    status(`Unmerged “${d.a} – ${d.t}”. Click Publish to put it live.`, "ok");
+  });
+
+  // the edit bar
   function updateBar() {
-    const bar = $("edbar"); if (!bar) return;
-    const n = Object.keys(drafts).length;
+    const bar = $("edbar");
     bar.hidden = !editMode;
-    $("edbar-n").textContent = n ? `${n} change${n === 1 ? "" : "s"} not published yet` : "Edit mode: open any song to add a YouTube video or cover";
-    $("edbar-dl").disabled = !n; $("edbar-x").disabled = !n;
+    if (!editMode) return;
+    const n = nDrafts();
+    $("edbar-n").textContent = n ? `${n} change${n === 1 ? "" : "s"} not published yet` : "Edit mode: open any song to add a video or merge a duplicate";
+    $("edbar-pub").disabled = !n; $("edbar-dl").disabled = !n; $("edbar-x").disabled = !n;
   }
-  function downloadMedia() {
-    const text = JSON.stringify({ media: mergedMedia() }, null, 1);
+  const fileJSON = () => JSON.stringify({ media: effective("media"), merges: effective("merges") }, null, 1);
+  $("edbar-dl").onclick = () => {
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([text], { type: "application/json" }));
+    a.href = URL.createObjectURL(new Blob([fileJSON()], { type: "application/json" }));
     a.download = "media.json"; document.body.appendChild(a); a.click();
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  };
+  $("edbar-x").onclick = () => { drafts = { media: {}, merges: {} }; saveDrafts(); refreshAll(); };
+
+  // one-click publish: write media.json to the GitHub repository that serves this site
+  function repoInfo() {
+    const h = location.hostname;
+    if (h.endsWith(".github.io")) {
+      const owner = h.split(".")[0], first = location.pathname.split("/").filter(Boolean)[0];
+      return { owner, repo: first && !first.includes(".") ? first : h };
+    }
+    return { owner: "deanxenos474-netizen", repo: "rage-archive" };
   }
-  const editMode = new URLSearchParams(location.search).has("edit");
-  function refreshOpenBroadcasts() {
-    bEl.querySelectorAll("details.bc[data-filled]").forEach(el => { el.querySelector("ol")?.remove(); el.querySelector(".src")?.remove(); delete el.dataset.filled; if (el.open) fillBroadcast(el); });
+  const b64 = str => { const bytes = new TextEncoder().encode(str); let bin = ""; for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); return btoa(bin); };
+  async function publish(token) {
+    const { owner, repo } = repoInfo();
+    const api = `https://api.github.com/repos/${owner}/${repo}/contents/media.json`;
+    const headers = { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json" };
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const g = await fetch(api, { headers, cache: "no-store" });
+      if (g.status === 401 || g.status === 403) throw Object.assign(new Error("token"), { code: "token" });
+      const sha = g.ok ? (await g.json()).sha : undefined;
+      const body = { message: `Update videos and merges (${nDrafts()} change${nDrafts() === 1 ? "" : "s"})`, content: b64(fileJSON() + "\n"), sha };
+      const p = await fetch(api, { method: "PUT", headers, body: JSON.stringify(body) });
+      if (p.ok) return;
+      if (p.status === 401 || p.status === 403) throw Object.assign(new Error("token"), { code: "token" });
+      if (p.status !== 409 && p.status !== 422) throw new Error(`GitHub said ${p.status}`);
+    }
+    throw new Error("someone else changed it at the same time; try again");
   }
+  async function doPublish(token) {
+    $("edbar-pub").disabled = true; $("edbar-n").textContent = "Publishing…";
+    try {
+      await publish(token);
+      published = { media: effective("media"), merges: effective("merges") };
+      drafts = { media: {}, merges: {} }; saveDrafts(); refreshAll();
+      $("edbar-n").textContent = "Published. Live for everyone in about a minute.";
+      return true;
+    } catch (e) {
+      if (e.code === "token") { try { localStorage.removeItem(TOKEN_KEY); } catch {} openGh("GitHub didn't accept the token. It may have expired or be missing the Contents permission."); }
+      else $("edbar-n").textContent = `Didn't publish: ${e.message}`;
+      $("edbar-pub").disabled = false;
+      return false;
+    }
+  }
+  function openGh(msg) {
+    const { owner, repo } = repoInfo();
+    $("gh-repo").textContent = `${owner}/${repo}`;
+    $("gh-status").textContent = msg || ""; $("gh-status").className = "status" + (msg ? " err" : "");
+    $("gh-token").value = "";
+    $("gh").showModal();
+  }
+  $("edbar-pub").onclick = () => { let t = null; try { t = localStorage.getItem(TOKEN_KEY); } catch {} t ? doPublish(t) : openGh(); };
+  $("gh-save").onclick = async () => {
+    const t = $("gh-token").value.trim();
+    if (!/^(github_pat_|ghp_)[A-Za-z0-9_]{20,}$/.test(t)) { $("gh-status").textContent = "That doesn't look like a GitHub token. It starts with github_pat_"; $("gh-status").className = "status err"; return; }
+    try { localStorage.setItem(TOKEN_KEY, t); } catch {}
+    $("gh").close();
+    await doPublish(t);
+  };
+  $("gh-close").onclick = () => $("gh").close();
 
   /* ---------- filters ---------- */
   function setType(t) {
@@ -741,32 +1077,29 @@ footer a { color: var(--accent) }
   addEventListener("scroll", () => requestAnimationFrame(render), { passive: true });
   addEventListener("resize", () => requestAnimationFrame(render));
   try { const s = localStorage.getItem("rage-sort"); if (s) { sort = s; $("sort").value = s; } } catch {}
-
-  /* ---------- load covers & videos ---------- */
-  $("d-edit").hidden = !editMode;
-  $("edbar-dl").onclick = downloadMedia;
-  $("edbar-x").onclick = () => { drafts = {}; saveDrafts(); refreshAll(); };
-  fetch("media.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : { media: {} }).then(d => { published = (d && d.media) || {}; })
-    .catch(() => { $("media-note").textContent = "Covers and videos didn't load. Reload the page to try again."; })
-    .finally(refreshAll);
+  $("d-edit").hidden = !editMode; $("d-merge").hidden = !editMode;
 
   /* ---------- load ---------- */
-  fetch("songs.json").then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
+  const mediaP = fetch("media.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : {}).catch(() => { $("media-note").textContent = "Videos didn't load. Reload the page to try again."; return {}; })
+    .then(d => { published = { media: (d && d.media) || {}, merges: (d && d.merges) || {} }; });
+  const songsP = fetch("songs.json", { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
     const A = d.artists, L = d.labels;
-    S = d.songs.map(r => {
+    S = d.songs.map((r, i) => {
       const a = A[r[0]], t = r[1], l = L[r[2]];
-      return { a, t, l, n: r[3], first: r[4], last: r[5], y: r[6], misc: r[7], id: r[8], ak: sortKey(a), tk: sortKey(t), hay: fold(`${a} ${t} ${l}`) };
+      idIndex.set(r[8], i);
+      return { a, t, l, n0: r[3], first0: r[4], last0: r[5], y0: r[6], n: r[3], first: r[4], last: r[5], y: r[6], misc: r[7], id: r[8], hidden: false,
+        ak: sortKey(a), tk: sortKey(t), hay: fold(`${a} ${t} ${l}`) };
     });
     const m = d.meta;
     $("s-songs").textContent = fmt(m.songs);
     $("s-plays").textContent = fmt(m.plays);
+    if (m.updated) $("s-upd").textContent = ` · updated ${fmtDate(+m.updated.replace(/-/g, ""))}`;
     const yc = []; for (let y = Y0; y <= Y1; y++) yc.push(m.yearly[y] || 0);
     yearlyChart($("yearly"), yc, 420, 96, 4);
-    apply();
-    routeHash();
-  }).catch(err => {
-    listEl.innerHTML = `<div class="empty">The song list didn't load (${esc(String(err.message || err))}). Reload the page to try again.</div>`;
-    $("count").textContent = "";
   });
+  Promise.all([songsP, mediaP]).then(() => { refreshAll(); routeHash(); loadBroadcasts().catch(() => {}); })
+    .catch(err => { listEl.innerHTML = `<div class="empty">The song list didn't load (${esc(String(err.message || err))}). Reload the page to try again.</div>`; $("count").textContent = ""; });
 })();
 </script>
+</body>
+</html>
