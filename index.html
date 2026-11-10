@@ -146,10 +146,13 @@ dialog::backdrop { background: rgb(5 6 14 / .6) }
 @font-face { font-family: "Eurostile Demi"; src: url("eurostile-demi.otf") format("opentype"); font-display: swap }
 .player { position: relative; background: #000; border-radius: 10px; overflow: hidden }
 .player video { width: 100%; max-height: 62vh; display: block; background: #000; object-fit: contain }
-.player .ytbox { width: 100%; aspect-ratio: 16 / 9; max-height: 62vh; background: #000; position: relative; overflow: hidden }
-/* the YouTube frame is sized by layout(): taller than the picture, so YouTube's title bar and its
-   share / "More videos" / logo row fall in strips that are cropped off above and below */
-.ytbox iframe { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; border: 0 }
+.player .ytbox { width: 100%; aspect-ratio: 16 / 9; max-height: 62vh; background: #000 }
+.ytbox iframe { width: 100%; height: 100%; display: block; border: 0 }
+/* while a YouTube video is paused, YouTube draws its title bar and share / "More videos" / logo row
+   over the picture; cover those strips with our own bars (YouTube itself is left untouched) */
+.player .ytbar { position: absolute; left: 0; right: 0; height: 17%; min-height: 64px; background: #000; pointer-events: none; display: none }
+.player .ytbar.top { top: 0 } .player .ytbar.bot { bottom: 0 }
+.player.yt.paused .ytbar { display: block }
 .player:fullscreen, .player.fakefs { border-radius: 0; display: grid; place-items: center; width: 100vw; height: 100vh }
 .player.fakefs { position: fixed; inset: 0; z-index: 1000; height: 100dvh }   /* phones without real fullscreen (iPhone) */
 .player:fullscreen video, .player.fakefs video { max-height: none; height: 100%; width: 100% }
@@ -169,6 +172,9 @@ html.nofsscroll, html.nofsscroll body { overflow: hidden }
 .player .fsb { transition: opacity .2s }
 .player.playing .fsb { opacity: 0 }
 .player.playing:hover .fsb, .player .fsb:focus-visible { opacity: 1 }
+.pmsg { position: absolute; inset: 0; z-index: 3; display: grid; place-content: center; gap: 10px; padding: 20px; text-align: center; color: #fff; background: rgb(0 0 0 / .78); font: 500 14px/1.4 var(--body) }
+.pmsg p { margin: 0; max-width: 40ch }
+.pmsg a { color: #fff; justify-self: center; border: 1px solid rgb(255 255 255 / .5); border-radius: 8px; padding: 6px 12px; text-decoration: none }
 .vload { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font: 500 13px var(--mono); background: rgb(0 0 0 / .6); text-align: center; padding: 16px }
 
 /* watch-a-broadcast */
@@ -830,27 +836,51 @@ ol.steps a { color: var(--accent) }
   let fsCounter = 0;
   function makePlayer(host, opts = {}) {
     const fid = "capsh" + (++fsCounter);
-    host.innerHTML = `<div class="player"><div class="ytbox" hidden><div class="ytel"></div></div><video playsinline preload="metadata" disablepictureinpicture hidden></video><div class="poster" hidden></div>
+    host.innerHTML = `<div class="player"><div class="ytbox" hidden><div class="ytel"></div></div><video playsinline preload="metadata" disablepictureinpicture hidden></video><div class="poster" hidden></div><div class="ytbar top"></div><div class="ytbar bot"></div>
       <svg class="ov" aria-hidden="true"><defs><filter id="${fid}" x="-5%" y="-20%" width="115%" height="160%"><feDropShadow dx="4" dy="4" stdDeviation="2.2" flood-color="#000" flood-opacity=".85"/></filter></defs>
         <image href="rage-logo.png" opacity="0" preserveAspectRatio="none"/><g class="capg" opacity="0" filter="url(#${fid})"><text class="l1"></text><text class="l2"></text></g></svg>
       <button class="shield" type="button" aria-label="Play"><span class="bigplay"></span></button>
-      <button class="fsb" type="button">Fullscreen</button></div>`;
+      <button class="fsb" type="button">Fullscreen</button><div class="pmsg" hidden></div></div>`;
     const wrap = host.querySelector(".player"), svg = wrap.querySelector("svg"), ytbox = wrap.querySelector(".ytbox"), v = wrap.querySelector("video");
     const img = svg.querySelector("image"), capg = svg.querySelector(".capg"), l1 = svg.querySelector(".l1"), l2 = svg.querySelector(".l2");
     const P = { stop: false, raf: 0, iv: 0, yt: null, ytReady: false, kind: null, m: {}, L: 8.2, pending: null };
     const shield = wrap.querySelector(".shield"), poster = wrap.querySelector(".poster");
-    // YouTube switches on automatic subtitles for some viewers; turn them off
-    const noCaptions = () => { try { P.yt.unloadModule("captions"); P.yt.unloadModule("cc"); } catch {} };
+
     function setPlaying(on) { wrap.classList.toggle("playing", on); shield.setAttribute("aria-label", on ? "Pause" : "Play"); }
     // covers YouTube's own title/thumbnail screen before it starts and its suggestions screen after it ends
     function showPoster(on) { const src = on && coverSrc(P.m); poster.hidden = !src; if (src) poster.style.backgroundImage = `url("${src.replace(/"/g, "%22")}")`; }
+    // a plain message over the picture when a video can't play, with a way to watch it elsewhere
+    const pmsg = wrap.querySelector(".pmsg");
+    function problem(text) {
+      if (!text) { pmsg.hidden = true; clearTimeout(P.stall); return; }
+      const link = P.m.yt ? `https://www.youtube.com/watch?v=${P.m.yt}` : P.m.video;
+      pmsg.innerHTML = `<p>${esc(text)}</p>${link ? `<a href="${esc(link)}" target="_blank" rel="noopener">${P.m.yt ? "Watch it on YouTube" : "Open the video file"}</a>` : ""}`;
+      pmsg.hidden = false; setPlaying(false);
+    }
+    const YT_ERR = {
+      2: "YouTube says this video link isn't valid.",
+      5: "YouTube couldn't play this video in this browser.",
+      100: "This video has been removed from YouTube or made private.",
+      101: "The video's owner doesn't let it play on other websites, or it's blocked in your country.",
+      150: "The video's owner doesn't let it play on other websites, or it's blocked in your country.",
+      153: "YouTube refused to play this video here.",
+    };
+    // if YouTube hasn't started a few seconds after asking, say so instead of sitting silently
+    const watchStart = () => { clearTimeout(P.stall); P.stall = setTimeout(() => {
+      if (P.stop || P.kind !== "yt") return;
+      const st = P.yt && P.ytReady ? P.yt.getPlayerState() : -1;
+      if (st !== 1 && st !== 3 && st !== 2) problem("YouTube hasn't started this video. It may be blocked in your country or need you to sign in on YouTube.");
+    }, 9000); };
     shield.onclick = () => {
+      if (!pmsg.hidden) problem("");
       if (P.kind === "yt") {
+        watchStart();
         if (!P.yt || !P.ytReady) { if (P.pending) P.pending.autoplay = true; return; }
         const st = P.yt.getPlayerState();
         st === 1 || st === 3 ? P.yt.pauseVideo() : P.yt.playVideo();
       } else if (P.kind === "video") v.paused || v.ended ? v.play().catch(() => {}) : v.pause();
     };
+    v.addEventListener("error", () => { if (P.kind === "video" && v.getAttribute("src")) problem("This video file couldn't be played."); });
 
     const frameEl = () => P.kind === "yt" ? ytbox : v;
     const now = () => P.kind === "yt" ? (P.yt && P.ytReady && P.yt.getCurrentTime ? P.yt.getCurrentTime() || 0 : 0) : v.currentTime;
@@ -860,11 +890,6 @@ ol.steps a { color: var(--accent) }
       const shape = P.m.aspect || "16:9";
       const fileAR = P.kind === "yt" ? (shape === "4:3" || shape === "16:9-in-4:3" ? 4 / 3 : 16 / 9) : (v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : 16 / 9);
       const cw = Math.min(bw, bh * fileAR), ch = cw / fileAR;
-      const ifr = P.kind === "yt" && ytbox.querySelector("iframe");
-      if (ifr) {   // exactly the picture's width, plus hidden strips above and below for YouTube's overlays
-        const pad = Math.round(Math.max(110, ch * 0.2));
-        Object.assign(ifr.style, { width: cw + "px", height: (ch + 2 * pad) + "px", left: ((bw - cw) / 2) + "px", top: ((bh - ch) / 2 - pad) + "px" });
-      }
       let x = el.offsetLeft + (bw - cw) / 2, y = el.offsetTop + (bh - ch) / 2, w = cw, h = ch;
       if (shape === "4:3-in-16:9") { w = h * 4 / 3; x += (cw - w) / 2; }
       if (shape === "16:9-in-4:3") { h = w * 9 / 16; y += (ch - h) / 2; }
@@ -914,7 +939,7 @@ ol.steps a { color: var(--accent) }
       P.m = m || {}; P.L = P.m.bare ? Infinity : Number.isFinite(+P.m.logoAt) ? +P.m.logoAt : 8.2;   // bare: titles/credits, no logo or caption
       l1.textContent = (song.a || "").toUpperCase(); l2.textContent = song.t || "";
       img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0");
-      setPlaying(false); showPoster(false);
+      setPlaying(false); showPoster(false); problem(""); wrap.classList.remove("paused"); wrap.classList.toggle("yt", !!P.m.yt);
       if (P.m.yt) {
         showPoster(true);
         P.kind = "yt"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = false;
@@ -931,11 +956,11 @@ ol.steps a { color: var(--accent) }
                 onReady: () => { P.ytReady = true; const p = P.pending; if (p && p.id !== first.id) { p.autoplay ? P.yt.loadVideoById(p.id) : P.yt.cueVideoById(p.id); } else if (p && p.autoplay) P.yt.playVideo(); layout(); },
                 onStateChange: e => {
                   if (P.kind !== "yt") return;
-                  if (e.data === 1) { setPlaying(true); showPoster(false); noCaptions(); }
-                  else if (e.data === 2) setPlaying(false);
+                  if (e.data === 1) { setPlaying(true); showPoster(false); problem(""); wrap.classList.remove("paused"); }
+                  else if (e.data === 2) { setPlaying(false); wrap.classList.add("paused"); }
                   else if (e.data === 0 || e.data === 5 || e.data === -1) { setPlaying(false); showPoster(true); if (e.data === 0) opts.onEnded?.(); }
                 },
-                onError: () => opts.onError?.(),
+                onError: e => { problem(YT_ERR[e.data] || `YouTube couldn't play this video (error ${e.data}).`); opts.onError?.(); },
               },
             });
           }).catch(() => { ytbox.innerHTML = `<div class="vload">YouTube didn't load. Check your connection and try again.</div>`; });
