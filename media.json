@@ -27,13 +27,17 @@
    "artist": "Michael Jackson",
    "title": "Rockin' Robin",
    "yt": "5lt-Ik4pPl4",
-   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/6c/3c/86/6c3c860b-0e0a-f016-1adc-44d8e3ff0144/00602537386796.rgb.jpg/1423x1411bb-100.jpg"
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/6c/3c/86/6c3c860b-0e0a-f016-1adc-44d8e3ff0144/00602537386796.rgb.jpg/1423x1411bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 7
   },
   "14d0ea524138": {
    "artist": "The Jacksons",
    "title": "Blame It On The Boogie",
    "yt": "S1ZQkHdXHvQ",
-   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/8e/24/32/8e2432a5-ee81-267b-22e3-7f072448ea21/886448947806.jpg/3000x3000bb-100.jpg"
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/8e/24/32/8e2432a5-ee81-267b-22e3-7f072448ea21/886448947806.jpg/3000x3000bb-100.jpg",
+   "aspect": "4:3-in-16:9",
+   "logoAt": 7
   }
  },
  "merges": {
