@@ -362,6 +362,7 @@ ol.steps a { color: var(--accent) }
       <h3>Song details</h3>
       <label class="lbl2" for="f-artist">Artist<input type="text" id="f-artist" autocomplete="off"></label>
       <label class="lbl2" for="f-title">Song title<input type="text" id="f-title" autocomplete="off"></label>
+      <label class="lbl2" for="f-label">Label (the record company in brackets; leave empty for none)<input type="text" id="f-label" autocomplete="off"></label>
       <label class="f" for="f-type" style="flex-wrap:wrap">Type
         <select id="f-type">
           <option value="song">Song (music video)</option>
@@ -569,11 +570,12 @@ ol.steps a { color: var(--accent) }
     for (const s of S) {
       const e = ed[s.id];
       const a = (e && e.a) || s.a0, t = (e && e.t) || s.t0;
+      const l = e && typeof e.l === "string" ? e.l : s.l0;        // "" is allowed: no label
       s.kind = (e && KINDS[e.type] != null && e.type) || (s.misc0 ? "clip" : "song");
       s.misc = isMisc(s.kind) ? 1 : 0;
-      if (a !== s.a || t !== s.t || !s.hay) {
-        s.a = a; s.t = t; s.ak = sortKey(a); s.tk = sortKey(t);
-        s.hay = fold(`${a} ${t} ${s.l}` + (a !== s.a0 || t !== s.t0 ? ` ${s.a0} ${s.t0}` : ""));   // old names still find it
+      if (a !== s.a || t !== s.t || l !== s.l || !s.hay) {
+        s.a = a; s.t = t; s.l = l; s.ak = sortKey(a); s.tk = sortKey(t);
+        s.hay = fold(`${a} ${t} ${l}` + (a !== s.a0 || t !== s.t0 || l !== s.l0 ? ` ${s.a0} ${s.t0} ${s.l0}` : ""));   // old names still find it
       }
     }
   }
@@ -1161,9 +1163,9 @@ ol.steps a { color: var(--accent) }
       if (m.yt || m.video) { songPlayer = makePlayer($("d-video")); songPlayer.load(m, s, false); }
     }
     if (admin) {
-      $("f-artist").value = s.a; $("f-title").value = s.t; $("f-type").value = s.kind;
-      const changed = s.a !== s.a0 || s.t !== s.t0 || s.kind !== (s.misc0 ? "clip" : "song");
-      $("i-orig").textContent = changed ? `Original listing: ${s.a0} – ${s.t0} (${s.misc0 ? "interview or clip" : "song"})` : "Change how this entry shows everywhere on the site.";
+      $("f-artist").value = s.a; $("f-title").value = s.t; $("f-label").value = s.l; $("f-type").value = s.kind;
+      const changed = s.a !== s.a0 || s.t !== s.t0 || s.l !== s.l0 || s.kind !== (s.misc0 ? "clip" : "song");
+      $("i-orig").textContent = changed ? `Original listing: ${s.a0} – ${s.t0}${s.l0 ? ` (${s.l0})` : " (no label)"}, ${s.misc0 ? "interview or clip" : "song"}` : "Change how this entry shows everywhere on the site.";
       $("i-reset").disabled = !changed;
       $("f-link").value = m.yt ? "https://www.youtube.com/watch?v=" + m.yt : (m.video || "");
       $("f-cover").value = m.cover || "";
@@ -1292,6 +1294,8 @@ ol.steps a { color: var(--accent) }
     const e = {};
     if (a !== s.a0) e.a = a;
     if (t !== s.t0) e.t = t;
+    const lab = $("f-label").value.trim().replace(/\s+/g, " ");
+    if (lab !== s.l0) e.l = lab;
     if (k !== (s.misc0 ? "clip" : "song")) e.type = k;
     const has = Object.keys(e).length > 0;
     if (has) drafts.edits[s.id] = e;
@@ -1557,9 +1561,9 @@ ol.steps a { color: var(--accent) }
   const songsP = fetch("songs.json", { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
     const A = d.artists, L = d.labels;
     S = d.songs.map((r, i) => {
-      const a = A[r[0]], t = r[1], l = L[r[2]];
+      const a = A[r[0]], t = r[1], l = L[r[2]] || "";
       idIndex.set(r[8], i);
-      return { a, t, l, a0: a, t0: t, misc0: r[7], n0: r[3], first0: r[4], last0: r[5], y0: r[6], n: r[3], first: r[4], last: r[5], y: r[6], misc: r[7], kind: r[7] ? "clip" : "song", id: r[8], hidden: false,
+      return { a, t, l, a0: a, t0: t, l0: l, misc0: r[7], n0: r[3], first0: r[4], last0: r[5], y0: r[6], n: r[3], first: r[4], last: r[5], y: r[6], misc: r[7], kind: r[7] ? "clip" : "song", id: r[8], hidden: false,
         ak: sortKey(a), tk: sortKey(t), hay: fold(`${a} ${t} ${l}`) };
     });
     const m = d.meta;
