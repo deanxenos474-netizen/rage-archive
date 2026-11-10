@@ -155,6 +155,15 @@ dialog::backdrop { background: rgb(5 6 14 / .6) }
 .ov text { fill: #fff; font-family: "Eurostile Demi", "Eurostile", "Microgramma", "Arial Narrow", sans-serif; white-space: pre }
 .fsb { position: absolute; top: 8px; right: 8px; font: 500 12px var(--body); color: #fff; background: rgb(0 0 0 / .55); border: 1px solid rgb(255 255 255 / .35); border-radius: 6px; padding: 5px 8px; cursor: pointer; z-index: 2 }
 .player:fullscreen .fsb { top: max(12px, env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px)) }
+/* our own clean player chrome: a click-anywhere play/pause layer over the video, no YouTube or browser controls */
+.player .poster { position: absolute; inset: 0; background: #000 center / contain no-repeat }
+.player .shield { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; background: transparent; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent }
+.player .bigplay { width: 68px; height: 68px; border-radius: 50%; background: rgb(0 0 0 / .55); border: 2px solid rgb(255 255 255 / .8); position: relative; transition: opacity .2s }
+.player .bigplay::after { content: ""; position: absolute; left: 26px; top: 20px; border-style: solid; border-width: 13px 0 13px 21px; border-color: transparent transparent transparent #fff }
+.player.playing .bigplay { opacity: 0 }
+.player .fsb { transition: opacity .2s }
+.player.playing .fsb { opacity: 0 }
+.player.playing:hover .fsb, .player .fsb:focus-visible { opacity: 1 }
 .vload { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font: 500 13px var(--mono); background: rgb(0 0 0 / .6); text-align: center; padding: 16px }
 
 /* watch-a-broadcast */
@@ -808,13 +817,25 @@ ol.steps a { color: var(--accent) }
   let fsCounter = 0;
   function makePlayer(host, opts = {}) {
     const fid = "capsh" + (++fsCounter);
-    host.innerHTML = `<div class="player"><div class="ytbox" hidden><div class="ytel"></div></div><video playsinline controls preload="metadata" controlsList="nofullscreen" disablepictureinpicture hidden></video>
+    host.innerHTML = `<div class="player"><div class="ytbox" hidden><div class="ytel"></div></div><video playsinline preload="metadata" disablepictureinpicture hidden></video><div class="poster" hidden></div>
       <svg class="ov" aria-hidden="true"><defs><filter id="${fid}" x="-5%" y="-20%" width="115%" height="160%"><feDropShadow dx="4" dy="4" stdDeviation="2.2" flood-color="#000" flood-opacity=".85"/></filter></defs>
         <image href="rage-logo.png" opacity="0" preserveAspectRatio="none"/><g class="capg" opacity="0" filter="url(#${fid})"><text class="l1"></text><text class="l2"></text></g></svg>
+      <button class="shield" type="button" aria-label="Play"><span class="bigplay"></span></button>
       <button class="fsb" type="button">Fullscreen</button></div>`;
     const wrap = host.querySelector(".player"), svg = wrap.querySelector("svg"), ytbox = wrap.querySelector(".ytbox"), v = wrap.querySelector("video");
     const img = svg.querySelector("image"), capg = svg.querySelector(".capg"), l1 = svg.querySelector(".l1"), l2 = svg.querySelector(".l2");
     const P = { stop: false, raf: 0, iv: 0, yt: null, ytReady: false, kind: null, m: {}, L: 8.2, pending: null };
+    const shield = wrap.querySelector(".shield"), poster = wrap.querySelector(".poster");
+    function setPlaying(on) { wrap.classList.toggle("playing", on); shield.setAttribute("aria-label", on ? "Pause" : "Play"); }
+    // covers YouTube's own title/thumbnail screen before it starts and its suggestions screen after it ends
+    function showPoster(on) { const src = on && coverSrc(P.m); poster.hidden = !src; if (src) poster.style.backgroundImage = `url("${src.replace(/"/g, "%22")}")`; }
+    shield.onclick = () => {
+      if (P.kind === "yt") {
+        if (!P.yt || !P.ytReady) { if (P.pending) P.pending.autoplay = true; return; }
+        const st = P.yt.getPlayerState();
+        st === 1 || st === 3 ? P.yt.pauseVideo() : P.yt.playVideo();
+      } else if (P.kind === "video") v.paused || v.ended ? v.play().catch(() => {}) : v.pause();
+    };
 
     const frameEl = () => P.kind === "yt" ? ytbox : v;
     const now = () => P.kind === "yt" ? (P.yt && P.ytReady && P.yt.getCurrentTime ? P.yt.getCurrentTime() || 0 : 0) : v.currentTime;
@@ -845,7 +866,9 @@ ol.steps a { color: var(--accent) }
     loop();
     P.iv = setInterval(() => { if (!P.stop) frame(); }, 150);     // keeps going when the tab is in the background
     v.addEventListener("loadedmetadata", layout);
-    v.addEventListener("ended", () => { if (P.kind === "video") opts.onEnded?.(); });
+    v.addEventListener("ended", () => { if (P.kind === "video") { setPlaying(false); opts.onEnded?.(); } });
+    v.addEventListener("play", () => { if (P.kind === "video") setPlaying(true); });
+    v.addEventListener("pause", () => { if (P.kind === "video") setPlaying(false); });
     const ro = new ResizeObserver(layout); ro.observe(wrap);
     wrap.querySelector(".fsb").onclick = () => {
       if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
@@ -858,7 +881,9 @@ ol.steps a { color: var(--accent) }
       P.m = m || {}; P.L = Number.isFinite(+P.m.logoAt) ? +P.m.logoAt : 8.2;
       l1.textContent = (song.a || "").toUpperCase(); l2.textContent = song.t || "";
       img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0");
+      setPlaying(false); showPoster(false);
       if (P.m.yt) {
+        showPoster(true);
         P.kind = "yt"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = false;
         if (P.yt && P.ytReady) { autoplay ? P.yt.loadVideoById(P.m.yt) : P.yt.cueVideoById(P.m.yt); }
         else {
@@ -868,10 +893,15 @@ ol.steps a { color: var(--accent) }
             const first = P.pending;
             P.yt = new YT.Player(wrap.querySelector(".ytel"), {
               videoId: first.id, width: "100%", height: "100%",
-              playerVars: { fs: 0, rel: 0, playsinline: 1, modestbranding: 1, iv_load_policy: 3, autoplay: first.autoplay ? 1 : 0 },
+              playerVars: { controls: 0, disablekb: 1, fs: 0, rel: 0, playsinline: 1, modestbranding: 1, iv_load_policy: 3, cc_load_policy: 0, autoplay: first.autoplay ? 1 : 0 },
               events: {
-                onReady: () => { P.ytReady = true; const p = P.pending; if (p && p.id !== first.id) { p.autoplay ? P.yt.loadVideoById(p.id) : P.yt.cueVideoById(p.id); } layout(); },
-                onStateChange: e => { if (e.data === 0 && P.kind === "yt") opts.onEnded?.(); },
+                onReady: () => { P.ytReady = true; const p = P.pending; if (p && p.id !== first.id) { p.autoplay ? P.yt.loadVideoById(p.id) : P.yt.cueVideoById(p.id); } else if (p && p.autoplay) P.yt.playVideo(); layout(); },
+                onStateChange: e => {
+                  if (P.kind !== "yt") return;
+                  if (e.data === 1) { setPlaying(true); showPoster(false); }
+                  else if (e.data === 2) setPlaying(false);
+                  else if (e.data === 0 || e.data === 5 || e.data === -1) { setPlaying(false); showPoster(true); if (e.data === 0) opts.onEnded?.(); }
+                },
                 onError: () => opts.onError?.(),
               },
             });
