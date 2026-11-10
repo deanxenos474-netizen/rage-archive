@@ -534,13 +534,15 @@ ol.steps a { color: var(--accent) }
     const m = /(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/))([A-Za-z0-9_-]{11})/.exec(u || "");
     return m ? m[1] : (/^[A-Za-z0-9_-]{11}$/.test(u || "") ? u : null);
   }
-  function coverSrc(m) {
+  // noArt: entries typed as a clip (interviews etc.) never show album art, only a frame from their video
+  function coverSrc(m, noArt) {
     if (!m) return null;
-    if (m.cover && safeLink(m.cover)) return m.cover;
+    if (!noArt && m.cover && safeLink(m.cover)) return m.cover;
     if (m.yt) return `https://i.ytimg.com/vi/${m.yt}/hqdefault.jpg`;
     return null;
   }
   const canon = i => mergeTo.has(i) ? mergeTo.get(i) : i;
+  const isClipId = sid => { const i = idIndex.get(sid); return i != null && S[canon(i)].kind === "clip"; };
   const mediaFor = sid => { const i = idIndex.get(sid); return media.get(i != null ? S[canon(i)].id : sid); };
 
   // corrected artist / title / type, keyed by song id (media.json "edits")
@@ -597,7 +599,7 @@ ol.steps a { color: var(--accent) }
   function thumbHTML(sid, artist) {
     const m = mediaFor(sid);
     const play = m && (m.yt || m.video) ? '<span class="play" aria-label="Has video"></span>' : "";
-    const src = coverSrc(m);
+    const src = coverSrc(m, isClipId(sid));
     if (src) return `<span class="thumb"><img src="${esc(src)}" alt="" loading="lazy" onerror="this.remove()">${play}</span>`;
     return `<span class="thumb" aria-hidden="true">${esc((sortKey(artist)[0] || "#").toUpperCase())}${play}</span>`;
   }
@@ -855,7 +857,7 @@ ol.steps a { color: var(--accent) }
     function setPlaying(on) { wrap.classList.toggle("playing", on); if (on) wrap.classList.remove("loading"); shield.setAttribute("aria-label", on ? "Pause" : "Play"); }
     const setLoading = on => wrap.classList.toggle("loading", on);   // pressed play, video not moving yet: show a spinner
     // covers YouTube's own title/thumbnail screen before it starts and its suggestions screen after it ends
-    function showPoster(on) { const src = on && coverSrc(P.m); poster.hidden = !src; if (src) poster.style.backgroundImage = `url("${src.replace(/"/g, "%22")}")`; }
+    function showPoster(on) { const src = on && coverSrc(P.m, P.noArt); poster.hidden = !src; if (src) poster.style.backgroundImage = `url("${src.replace(/"/g, "%22")}")`; }
     // a plain message over the picture when a video can't play, with a way to watch it elsewhere
     const pmsg = wrap.querySelector(".pmsg");
     function problem(text) {
@@ -980,7 +982,7 @@ ol.steps a { color: var(--accent) }
 
     function load(m, song, autoplay) {
       P.m = m || {}; P.L = P.m.bare ? Infinity : Number.isFinite(+P.m.logoAt) ? +P.m.logoAt : 8.2;   // bare: titles/credits, no logo or caption
-      l1.textContent = (song.a || "").toUpperCase(); l2.textContent = song.t || "";
+      l1.textContent = (song.a || "").toUpperCase(); l2.textContent = song.t || ""; P.noArt = song.kind === "clip";
       img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0");
       setPlaying(false); setLoading(!!autoplay); showPoster(false); problem(""); wrap.classList.remove("paused"); wrap.classList.toggle("yt", !!P.m.yt);
       P.want = !!autoplay; P.endFired = false; P.lastT = null; setAd(false);
@@ -1068,9 +1070,9 @@ ol.steps a { color: var(--accent) }
   function renderMedia() {
     if (cur < 0) return;
     const s = S[cur], m = media.get(s.id) || {};
-    const cov = $("d-cover"), src = coverSrc(m);
+    const cov = $("d-cover"), src = coverSrc(m, s.kind === "clip");
     cov.innerHTML = src ? `<img src="${esc(src)}" alt="" onerror="this.remove()">` : esc((sortKey(s.a)[0] || "#").toUpperCase());
-    const key = JSON.stringify([s.id, m.yt, m.video, m.aspect, m.logoAt]);
+    const key = JSON.stringify([s.id, m.yt, m.video, m.aspect, m.logoAt, s.kind, m.cover]);
     if (songKey !== key) {           // don't restart a playing video when nothing about it changed
       songKey = key;
       if (songPlayer) { songPlayer.destroy(); songPlayer = null; }
@@ -1083,6 +1085,7 @@ ol.steps a { color: var(--accent) }
       $("i-reset").disabled = !changed;
       $("f-link").value = m.yt ? "https://www.youtube.com/watch?v=" + m.yt : (m.video || "");
       $("f-cover").value = m.cover || "";
+      $("f-cover").placeholder = s.kind === "clip" ? "Clips don't show album art: this entry uses a frame from its video" : "Cover image link (leave empty to use the YouTube thumbnail)";
       $("f-aspect").value = m.aspect || "16:9";
       $("f-logo").value = m.logoAt != null ? m.logoAt : 8.2;
     }
