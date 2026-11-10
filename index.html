@@ -398,6 +398,13 @@ ol.steps a { color: var(--accent) }
       <div class="picks" id="m-picks"></div>
       <div id="m-members"></div>
     </section>
+    <section class="edit" id="d-inc" hidden aria-label="Also includes">
+      <h3>Two segments in one entry?</h3>
+      <p class="hint">If the playlist lumped two things together (like "interview followed by Rock With You"), add the second one here. It then shows as its own line straight after this one in the broadcast, plays with its own video, and gets this entry's plays and dates. Tidy this entry's own title above in Song details.</p>
+      <div id="i-list"></div>
+      <div class="line"><input type="search" id="i-q" placeholder="Search for the song it also includes" aria-label="Search for the song it also includes" autocomplete="off"></div>
+      <div class="picks" id="i-picks"></div>
+    </section>
     <p class="status" id="ed-status" role="status"></p>
   </div>
 </dialog>
@@ -506,6 +513,8 @@ ol.steps a { color: var(--accent) }
   const media = new Map();                   // song id -> {yt, video, cover, aspect, logoAt} (effective, after merges)
   let mergeTo = new Map();                   // song index -> index it's merged into (resolved)
   let members = new Map();                   // song index -> [indexes merged into it]
+  let includesOf = new Map();                // song index -> [song indexes it also contains] ("followed by" segments)
+  let includedBy = new Map();                // song index -> [song indexes whose segment contains it]
   const listEl = $("list"), bEl = $("bcast"), uEl = $("upc");
   const ROW = 60;
 
@@ -526,16 +535,16 @@ ol.steps a { color: var(--accent) }
 
   /* ---------- covers, videos and merges (media.json + edits) ---------- */
   const DRAFT_KEY = "rage-media-drafts", TOKEN_KEY = "rage-gh-token";
-  const emptyDrafts = () => ({ media: {}, merges: {}, edits: {} });
+  const emptyDrafts = () => ({ media: {}, merges: {}, edits: {}, includes: {} });
   let published = emptyDrafts();
   let drafts = emptyDrafts();
   try {
     const raw = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
-    if (raw && (raw.media || raw.merges || raw.edits)) drafts = { media: raw.media || {}, merges: raw.merges || {}, edits: raw.edits || {} };
+    if (raw && (raw.media || raw.merges || raw.edits || raw.includes)) drafts = { media: raw.media || {}, merges: raw.merges || {}, edits: raw.edits || {}, includes: raw.includes || {} };
     else if (raw) drafts.media = raw;           // older format: just media
   } catch {}
   const saveDrafts = () => { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(drafts)); } catch {} };
-  const nDrafts = () => Object.keys(drafts.media).length + Object.keys(drafts.merges).length + Object.keys(drafts.edits).length;
+  const nDrafts = () => Object.keys(drafts.media).length + Object.keys(drafts.merges).length + Object.keys(drafts.edits).length + Object.keys(drafts.includes).length;
   // published data, plus this browser's unpublished changes when logged in as admin
   const effective = kind => { const out = {}; for (const [k, v] of Object.entries({ ...published[kind], ...(admin ? drafts[kind] : {}) })) if (v) out[k] = v; return out; };
 
@@ -591,6 +600,26 @@ ol.steps a { color: var(--accent) }
       add(s.y0);
       for (const i of list) { const d = S[i]; d.hidden = true; s.n += d.n0; s.first = Math.min(s.first, d.first0); s.last = Math.max(s.last, d.last0); add(d.y0); }
       s.y = Object.keys(yc).map(Number).sort((a, b) => a - b).map(k => `${k}:${yc[k]}`).join(",");
+    }
+    // "includes": an entry that is really two segments (an interview followed by a song) also plays the included
+    // song each time it airs, so that song gets those plays and dates too
+    includesOf = new Map(); includedBy = new Map();
+    for (const [sid, list] of Object.entries(effective("includes"))) {
+      const i = idIndex.get(sid); if (i == null || !Array.isArray(list)) continue;
+      const src = S[i], targets = [];
+      for (const tid of list) {
+        const ti = idIndex.get(tid); if (ti == null) continue;
+        const c = canon(ti); if (c === canon(i) || targets.includes(c)) continue;
+        targets.push(c);
+        if (!includedBy.has(c)) includedBy.set(c, []);
+        includedBy.get(c).push(i);
+        const t = S[c], yc = {};
+        const add = str => (str || "").split(",").filter(Boolean).forEach(p => { const [k, v] = p.split(":"); yc[k] = (yc[k] || 0) + +v; });
+        add(t.y); add(src.y0);
+        t.n += src.n0; t.first = Math.min(t.first, src.first0); t.last = Math.max(t.last, src.last0);
+        t.y = Object.keys(yc).map(Number).sort((a, b) => a - b).map(k => `${k}:${yc[k]}`).join(",");
+      }
+      if (targets.length) includesOf.set(i, targets);
     }
     // media follows the original entry; a duplicate's video shows on the original if the original has none
     media.clear();
@@ -708,10 +737,12 @@ ol.steps a { color: var(--accent) }
 
   // a broadcast's running order as display items (aired: song indexes; upcoming: rows with their own text)
   function itemsOf(b, upcoming) {
-    if (!upcoming) return b.tr.map(si => { const c = canon(si), s = S[c]; return { i: c, sid: s.id, a: s.a, t: s.t, l: s.l, n: s.n, kind: s.kind }; });
-    return b.rows.map(([a, t, l, sid]) => {
-      const i = idIndex.get(sid); const c = i != null ? canon(i) : null;
-      return c != null ? { i: c, sid: S[c].id, a: S[c].a, t: S[c].t, l: S[c].l, n: S[c].n, kind: S[c].kind } : { i: null, sid, a, t, l, n: 0, kind: "song" };
+    const item = c => { const s = S[c]; return { i: c, sid: s.id, a: s.a, t: s.t, l: s.l, n: s.n, kind: s.kind }; };
+    const withIncluded = i => [item(canon(i)), ...(includesOf.get(i) || []).map(item)];
+    if (!upcoming) return b.tr.flatMap(withIncluded);
+    return b.rows.flatMap(([a, t, l, sid]) => {
+      const i = idIndex.get(sid);
+      return i != null ? withIncluded(i) : [{ i: null, sid, a, t, l, n: 0, kind: "song" }];
     });
   }
   const hasVideo = it => { const m = mediaFor(it.sid); return !!(m && (m.yt || m.video)); };
@@ -1104,11 +1135,11 @@ ol.steps a { color: var(--accent) }
     $("d-copy").textContent = "Copy";
     status("");
     renderMedia();
-    renderMergeUI();
+    renderMergeUI(); renderIncUI();
     $("d-dates").innerHTML = '<span class="count">Loading…</span>';
     loadBroadcasts().then(() => {
       if (cur !== i) return;
-      const ids = [...new Set([i, ...(members.get(i) || [])].flatMap(j => plays.get(j) || []))].sort((a, b) => a - b);
+      const ids = [...new Set([i, ...(members.get(i) || []), ...(includedBy.get(i) || [])].flatMap(j => plays.get(j) || []))].sort((a, b) => a - b);
       $("d-dates").innerHTML = ids.length ? ids.map(bi => { const b = B[bi];
         return `<button data-b="${bi}"${b.kind ? ' class="sp"' : ""} title="${esc(b.kind ? `${b.kind === 2 ? "Guest programmer" : "Special"}: ${b.sp}` : b.title)}">${fmtDate(b.date)}</button>`; }).join("")
         : '<span class="count">No broadcast listing found.</span>';
@@ -1276,6 +1307,43 @@ ol.steps a { color: var(--accent) }
     status("Back to the original listing. Click Publish to put it live.", "ok");
   });
 
+  // "also includes": split an entry that is really two segments
+  const incList = s => (effective("includes")[s.id] || []).filter(tid => idIndex.has(tid));
+  function setInc(s, list) {
+    if (list.length) drafts.includes[s.id] = list;
+    else if (published.includes[s.id]) drafts.includes[s.id] = null;
+    else delete drafts.includes[s.id];
+    saveDrafts(); refreshAll();
+  }
+  function renderIncUI() {
+    if (!admin || cur < 0) return;
+    const s = S[cur], list = incList(s);
+    $("i-q").value = ""; $("i-picks").innerHTML = "";
+    $("i-list").innerHTML = list.length ? `<p class="lbl">Also includes, in this order</p><div class="picks">${list.map(tid => { const t = S[canon(idIndex.get(tid))];
+      return `<button data-incrm="${esc(tid)}">${esc(t.a)} – ${esc(t.t)} <small>click to remove</small></button>`; }).join("")}</div>` : "";
+  }
+  let ideb;
+  $("i-q").addEventListener("input", () => { clearTimeout(ideb); ideb = setTimeout(() => {
+    const terms = fold($("i-q").value.trim()).split(/\s+/).filter(Boolean);
+    if (!terms.length) { $("i-picks").innerHTML = ""; return; }
+    const hits = [];
+    for (let i = 0; i < S.length && hits.length < 200; i++) if (i !== cur && !S[i].hidden && terms.every(t => S[i].hay.includes(t))) hits.push(i);
+    hits.sort((a, b) => S[b].n - S[a].n);
+    $("i-picks").innerHTML = hits.slice(0, 8).map(i => `<button data-incadd="${i}">${esc(S[i].a)} – ${esc(S[i].t)} <small>${fmt(S[i].n)} play${S[i].n === 1 ? "" : "s"} · add after this entry</small></button>`).join("") || '<p class="hint">No matching entries.</p>';
+  }, 150); });
+  $("i-picks").addEventListener("click", e => {
+    const bt = e.target.closest("button[data-incadd]"); if (!bt) return;
+    const s = S[cur], t = S[+bt.dataset.incadd], list = incList(s);
+    if (!list.includes(t.id)) setInc(s, [...list, t.id]);
+    status(`“${t.a} – ${t.t}” now follows this entry in its broadcasts. Click Publish to put it live.`, "ok");
+  });
+  $("i-list").addEventListener("click", e => {
+    const bt = e.target.closest("button[data-incrm]"); if (!bt) return;
+    const s = S[cur], t = S[canon(idIndex.get(bt.dataset.incrm))];
+    setInc(s, incList(s).filter(x => x !== bt.dataset.incrm));
+    status(`Removed “${t.a} – ${t.t}”. Click Publish to put it live.`, "ok");
+  });
+
   // merging duplicates
   function renderMergeUI() {
     if (!admin || cur < 0) return;
@@ -1317,13 +1385,13 @@ ol.steps a { color: var(--accent) }
     bar.hidden = !admin;
     document.body.style.paddingBottom = admin ? "70px" : "";
     $("adm-open").textContent = admin ? "Admin: logged in" : "Admin login";
-    for (const id of ["d-info", "d-edit", "d-merge"]) $(id).hidden = !admin;
+    for (const id of ["d-info", "d-edit", "d-merge", "d-inc"]) $(id).hidden = !admin;
     if (!admin) return;
     const n = nDrafts();
     $("edbar-n").textContent = n ? `${n} change${n === 1 ? "" : "s"} not published yet` : "Edit mode: open any song to fix its name, add a video or merge a duplicate";
     $("edbar-pub").disabled = !n; $("edbar-dl").disabled = !n; $("edbar-x").disabled = !n;
   }
-  const fileJSON = () => JSON.stringify({ media: effective("media"), merges: effective("merges"), edits: effective("edits") }, null, 1);
+  const fileJSON = () => JSON.stringify({ media: effective("media"), merges: effective("merges"), edits: effective("edits"), includes: effective("includes") }, null, 1);
   $("edbar-dl").onclick = () => {
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([fileJSON()], { type: "application/json" }));
@@ -1363,7 +1431,7 @@ ol.steps a { color: var(--accent) }
     $("edbar-pub").disabled = true; $("edbar-n").textContent = "Publishing…";
     try {
       await publish(token);
-      published = { media: effective("media"), merges: effective("merges"), edits: effective("edits") };
+      published = { media: effective("media"), merges: effective("merges"), edits: effective("edits"), includes: effective("includes") };
       drafts = emptyDrafts(); saveDrafts(); refreshAll();
       $("edbar-n").textContent = "Published. Live for everyone in about a minute.";
       return true;
@@ -1485,7 +1553,7 @@ ol.steps a { color: var(--accent) }
 
   /* ---------- load ---------- */
   const mediaP = fetch("media.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : {}).catch(() => { $("media-note").textContent = "Videos didn't load. Reload the page to try again."; return {}; })
-    .then(d => { published = { media: (d && d.media) || {}, merges: (d && d.merges) || {}, edits: (d && d.edits) || {} }; });
+    .then(d => { published = { media: (d && d.media) || {}, merges: (d && d.merges) || {}, edits: (d && d.edits) || {}, includes: (d && d.includes) || {} }; });
   const songsP = fetch("songs.json", { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
     const A = d.artists, L = d.labels;
     S = d.songs.map((r, i) => {
