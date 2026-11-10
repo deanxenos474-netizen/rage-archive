@@ -156,6 +156,7 @@ dialog::backdrop { background: rgb(5 6 14 / .6) }
 .fsb { position: absolute; top: 8px; right: 8px; font: 500 12px var(--body); color: #fff; background: rgb(0 0 0 / .55); border: 1px solid rgb(255 255 255 / .35); border-radius: 6px; padding: 5px 8px; cursor: pointer; z-index: 2 }
 .player:fullscreen .fsb { top: max(12px, env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px)) }
 /* our own clean player chrome: a click-anywhere play/pause layer over the video, no YouTube or browser controls */
+.thumb.bumper img { object-fit: contain; padding: 6px; background: #000 }
 .player .poster { position: absolute; inset: 0; background: #000 center / contain no-repeat }
 .player .shield { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; background: transparent; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent }
 .player .bigplay { width: 68px; height: 68px; border-radius: 50%; background: rgb(0 0 0 / .55); border: 2px solid rgb(255 255 255 / .8); position: relative; transition: opacity .2s }
@@ -878,7 +879,7 @@ ol.steps a { color: var(--accent) }
     document.addEventListener("fullscreenchange", onFs);
 
     function load(m, song, autoplay) {
-      P.m = m || {}; P.L = Number.isFinite(+P.m.logoAt) ? +P.m.logoAt : 8.2;
+      P.m = m || {}; P.L = P.m.bare ? Infinity : Number.isFinite(+P.m.logoAt) ? +P.m.logoAt : 8.2;   // bare: titles/credits, no logo or caption
       l1.textContent = (song.a || "").toUpperCase(); l2.textContent = song.t || "";
       img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0");
       setPlaying(false); showPoster(false);
@@ -987,20 +988,29 @@ ol.steps a { color: var(--accent) }
     try { navigator.clipboard.writeText(txt).then(() => { $("d-copy").textContent = "Copied"; }, fallback); } catch { fallback(); }
   });
 
-  /* ---------- watch a whole broadcast ---------- */
+  /* ---------- watch a whole broadcast ----------
+     A full episode opens with the rage titles and ends with the closing credits (clips/intro.mp4, clips/credits.mp4). */
+  const BUMPERS = {
+    intro:   { bumper: "intro",   a: "rage", t: "Opening titles",  i: null, sid: null, m: { video: "clips/intro.mp4", bare: true } },
+    credits: { bumper: "credits", a: "rage", t: "Closing credits", i: null, sid: null, m: { video: "clips/credits.mp4", bare: true } },
+  };
+  const canPlay = it => it.bumper ? true : hasVideo(it);
+  const tvThumb = it => it.bumper ? '<span class="thumb bumper" aria-hidden="true"><img src="rage-logo.png" alt=""></span>' : thumbHTML(it.sid, it.a);
   let tv = null;
   function watchBroadcast(key) {
     const up = key.startsWith("u-");
     const b = up ? U[+key.slice(2)] : B[+key.slice(2)];
     if (!b) return;
-    const items = itemsOf(b, up);
-    const playable = items.map((it, k) => hasVideo(it) ? k : -1).filter(k => k >= 0);
-    if (!playable.length) return;
+    const songs = itemsOf(b, up);
+    const nv = songs.filter(hasVideo).length;
+    if (!nv) return;
+    const items = [BUMPERS.intro, ...songs, BUMPERS.credits];
+    const playable = items.map((it, k) => canPlay(it) ? k : -1).filter(k => k >= 0);
     $("tv-title").textContent = b.kind ? b.sp : (b.title || "Playlist");
-    $("tv-sub").textContent = `${up ? "Upcoming · " : ""}${dow(b.date)} ${fmtDate(b.date)} · ${playable.length} of ${items.length} songs have videos`;
-    $("tv-queue").innerHTML = items.map((it, k) => `<li><button data-k="${k}"${hasVideo(it) ? "" : " disabled"}>${thumbHTML(it.sid, it.a)}<span class="t"><span class="a">${esc(it.a)}</span><span class="s">${esc(it.t)}${hasVideo(it) ? "" : " · no video yet"}</span></span></button></li>`).join("");
+    $("tv-sub").textContent = `${up ? "Upcoming · " : ""}${dow(b.date)} ${fmtDate(b.date)} · ${nv} of ${songs.length} songs have videos`;
+    $("tv-queue").innerHTML = items.map((it, k) => `<li><button data-k="${k}"${canPlay(it) ? "" : " disabled"}>${tvThumb(it)}<span class="t"><span class="a">${esc(it.a)}</span><span class="s">${esc(it.t)}${canPlay(it) ? "" : " · no video yet"}</span></span></button></li>`).join("");
     if (tv) tv.player.destroy();
-    tv = { items, playable, pos: 0, player: makePlayer($("tv-player"), { onEnded: () => step(1), onError: () => setTimeout(() => step(1), 1500) }) };
+    tv = { items, playable, nsongs: songs.length, nv, pos: 0, player: makePlayer($("tv-player"), { onEnded: () => step(1), onError: () => setTimeout(() => step(1), 1500) }) };
     if (!$("tv").open) $("tv").showModal();
     play(0, true);
   }
@@ -1008,8 +1018,10 @@ ol.steps a { color: var(--accent) }
     if (!tv) return;
     tv.pos = Math.max(0, Math.min(tv.playable.length - 1, p));
     const k = tv.playable[tv.pos], it = tv.items[k];
-    tv.player.load(mediaFor(it.sid), it, autoplay);
-    $("tv-now").innerHTML = `${esc(it.a)} – ${esc(it.t)}<small>Video ${tv.pos + 1} of ${tv.playable.length} · song ${k + 1} in the running order</small>`;
+    tv.player.load(it.bumper ? it.m : mediaFor(it.sid), it.bumper ? { a: "", t: "" } : it, autoplay);
+    const vidNo = tv.playable.slice(0, tv.pos + 1).filter(j => !tv.items[j].bumper).length;
+    $("tv-now").innerHTML = it.bumper ? `rage – ${esc(it.t)}<small>${it.bumper === "intro" ? `Then ${tv.nv} music video${tv.nv === 1 ? "" : "s"}` : "End of the broadcast"}</small>`
+      : `${esc(it.a)} – ${esc(it.t)}<small>Video ${vidNo} of ${tv.nv} · song ${k} in the running order</small>`;
     $("tv-prev").disabled = tv.pos === 0; $("tv-next").disabled = tv.pos === tv.playable.length - 1;
     $("tv-song").disabled = it.i == null;
     document.querySelectorAll("#tv-queue button").forEach(bt => bt.setAttribute("aria-current", String(+bt.dataset.k === k)));
