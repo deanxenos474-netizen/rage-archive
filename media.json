@@ -80,6 +80,12 @@
    "title": "Molly Meldrum interviews Michael Jackson",
    "yt": "fKoLuMDOTc0",
    "burned": true
+  },
+  "ffff7995e2e6": {
+   "artist": "Michael Jackson",
+   "title": "Off The Wall",
+   "yt": "vhwKwEiq70I",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music60/v4/1d/97/97/1d979741-4be8-ee54-f8c9-786b5a80a504/dj.jfdyezcm.jpg/1409x1409bb-100.jpg"
   }
  },
  "merges": {
@@ -90,7 +96,8 @@
   "1990bdc36bd4": "7de36036022a",
   "17f31cb5ff01": "1fc0a5cf27ef",
   "1fc0a5cf27ef": "1e6706454f7a",
-  "47b18119d566": "66169ed7e9f0"
+  "47b18119d566": "66169ed7e9f0",
+  "6e3bcbe473ea": "ffff7995e2e6"
  },
  "edits": {
   "7f9c6325842c": {
