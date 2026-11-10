@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-10T14:34:58.797Z",
+ "saved": "2026-11-10T14:38:09.017Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -388,6 +388,23 @@
    "yt": "oBmnCbNmg0Q",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/c5/8d/b1/c58db1f1-0249-7a52-b58c-6f4eb145b06a/884977149166.jpg/1380x1380bb-100.jpg",
    "aspect": "4:3-in-16:9",
+   "logoAt": 7,
+   "verified": true
+  },
+  "8f0199015c9b": {
+   "artist": "Michael Jackson",
+   "title": "They Don't Care About Us",
+   "yt": "QNJL6nfu__Q",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/c5/8d/b1/c58db1f1-0249-7a52-b58c-6f4eb145b06a/884977149166.jpg/1380x1380bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 7,
+   "verified": true
+  },
+  "9209008eeaec": {
+   "artist": "Michael Jackson",
+   "title": "Stranger In Moscow",
+   "yt": "J9-hyzLSDNs",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/c5/8d/b1/c58db1f1-0249-7a52-b58c-6f4eb145b06a/884977149166.jpg/1380x1380bb-100.jpg",
    "logoAt": 7,
    "verified": true
   }
