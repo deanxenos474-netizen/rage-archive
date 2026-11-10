@@ -823,8 +823,9 @@ ol.steps a { color: var(--accent) }
      Timing from the same clips: logo fades in over 0.55s, fades out 3.75-4.25s after it starts;
      the caption appears 7.35s after the logo and is gone 16.75s after it (both fade, like the logo). */
   const GEO = {
-    "4:3":  { W: 1440, logo: { x: 142, y: 821, width: 401, height: 137 },
-              l1: { x: 127, y: 898, size: 65.4, sx: 0.812 }, l2: { x: 130, y: 963.5, size: 52.3, sx: 0.977 } },
+    // 4:3 measured from a real 4:3 broadcast (Led Zeppelin, Immigrant Song): logo and caption overlaid pixel for pixel
+    "4:3":  { W: 1440, logo: { x: 139, y: 823.4, width: 423.2, height: 155 },
+              l1: { x: 135.6, y: 909, size: 69.3, sx: 0.775 }, l2: { x: 134.8, y: 974, size: 54.7, sx: 0.947 } },
     "16:9": { W: 1920, logo: { x: 195, y: 836, width: 458, height: 152 },
               l1: { x: 195, y: 886, size: 77.1, sx: 0.79 },  l2: { x: 197, y: 965.5, size: 58.8, sx: 0.944 } },
   };
