@@ -88,6 +88,8 @@ label.f { display: flex; align-items: center; gap: 8px; font: 500 12px var(--mon
 .n small { display: block; font-size: 11px; color: var(--muted); font-weight: 400 }
 .tag { font: 500 10px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--hot); border: 1px solid currentColor; border-radius: 4px; padding: 2px 4px; margin-left: 6px; vertical-align: 2px }
 .tag.new { color: var(--accent) }
+.tag.live { color: var(--ok) }
+.tag.special, .tag.other { color: var(--muted) }
 .empty, .loading { padding: 40px 6px; color: var(--muted) }
 
 /* broadcasts */
@@ -169,7 +171,7 @@ dialog::backdrop { background: rgb(5 6 14 / .6) }
 .edit { border: 1px dashed var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 10px }
 .edit h3 { margin: 0; font: 700 14px var(--body) }
 .edit .hint { margin: 0; color: var(--muted); font-size: 13px }
-.edit input[type="url"], .edit input[type="search"], .edit input[type="password"] { flex: 1; min-width: 0; font: 14px var(--body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px }
+.edit input[type="url"], .edit input[type="search"], .edit input[type="password"], .edit input[type="text"] { flex: 1; min-width: 0; font: 14px var(--body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px }
 .edit input[type="number"] { width: 6em; font: 14px var(--body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px }
 .edit select { font: 14px var(--body) }
 .picks { display: grid; gap: 4px }
@@ -194,6 +196,9 @@ dialog::backdrop { background: rgb(5 6 14 / .6) }
 .actions { display: flex; flex-wrap: wrap; gap: 8px }
 footer { color: var(--muted); font-size: 13px; padding-block: 0 60px; max-width: 70ch }
 footer a { color: var(--accent) }
+footer .admin { font: inherit; color: var(--muted); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer }
+.linkbtn { font: inherit; font-size: 13px; color: var(--accent); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; justify-self: start }
+.edit .lbl2 { font-size: 13px; color: var(--muted); display: grid; gap: 4px }
 ol.steps { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px }
 ol.steps a { color: var(--accent) }
 
@@ -288,6 +293,7 @@ ol.steps a { color: var(--accent) }
     <a href="https://www.abc.net.au/rage/playlist" target="_blank" rel="noopener">abc.net.au/rage/playlist</a> (2007 to now). For each week the fuller source was used.
     About 20 weeks between 2012 and 2023 are missing from both. Videos play from YouTube. A fan archive, not affiliated with the ABC.
     <span id="media-note"></span>
+    <button class="admin" id="adm-open" type="button">Admin login</button>
   </footer>
 </main>
 
@@ -296,6 +302,7 @@ ol.steps a { color: var(--accent) }
   <button class="btn go" id="edbar-pub" disabled>Publish</button>
   <button class="btn" id="edbar-dl" disabled>Download media.json</button>
   <button class="btn" id="edbar-x" disabled>Discard changes</button>
+  <button class="btn" id="edbar-out">Log out</button>
 </div>
 
 <!-- one song -->
@@ -319,6 +326,22 @@ ol.steps a { color: var(--accent) }
       <button class="btn" id="d-artist">All by this artist</button>
       <a class="btn" id="d-yt" target="_blank" rel="noopener">Find on YouTube</a>
     </div>
+    <section class="edit" id="d-info" hidden aria-label="Song details">
+      <h3>Song details</h3>
+      <label class="lbl2" for="f-artist">Artist<input type="text" id="f-artist" autocomplete="off"></label>
+      <label class="lbl2" for="f-title">Song title<input type="text" id="f-title" autocomplete="off"></label>
+      <label class="f" for="f-type" style="flex-wrap:wrap">Type
+        <select id="f-type">
+          <option value="song">Song (music video)</option>
+          <option value="live">Live performance</option>
+          <option value="clip">Interview or clip</option>
+          <option value="special">Special or segment</option>
+          <option value="other">Other</option>
+        </select>
+      </label>
+      <div class="actions"><button class="btn primary" id="i-save">Save</button><button class="btn" id="i-reset">Back to original</button></div>
+      <p class="hint" id="i-orig"></p>
+    </section>
     <section class="edit" id="d-edit" hidden aria-label="Video and cover">
       <h3>Video &amp; cover</h3>
       <div class="line"><input type="url" id="f-link" placeholder="YouTube link (or a direct .mp4 link)" aria-label="Video link"></div>
@@ -368,6 +391,30 @@ ol.steps a { color: var(--accent) }
   </div>
 </dialog>
 
+<!-- admin login -->
+<dialog id="adm" aria-labelledby="adm-title">
+  <div class="d-in">
+    <div class="d-head nocover">
+      <div><h2 id="adm-title">Admin login</h2><p>For the site owner. Everyone else can browse and watch without logging in.</p></div>
+      <button class="x" id="adm-close" aria-label="Close">×</button>
+    </div>
+    <section class="edit" id="adm-login">
+      <div class="line"><input type="password" id="adm-pw" placeholder="Admin password" autocomplete="current-password" aria-label="Admin password"><button class="btn primary" id="adm-go">Log in</button></div>
+      <p class="status" id="adm-status" role="status"></p>
+      <button class="linkbtn" id="adm-forgot" type="button">Forgot the password? Set a new one with your GitHub token</button>
+    </section>
+    <section class="edit" id="adm-set" hidden>
+      <h3 id="adm-set-h">Set the admin password</h3>
+      <p class="hint" id="adm-set-hint">This needs your GitHub token, so only you can do it. The site stores a scrambled fingerprint of the password, never the password itself.</p>
+      <label class="lbl2" for="adm-tok" id="adm-tok-l"><span>GitHub token, the same one Publish uses. To make one: <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener" style="color:var(--accent)">new fine-grained token</a>, only the rage-archive repository, Contents set to Read and write.</span><input type="password" id="adm-tok" placeholder="github_pat_…" autocomplete="off"></label>
+      <label class="lbl2" for="adm-new">New password<input type="password" id="adm-new" autocomplete="new-password"></label>
+      <label class="lbl2" for="adm-new2">Type it again<input type="password" id="adm-new2" autocomplete="new-password"></label>
+      <div class="actions"><button class="btn primary" id="adm-setgo">Save password &amp; log in</button></div>
+      <p class="status" id="adm-set-status" role="status"></p>
+    </section>
+  </div>
+</dialog>
+
 <!-- connect GitHub for one-click publishing -->
 <dialog id="gh" aria-labelledby="gh-title">
   <div class="d-in">
@@ -404,7 +451,12 @@ ol.steps a { color: var(--accent) }
   const sortKey = s => fold(s).replace(/^[^a-z0-9]+/, "");
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
   const safeLink = u => { try { const x = new URL(u); return x.protocol === "https:" || x.protocol === "http:" ? x.href : null; } catch { return null; } };
-  const editMode = new URLSearchParams(location.search).has("edit");
+  // admin: logged in with the admin password (only shows the edit tools; publishing still needs the GitHub token)
+  let admin = false;
+  const wantLogin = new URLSearchParams(location.search).has("edit");
+  const KINDS = { song: "", live: "live", clip: "clip", special: "special", other: "other" };   // type -> tag shown
+  const isMisc = k => k === "clip" || k === "special" || k === "other";                          // "Interviews & clips" filter
+  const tagHTML = k => KINDS[k] ? `<span class="tag ${k}">${KINDS[k]}</span>` : "";
 
   let S = [], view = [], type = "all", sort = "artist", mode = "songs";
   const idIndex = new Map();                 // song id -> index in S
@@ -432,16 +484,18 @@ ol.steps a { color: var(--accent) }
 
   /* ---------- covers, videos and merges (media.json + edits) ---------- */
   const DRAFT_KEY = "rage-media-drafts", TOKEN_KEY = "rage-gh-token";
-  let published = { media: {}, merges: {} };
-  let drafts = { media: {}, merges: {} };
+  const emptyDrafts = () => ({ media: {}, merges: {}, edits: {} });
+  let published = emptyDrafts();
+  let drafts = emptyDrafts();
   try {
     const raw = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
-    if (raw && (raw.media || raw.merges)) drafts = { media: raw.media || {}, merges: raw.merges || {} };
+    if (raw && (raw.media || raw.merges || raw.edits)) drafts = { media: raw.media || {}, merges: raw.merges || {}, edits: raw.edits || {} };
     else if (raw) drafts.media = raw;           // older format: just media
   } catch {}
   const saveDrafts = () => { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(drafts)); } catch {} };
-  const nDrafts = () => Object.keys(drafts.media).length + Object.keys(drafts.merges).length;
-  const effective = kind => { const out = {}; for (const [k, v] of Object.entries({ ...published[kind], ...drafts[kind] })) if (v) out[k] = v; return out; };
+  const nDrafts = () => Object.keys(drafts.media).length + Object.keys(drafts.merges).length + Object.keys(drafts.edits).length;
+  // published data, plus this browser's unpublished changes when logged in as admin
+  const effective = kind => { const out = {}; for (const [k, v] of Object.entries({ ...published[kind], ...(admin ? drafts[kind] : {}) })) if (v) out[k] = v; return out; };
 
   function ytId(u) {
     const m = /(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/))([A-Za-z0-9_-]{11})/.exec(u || "");
@@ -456,7 +510,23 @@ ol.steps a { color: var(--accent) }
   const canon = i => mergeTo.has(i) ? mergeTo.get(i) : i;
   const mediaFor = sid => { const i = idIndex.get(sid); return media.get(i != null ? S[canon(i)].id : sid); };
 
+  // corrected artist / title / type, keyed by song id (media.json "edits")
+  function applyEdits() {
+    const ed = effective("edits");
+    for (const s of S) {
+      const e = ed[s.id];
+      const a = (e && e.a) || s.a0, t = (e && e.t) || s.t0;
+      s.kind = (e && KINDS[e.type] != null && e.type) || (s.misc0 ? "clip" : "song");
+      s.misc = isMisc(s.kind) ? 1 : 0;
+      if (a !== s.a || t !== s.t || !s.hay) {
+        s.a = a; s.t = t; s.ak = sortKey(a); s.tk = sortKey(t);
+        s.hay = fold(`${a} ${t} ${s.l}` + (a !== s.a0 || t !== s.t0 ? ` ${s.a0} ${s.t0}` : ""));   // old names still find it
+      }
+    }
+  }
+
   function applyMerges() {
+    applyEdits();
     // reset every song to its own numbers, then fold each duplicate into its original
     for (const s of S) { s.n = s.n0; s.first = s.first0; s.last = s.last0; s.y = s.y0; s.hidden = false; }
     mergeTo = new Map(); members = new Map();
@@ -545,7 +615,7 @@ ol.steps a { color: var(--accent) }
       el.className = "item"; el.setAttribute("role", "listitem"); el.style.top = (k * ROW) + "px"; el.dataset.i = view[k];
       const y1 = Math.floor(s.first / 1e4), y2 = Math.floor(s.last / 1e4);
       const yrs = y1 === y2 ? String(y1) : `${y1}–${String(y2).slice(2)}`;
-      el.innerHTML = `${thumbHTML(s.id, s.a)}<span class="t"><span class="a">${esc(s.a)}${s.misc ? '<span class="tag">clip</span>' : ""}</span><span class="s">${esc(s.t)}${s.l ? ` <i>${esc(s.l)}</i>` : ""}</span></span><span class="n">${fmt(s.n)}×<small>${yrs}</small></span>`;
+      el.innerHTML = `${thumbHTML(s.id, s.a)}<span class="t"><span class="a">${esc(s.a)}${tagHTML(s.kind)}</span><span class="s">${esc(s.t)}${s.l ? ` <i>${esc(s.l)}</i>` : ""}</span></span><span class="n">${fmt(s.n)}×<small>${yrs}</small></span>`;
       listEl.appendChild(el); pool.set(k, el);
     }
   }
@@ -588,10 +658,10 @@ ol.steps a { color: var(--accent) }
 
   // a broadcast's running order as display items (aired: song indexes; upcoming: rows with their own text)
   function itemsOf(b, upcoming) {
-    if (!upcoming) return b.tr.map(si => { const c = canon(si), s = S[c]; return { i: c, sid: s.id, a: s.a, t: s.t, l: s.l, n: s.n, misc: s.misc }; });
+    if (!upcoming) return b.tr.map(si => { const c = canon(si), s = S[c]; return { i: c, sid: s.id, a: s.a, t: s.t, l: s.l, n: s.n, kind: s.kind }; });
     return b.rows.map(([a, t, l, sid]) => {
       const i = idIndex.get(sid); const c = i != null ? canon(i) : null;
-      return c != null ? { i: c, sid: S[c].id, a: S[c].a, t: S[c].t, l: S[c].l, n: S[c].n, misc: S[c].misc } : { i: null, sid, a, t, l, n: 0, misc: 0 };
+      return c != null ? { i: c, sid: S[c].id, a: S[c].a, t: S[c].t, l: S[c].l, n: S[c].n, kind: S[c].kind } : { i: null, sid, a, t, l, n: 0, kind: "song" };
     });
   }
   const hasVideo = it => { const m = mediaFor(it.sid); return !!(m && (m.yt || m.video)); };
@@ -609,7 +679,7 @@ ol.steps a { color: var(--accent) }
     const nv = items.filter(hasVideo).length;
     const watch = `<div class="bwatch"><button class="btn primary" data-watch="${key}"${nv ? "" : " disabled"}>▶ Watch this broadcast</button><span>${nv ? `${nv} of ${items.length} have music videos` : "No music videos added for these songs yet"}</span></div>`;
     const lis = items.map(it => {
-      const inner = `${thumbHTML(it.sid, it.a)}<span class="t"><span class="a">${esc(it.a)}${it.misc ? '<span class="tag">clip</span>' : ""}${it.i == null ? '<span class="tag new">new</span>' : ""}</span><span class="s">${esc(it.t)}${it.l ? ` <i>${esc(it.l)}</i>` : ""}</span></span><span class="n">${it.i == null ? "" : fmt(it.n) + "×"}</span>`;
+      const inner = `${thumbHTML(it.sid, it.a)}<span class="t"><span class="a">${esc(it.a)}${tagHTML(it.kind)}${it.i == null ? '<span class="tag new">new</span>' : ""}</span><span class="s">${esc(it.t)}${it.l ? ` <i>${esc(it.l)}</i>` : ""}</span></span><span class="n">${it.i == null ? "" : fmt(it.n) + "×"}</span>`;
       return it.i == null ? `<li><div class="tr">${inner}</div></li>` : `<li><button class="tr" data-s="${it.i}">${inner}</button></li>`;
     }).join("");
     el.insertAdjacentHTML("beforeend", `${watch}<ol class="tracks">${lis}</ol>${b.url ? `<p class="src">Original playlist: <a href="${esc(b.url)}" target="_blank" rel="noopener">${esc(b.url.replace(/^https?:\/\//, ""))}</a></p>` : ""}`);
@@ -867,7 +937,11 @@ ol.steps a { color: var(--accent) }
       if (songPlayer) { songPlayer.destroy(); songPlayer = null; }
       if (m.yt || m.video) { songPlayer = makePlayer($("d-video")); songPlayer.load(m, s, false); }
     }
-    if (editMode) {
+    if (admin) {
+      $("f-artist").value = s.a; $("f-title").value = s.t; $("f-type").value = s.kind;
+      const changed = s.a !== s.a0 || s.t !== s.t0 || s.kind !== (s.misc0 ? "clip" : "song");
+      $("i-orig").textContent = changed ? `Original listing: ${s.a0} – ${s.t0} (${s.misc0 ? "interview or clip" : "song"})` : "Change how this entry shows everywhere on the site.";
+      $("i-reset").disabled = !changed;
       $("f-link").value = m.yt ? "https://www.youtube.com/watch?v=" + m.yt : (m.video || "");
       $("f-cover").value = m.cover || "";
       $("f-aspect").value = m.aspect || "16:9";
@@ -962,9 +1036,32 @@ ol.steps a { color: var(--accent) }
     status("Removed. Click Publish at the bottom to put the change live.", "ok");
   });
 
+  // song details: artist, title, type
+  $("i-save").addEventListener("click", () => {
+    const s = S[cur];
+    const a = $("f-artist").value.trim().replace(/\s+/g, " "), t = $("f-title").value.trim().replace(/\s+/g, " "), k = $("f-type").value;
+    if (!a || !t) { status("The artist and song title can't be empty.", "err"); return; }
+    const e = {};
+    if (a !== s.a0) e.a = a;
+    if (t !== s.t0) e.t = t;
+    if (k !== (s.misc0 ? "clip" : "song")) e.type = k;
+    const has = Object.keys(e).length > 0;
+    if (has) drafts.edits[s.id] = e;
+    else if (published.edits[s.id]) drafts.edits[s.id] = null;
+    else delete drafts.edits[s.id];
+    saveDrafts(); refreshAll();
+    status("Saved. Click Publish at the bottom to put it live for everyone.", "ok");
+  });
+  $("i-reset").addEventListener("click", () => {
+    const s = S[cur];
+    if (published.edits[s.id]) drafts.edits[s.id] = null; else delete drafts.edits[s.id];
+    saveDrafts(); refreshAll();
+    status("Back to the original listing. Click Publish to put it live.", "ok");
+  });
+
   // merging duplicates
   function renderMergeUI() {
-    if (!editMode || cur < 0) return;
+    if (!admin || cur < 0) return;
     const s = S[cur], mem = members.get(cur) || [];
     $("m-q").value = ""; $("m-picks").innerHTML = "";
     $("m-members").innerHTML = mem.length ? `<p class="lbl">Merged into this entry</p><div class="picks">${mem.map(i => `<button data-un="${i}">${esc(S[i].a)} – ${esc(S[i].t)} <small>${fmt(S[i].n0)} play${S[i].n0 === 1 ? "" : "s"} · click to unmerge</small></button>`).join("")}</div>` : "";
@@ -1000,20 +1097,23 @@ ol.steps a { color: var(--accent) }
   // the edit bar
   function updateBar() {
     const bar = $("edbar");
-    bar.hidden = !editMode;
-    if (!editMode) return;
+    bar.hidden = !admin;
+    document.body.style.paddingBottom = admin ? "70px" : "";
+    $("adm-open").textContent = admin ? "Admin: logged in" : "Admin login";
+    for (const id of ["d-info", "d-edit", "d-merge"]) $(id).hidden = !admin;
+    if (!admin) return;
     const n = nDrafts();
-    $("edbar-n").textContent = n ? `${n} change${n === 1 ? "" : "s"} not published yet` : "Edit mode: open any song to add a video or merge a duplicate";
+    $("edbar-n").textContent = n ? `${n} change${n === 1 ? "" : "s"} not published yet` : "Edit mode: open any song to fix its name, add a video or merge a duplicate";
     $("edbar-pub").disabled = !n; $("edbar-dl").disabled = !n; $("edbar-x").disabled = !n;
   }
-  const fileJSON = () => JSON.stringify({ media: effective("media"), merges: effective("merges") }, null, 1);
+  const fileJSON = () => JSON.stringify({ media: effective("media"), merges: effective("merges"), edits: effective("edits") }, null, 1);
   $("edbar-dl").onclick = () => {
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([fileJSON()], { type: "application/json" }));
     a.download = "media.json"; document.body.appendChild(a); a.click();
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
   };
-  $("edbar-x").onclick = () => { drafts = { media: {}, merges: {} }; saveDrafts(); refreshAll(); };
+  $("edbar-x").onclick = () => { drafts = emptyDrafts(); saveDrafts(); refreshAll(); };
 
   // one-click publish: write media.json to the GitHub repository that serves this site
   function repoInfo() {
@@ -1025,15 +1125,16 @@ ol.steps a { color: var(--accent) }
     return { owner: "deanxenos474-netizen", repo: "rage-archive" };
   }
   const b64 = str => { const bytes = new TextEncoder().encode(str); let bin = ""; for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); return btoa(bin); };
-  async function publish(token) {
+  const publish = token => putFile(token, "media.json", fileJSON() + "\n", `Update videos, merges and song details (${nDrafts()} change${nDrafts() === 1 ? "" : "s"})`);
+  async function putFile(token, path, text, message) {
     const { owner, repo } = repoInfo();
-    const api = `https://api.github.com/repos/${owner}/${repo}/contents/media.json`;
+    const api = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
     const headers = { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json" };
     for (let attempt = 0; attempt < 2; attempt++) {
       const g = await fetch(api, { headers, cache: "no-store" });
       if (g.status === 401 || g.status === 403) throw Object.assign(new Error("token"), { code: "token" });
       const sha = g.ok ? (await g.json()).sha : undefined;
-      const body = { message: `Update videos and merges (${nDrafts()} change${nDrafts() === 1 ? "" : "s"})`, content: b64(fileJSON() + "\n"), sha };
+      const body = { message, content: b64(text), sha };
       const p = await fetch(api, { method: "PUT", headers, body: JSON.stringify(body) });
       if (p.ok) return;
       if (p.status === 401 || p.status === 403) throw Object.assign(new Error("token"), { code: "token" });
@@ -1045,8 +1146,8 @@ ol.steps a { color: var(--accent) }
     $("edbar-pub").disabled = true; $("edbar-n").textContent = "Publishing…";
     try {
       await publish(token);
-      published = { media: effective("media"), merges: effective("merges") };
-      drafts = { media: {}, merges: {} }; saveDrafts(); refreshAll();
+      published = { media: effective("media"), merges: effective("merges"), edits: effective("edits") };
+      drafts = emptyDrafts(); saveDrafts(); refreshAll();
       $("edbar-n").textContent = "Published. Live for everyone in about a minute.";
       return true;
     } catch (e) {
@@ -1073,6 +1174,78 @@ ol.steps a { color: var(--accent) }
   };
   $("gh-close").onclick = () => $("gh").close();
 
+  /* ---------- admin login ----------
+     admin.json holds a salted PBKDF2-SHA256 fingerprint of the admin password, never the password.
+     This only hides or shows the edit tools; anyone can read this page's code, so the real lock
+     is that publishing needs the owner's GitHub token. */
+  const ADMIN_KEY = "rage-admin";
+  let adminCfg = null;                         // {salt, iter, hash} from admin.json, or null if none set yet
+  const hex = buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+  async function pwHash(pw, saltHex, iter) {
+    const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveBits"]);
+    const salt = new Uint8Array(saltHex.match(/../g).map(h => parseInt(h, 16)));
+    return hex(await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt, iterations: iter }, key, 256));
+  }
+  function setAdmin(on) {
+    admin = on;
+    try { on ? localStorage.setItem(ADMIN_KEY, adminCfg.hash) : localStorage.removeItem(ADMIN_KEY); } catch {}
+    if (!on && $("dlg").open) $("dlg").close();
+    refreshAll();
+  }
+  function openAdmin(forceSet) {
+    const setup = forceSet || !adminCfg;
+    $("adm-login").hidden = setup; $("adm-set").hidden = !setup;
+    $("adm-set-h").textContent = adminCfg ? "Set a new admin password" : "Set the admin password";
+    $("adm-set-hint").textContent = (adminCfg ? "" : "No admin password has been set for this site yet. ") +
+      "This needs your GitHub token, so only you can do it. The site stores a scrambled fingerprint of the password, never the password itself.";
+    let saved = null; try { saved = localStorage.getItem(TOKEN_KEY); } catch {}
+    $("adm-tok-l").hidden = !!saved;
+    for (const id of ["adm-pw", "adm-tok", "adm-new", "adm-new2"]) $(id).value = "";
+    for (const id of ["adm-status", "adm-set-status"]) { $(id).textContent = ""; $(id).className = "status"; }
+    if (!$("adm").open) $("adm").showModal();
+    $(setup ? (saved ? "adm-new" : "adm-tok") : "adm-pw").focus();
+  }
+  const admMsg = (id, msg, kind) => { $(id).textContent = msg; $(id).className = "status" + (kind ? " " + kind : ""); };
+  async function tryLogin() {
+    const pw = $("adm-pw").value;
+    if (!pw) return;
+    $("adm-go").disabled = true;
+    try {
+      if (adminCfg && await pwHash(pw, adminCfg.salt, adminCfg.iter) === adminCfg.hash) { $("adm").close(); setAdmin(true); }
+      else admMsg("adm-status", "That's not the admin password.", "err");
+    } catch { admMsg("adm-status", "This browser can't check passwords here. Use the site's https:// address.", "err"); }
+    $("adm-go").disabled = false;
+  }
+  $("adm-go").onclick = tryLogin;
+  $("adm-pw").addEventListener("keydown", e => { if (e.key === "Enter") tryLogin(); });
+  $("adm-forgot").onclick = () => openAdmin(true);
+  $("adm-close").onclick = () => $("adm").close();
+  $("adm-open").onclick = () => admin ? $("edbar").scrollIntoView() : openAdmin(false);
+  $("edbar-out").onclick = () => setAdmin(false);
+  $("adm-setgo").onclick = async () => {
+    let tok = null; try { tok = localStorage.getItem(TOKEN_KEY); } catch {}
+    if (!$("adm-tok-l").hidden) tok = $("adm-tok").value.trim();
+    const pw = $("adm-new").value;
+    if (!tok || !/^(github_pat_|ghp_)[A-Za-z0-9_]{20,}$/.test(tok)) return admMsg("adm-set-status", "Paste your GitHub token first. It starts with github_pat_", "err");
+    if (pw.length < 8) return admMsg("adm-set-status", "Use at least 8 characters for the password.", "err");
+    if (pw !== $("adm-new2").value) return admMsg("adm-set-status", "The two passwords don't match.", "err");
+    $("adm-setgo").disabled = true; admMsg("adm-set-status", "Saving…");
+    try {
+      const salt = hex(crypto.getRandomValues(new Uint8Array(16))), iter = 210000;
+      const cfg = { salt, iter, hash: await pwHash(pw, salt, iter) };
+      await putFile(tok, "admin.json", JSON.stringify(cfg) + "\n", "Set admin password");
+      try { localStorage.setItem(TOKEN_KEY, tok); } catch {}
+      adminCfg = cfg;
+      $("adm").close(); setAdmin(true);
+      $("edbar-n").textContent = "Admin password saved. It works on the live site in about a minute.";
+    } catch (e) {
+      if (e.code === "token") { try { localStorage.removeItem(TOKEN_KEY); } catch {} $("adm-tok-l").hidden = false;
+        admMsg("adm-set-status", "GitHub didn't accept the token. It may have expired or be missing the Contents read and write permission.", "err"); }
+      else admMsg("adm-set-status", `Didn't save: ${e.message}`, "err");
+    }
+    $("adm-setgo").disabled = false;
+  };
+
   /* ---------- filters ---------- */
   function setType(t) {
     type = t;
@@ -1084,17 +1257,16 @@ ol.steps a { color: var(--accent) }
   addEventListener("scroll", () => requestAnimationFrame(render), { passive: true });
   addEventListener("resize", () => requestAnimationFrame(render));
   try { const s = localStorage.getItem("rage-sort"); if (s) { sort = s; $("sort").value = s; } } catch {}
-  $("d-edit").hidden = !editMode; $("d-merge").hidden = !editMode;
 
   /* ---------- load ---------- */
   const mediaP = fetch("media.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : {}).catch(() => { $("media-note").textContent = "Videos didn't load. Reload the page to try again."; return {}; })
-    .then(d => { published = { media: (d && d.media) || {}, merges: (d && d.merges) || {} }; });
+    .then(d => { published = { media: (d && d.media) || {}, merges: (d && d.merges) || {}, edits: (d && d.edits) || {} }; });
   const songsP = fetch("songs.json", { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
     const A = d.artists, L = d.labels;
     S = d.songs.map((r, i) => {
       const a = A[r[0]], t = r[1], l = L[r[2]];
       idIndex.set(r[8], i);
-      return { a, t, l, n0: r[3], first0: r[4], last0: r[5], y0: r[6], n: r[3], first: r[4], last: r[5], y: r[6], misc: r[7], id: r[8], hidden: false,
+      return { a, t, l, a0: a, t0: t, misc0: r[7], n0: r[3], first0: r[4], last0: r[5], y0: r[6], n: r[3], first: r[4], last: r[5], y: r[6], misc: r[7], kind: r[7] ? "clip" : "song", id: r[8], hidden: false,
         ak: sortKey(a), tk: sortKey(t), hay: fold(`${a} ${t} ${l}`) };
     });
     const m = d.meta;
@@ -1104,7 +1276,12 @@ ol.steps a { color: var(--accent) }
     const yc = []; for (let y = Y0; y <= Y1; y++) yc.push(m.yearly[y] || 0);
     yearlyChart($("yearly"), yc, 420, 96, 4);
   });
-  Promise.all([songsP, mediaP]).then(() => { refreshAll(); routeHash(); loadBroadcasts().catch(() => {}); })
+  const adminP = fetch("admin.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null).catch(() => null).then(d => {
+    adminCfg = d && d.hash && d.salt && d.iter ? d : null;
+    let mine = null; try { mine = localStorage.getItem(ADMIN_KEY); } catch {}
+    admin = !!(adminCfg && mine === adminCfg.hash);
+  });
+  Promise.all([songsP, mediaP, adminP]).then(() => { refreshAll(); if (wantLogin && !admin) openAdmin(false); routeHash(); loadBroadcasts().catch(() => {}); })
     .catch(err => { listEl.innerHTML = `<div class="empty">The song list didn't load (${esc(String(err.message || err))}). Reload the page to try again.</div>`; $("count").textContent = ""; });
 })();
 </script>
