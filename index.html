@@ -1300,6 +1300,7 @@ ol.steps a { color: var(--accent) }
   function updateVideoCount() {
     let total = 0, withVid = 0;
     for (const s of S) { if (s.hidden) continue; total++; const m = media.get(s.id); if (m && (m.yt || m.video)) withVid++; }
+    if (S.length) $("s-songs").textContent = fmt(total);   // merged duplicates aren't counted twice
     $("s-vids").textContent = `${fmt(withVid)}/${fmt(total)}`;
     $("s-vids").parentElement.title = total ? `${(withVid / total * 100).toFixed(1)}% of entries have a music video` : "";
   }
