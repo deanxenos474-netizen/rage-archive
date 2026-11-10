@@ -43,6 +43,13 @@
    "yt": "33DeJtcJAAk",
    "aspect": "4:3",
    "burned": true
+  },
+  "0d5c6361563f": {
+   "artist": "Michael Jackson - 1977",
+   "title": "Countdown Interview With Molly Meldrum",
+   "yt": "2URqbYND7gE",
+   "aspect": "4:3",
+   "burned": true
   }
  },
  "merges": {
@@ -52,7 +59,8 @@
   "7acf8a2b0d50": "1990bdc36bd4",
   "1990bdc36bd4": "7de36036022a",
   "17f31cb5ff01": "1fc0a5cf27ef",
-  "1fc0a5cf27ef": "1e6706454f7a"
+  "1fc0a5cf27ef": "1e6706454f7a",
+  "47b18119d566": "66169ed7e9f0"
  },
  "edits": {
   "7f9c6325842c": {
@@ -69,6 +77,9 @@
   },
   "1e6706454f7a": {
    "a": "Michael Jackson"
+  },
+  "66169ed7e9f0": {
+   "a": "The Jackson 5"
   }
  }
 }
