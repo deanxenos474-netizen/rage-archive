@@ -1538,7 +1538,7 @@ ol.steps a { color: var(--accent) }
     if (!formUrl()) { if ($("dlg").open) $("dlg").close(); location.hash = "wanted"; return; }
     $("ff-form").reset(); $("ff-entry").value = entry ? entry + (wrong ? " [WRONG VIDEO]" : "") : ""; $("ff-status").textContent = ""; $("ff-status").className = "status"; $("ff-send").disabled = false;
     $("ff-title").textContent = wrong ? "Wrong video? Tell us the right one" : "Tell us what you have";
-    $("ff-what").placeholder = wrong ? "Which video did rage actually show, and how do you know? (e.g. 'it was the American Bandstand performance, I have the 2025 broadcast')" : "";
+    $("ff-what").placeholder = wrong ? "Which video did rage actually show, and how do you know?" : "";
     if ($("dlg").open) $("dlg").close();
     $("ff").showModal(); (entry ? $("ff-what") : $("ff-entry")).focus();
   }
