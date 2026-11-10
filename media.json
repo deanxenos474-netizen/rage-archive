@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-10T12:28:44.858Z",
+ "saved": "2026-11-10T12:38:52.640Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -170,6 +170,14 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music18/v4/ee/f4/2b/eef42b59-0dd5-3ae5-0534-04f120377646/dj.jealvyhf.jpg/1400x1400bb-100.jpg",
    "aspect": "4:3",
    "logoAt": 7,
+   "verified": true
+  },
+  "cccb75f8b62c": {
+   "artist": "Usa For Africa",
+   "title": "We Are The World",
+   "yt": "_cDNhqNv2HY",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/1a/a9/2b/1aa92bb3-f2ee-4f25-1bc9-ba252bd75be8/199806087862.jpg/3000x3000bb-100.jpg",
+   "aspect": "4:3",
    "verified": true
   }
  },
