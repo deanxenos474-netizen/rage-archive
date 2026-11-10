@@ -685,6 +685,7 @@ ol.steps a { color: var(--accent) }
     if (!bLoading) bLoading = fetch("broadcasts.json", { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
       B = d.lists.map(([date, title, url, tr, sp, kind], i) => ({ i, date, title, url, tr, sp: sp || "", kind: kind || 0, hay: fold(`${title} ${sp || ""}`) }));
       U = (d.upcoming || []).map(([date, title, url, rows, sp, kind], i) => ({ i, date, title, url, rows, sp: sp || "", kind: kind || 0 }));
+      for (const list of [B, U]) { const n = {}; for (const b of list) b.ord = n[b.date] = (n[b.date] || 0) + 1; }   // 1st, 2nd... broadcast that day
       plays = new Map();
       B.forEach(b => b.tr.forEach(si => { let a = plays.get(si); if (!a) plays.set(si, a = []); if (a[a.length - 1] !== b.i) a.push(b.i); }));
       $("s-lists").textContent = fmt(B.length);
@@ -699,6 +700,10 @@ ol.steps a { color: var(--accent) }
   }
 
   let bkind = "all";
+  /* every broadcast has its own link: #b-YYYYMMDD-N (N = which broadcast that day), #u-... while it's upcoming */
+  const linkOf = (b, up) => `${up ? "u" : "b"}-${b.date}-${b.ord}`;
+  const fullLink = h => location.origin + location.pathname + "#" + h;
+  let quietOpen = false;      // opening a broadcast from code (not a click) shouldn't rewrite the address
   const spHTML = b => b.kind ? `<span class="badge${b.kind === 2 ? " guest" : ""}">${b.kind === 2 ? "Guest programmer" : "Special"}</span>${esc(b.sp)}<small>${esc(b.title || "Playlist")}</small>` : esc(b.title || "Playlist");
 
   // a broadcast's running order as display items (aired: song indexes; upcoming: rows with their own text)
@@ -722,7 +727,7 @@ ol.steps a { color: var(--accent) }
     const b = up ? U[+key.slice(2)] : B[+key.slice(2)];
     const items = itemsOf(b, up);
     const nv = items.filter(hasVideo).length;
-    const watch = `<div class="bwatch"><button class="btn primary" data-watch="${key}"${nv ? "" : " disabled"}>▶ Watch this broadcast</button><span>${nv ? `${nv} of ${items.length} have music videos` : "No music videos added for these songs yet"}</span></div>`;
+    const watch = `<div class="bwatch"><button class="btn primary" data-watch="${key}"${nv ? "" : " disabled"}>▶ Watch this broadcast</button><button class="btn" data-copy="${linkOf(b, up)}">Copy link</button><span>${nv ? `${nv} of ${items.length} have music videos` : "No music videos added for these songs yet"}</span></div>`;
     const lis = items.map(it => {
       const inner = `${thumbHTML(it.sid, it.a)}<span class="t"><span class="a">${esc(it.a)}${tagHTML(it.kind)}${it.i == null ? "" : vidTag(it.sid)}${it.i == null ? '<span class="tag new">new</span>' : ""}</span><span class="s">${esc(it.t)}${it.l ? ` <i>${esc(it.l)}</i>` : ""}</span></span><span class="n">${it.i == null ? "" : fmt(it.n) + "×"}</span>`;
       const cls = "tr" + (it.kind === "clip" ? " noart" : "");
@@ -752,21 +757,37 @@ ol.steps a { color: var(--accent) }
     bEl.innerHTML = html;
     if (openIdx != null) {
       const el = $("b-" + openIdx);
-      if (el) { el.open = true; fillBroadcast(el); requestAnimationFrame(() => {
+      if (el) { quietOpen = true; el.open = true; fillBroadcast(el); requestAnimationFrame(() => {
         const y = el.getBoundingClientRect().top + window.scrollY - document.querySelector(".controls").offsetHeight - 8;
         window.scrollTo({ top: y }); }); }
     }
   }
+  let upOpen = null;          // upcoming broadcast to open next time the list is drawn (from a link)
   function renderUpcoming() {
     $("ucount").textContent = U.length ? `${U.length} playlist${U.length === 1 ? "" : "s"} posted by the ABC ahead of time · they count as plays once they air` : "Nothing posted yet";
     if (!U.length) { uEl.innerHTML = `<p class="note">The ABC hasn't posted any playlists ahead of time right now. It usually posts the coming week's on Thursday, and this site checks twice a day.</p>`; return; }
     uEl.innerHTML = U.map(b => summaryHTML(b, "u-" + b.i, true)).join("");
-    const first = uEl.querySelector("details"); if (first) { first.open = true; fillBroadcast(first); }
+    const want = upOpen != null && $("u-" + upOpen); upOpen = null;
+    const el = want || uEl.querySelector("details");
+    if (el) { if (!want) quietOpen = true; el.open = true; fillBroadcast(el);
+      if (want) requestAnimationFrame(() => window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - document.querySelector(".controls").offsetHeight - 8 })); }
   }
   for (const host of [bEl, uEl]) {
-    host.addEventListener("toggle", e => { if (e.target.open) fillBroadcast(e.target); }, true);
+    host.addEventListener("toggle", e => {
+      const el = e.target; if (!el.matches || !el.matches("details.bc")) return;
+      const up = el.dataset.key.startsWith("u-"), b = (up ? U : B)[+el.dataset.key.slice(2)];
+      if (el.open) { fillBroadcast(el); if (quietOpen) quietOpen = false; else if (b) setHash(linkOf(b, up)); }
+      else if (b && location.hash.slice(1) === linkOf(b, up)) setHash(up ? "upcoming" : "broadcasts");
+    }, true);
     host.addEventListener("click", e => {
       const w = e.target.closest("button[data-watch]"); if (w) { watchBroadcast(w.dataset.watch); return; }
+      const c = e.target.closest("button[data-copy]");
+      if (c) {
+        const url = fullLink(c.dataset.copy); setHash(c.dataset.copy);
+        const done = t => { c.textContent = t; setTimeout(() => { c.textContent = "Copy link"; }, 1800); };
+        try { navigator.clipboard.writeText(url).then(() => done("Copied"), () => { prompt("Copy this link:", url); }); } catch { prompt("Copy this link:", url); }
+        return;
+      }
       const b = e.target.closest("button[data-s]"); if (b) openDetail(+b.dataset.s);
     });
   }
@@ -794,7 +815,25 @@ ol.steps a { color: var(--accent) }
     $("bq").value = "";
     if (bkind !== "all") $("k-all").click();
     renderYear(Math.floor(b.date / 1e4), i);
-    setHash("b-" + b.date + "-" + i);
+    setHash(linkOf(b, false));
+  }
+  async function goUpcoming(i) {
+    await loadBroadcasts();
+    if ($("dlg").open) $("dlg").close();
+    if ($("tv").open) $("tv").close();
+    upOpen = i; setMode("upcoming", true);
+    setHash(linkOf(U[i], true));
+  }
+  // a link -> the broadcast it means (old links that used the list position still work)
+  async function openLink(kind, date, n) {
+    await loadBroadcasts();
+    const sameB = B.filter(b => b.date === date), sameU = U.filter(b => b.date === date);
+    if (kind === "u" && sameU[n - 1]) return goUpcoming(sameU[n - 1].i);
+    if (sameB[n - 1]) return goBroadcast(sameB[n - 1].i);                 // also an upcoming one that has since aired
+    if (kind === "b" && B[n] && B[n].date === date) return goBroadcast(n);  // old-style link
+    if (sameB.length) return goBroadcast(sameB[0].i);
+    if (sameU.length) return goUpcoming(sameU[0].i);
+    setMode("broadcasts", false);
   }
 
   /* ---------- mode switch + hash ---------- */
@@ -823,8 +862,8 @@ ol.steps a { color: var(--accent) }
     const h = location.hash.slice(1);
     if (h === lastHash) return;
     lastHash = h;
-    const m = /^b-\d{8}-(\d+)$/.exec(h);
-    if (m) goBroadcast(+m[1]).catch(() => {});
+    const m = /^([bu])-(\d{8})-(\d+)$/.exec(h);
+    if (m) openLink(m[1], +m[2], +m[3]).catch(() => {});
     else if (h === "broadcasts") setMode("broadcasts", false);
     else if (h === "upcoming") setMode("upcoming", false);
     else if (h === "songs" || !h) setMode("songs", true);
