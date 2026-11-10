@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-10T15:03:34.853Z",
+ "saved": "2026-11-10T15:04:02.851Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -430,7 +430,7 @@
    "title": "Ghosts",
    "yt": "9DhJRQ8ka34",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Features124/v4/f8/e7/00/f8e700ab-5827-86bf-a21a-2a8ec7a59050/dj.ydzammsx.jpg/1410x1410bb-100.jpg",
-   "aspect": "4:3-in-16:9",
+   "aspect": "4:3",
    "logoAt": 7,
    "verified": true
   }
