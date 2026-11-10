@@ -146,13 +146,10 @@ dialog::backdrop { background: rgb(5 6 14 / .6) }
 @font-face { font-family: "Eurostile Demi"; src: url("eurostile-demi.otf") format("opentype"); font-display: swap }
 .player { position: relative; background: #000; border-radius: 10px; overflow: hidden }
 .player video { width: 100%; max-height: 62vh; display: block; background: #000; object-fit: contain }
-.player .ytbox { width: 100%; aspect-ratio: 16 / 9; max-height: 62vh; background: #000 }
-.ytbox iframe { width: 100%; height: 100%; display: block; border: 0 }
-/* while a YouTube video is paused, YouTube draws its title bar and share / "More videos" / logo row
-   over the picture; cover those strips with our own bars (YouTube itself is left untouched) */
-.player .ytbar { position: absolute; left: 0; right: 0; height: 17%; min-height: 64px; background: #000; pointer-events: none; display: none }
-.player .ytbar.top { top: 0 } .player .ytbar.bot { bottom: 0 }
-.player.yt.paused .ytbar { display: block }
+.player .ytbox { width: 100%; aspect-ratio: 16 / 9; max-height: 62vh; background: #000; position: relative; overflow: hidden }
+/* YouTube's frame is made taller than the box (layout()), so its title bar and share / "More videos" / logo
+   row land in strips above and below that are cut off; the picture itself is shown whole */
+.ytbox iframe { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; border: 0 }
 .player:fullscreen, .player.fakefs { border-radius: 0; display: grid; place-items: center; width: 100vw; height: 100vh }
 .player.fakefs { position: fixed; inset: 0; z-index: 1000; height: 100dvh }   /* phones without real fullscreen (iPhone) */
 .player:fullscreen video, .player.fakefs video { max-height: none; height: 100%; width: 100% }
@@ -836,7 +833,7 @@ ol.steps a { color: var(--accent) }
   let fsCounter = 0;
   function makePlayer(host, opts = {}) {
     const fid = "capsh" + (++fsCounter);
-    host.innerHTML = `<div class="player"><div class="ytbox" hidden><div class="ytel"></div></div><video playsinline preload="metadata" disablepictureinpicture hidden></video><div class="poster" hidden></div><div class="ytbar top"></div><div class="ytbar bot"></div>
+    host.innerHTML = `<div class="player"><div class="ytbox" hidden><div class="ytel"></div></div><video playsinline preload="metadata" disablepictureinpicture hidden></video><div class="poster" hidden></div>
       <svg class="ov" aria-hidden="true"><defs><filter id="${fid}" x="-5%" y="-20%" width="115%" height="160%"><feDropShadow dx="4" dy="4" stdDeviation="2.2" flood-color="#000" flood-opacity=".85"/></filter></defs>
         <image href="rage-logo.png" opacity="0" preserveAspectRatio="none"/><g class="capg" opacity="0" filter="url(#${fid})"><text class="l1"></text><text class="l2"></text></g></svg>
       <button class="shield" type="button" aria-label="Play"><span class="bigplay"></span></button>
@@ -890,6 +887,11 @@ ol.steps a { color: var(--accent) }
       const shape = P.m.aspect || "16:9";
       const fileAR = P.kind === "yt" ? (shape === "4:3" || shape === "16:9-in-4:3" ? 4 / 3 : 16 / 9) : (v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : 16 / 9);
       const cw = Math.min(bw, bh * fileAR), ch = cw / fileAR;
+      const ifr = P.kind === "yt" && ytbox.querySelector("iframe");
+      if (ifr) {   // exactly the picture's width, with an extra strip above and below for YouTube's overlays to fall into
+        const pad = Math.round(Math.max(90, ch * 0.22));
+        Object.assign(ifr.style, { width: cw + "px", height: (ch + 2 * pad) + "px", left: ((bw - cw) / 2) + "px", top: ((bh - ch) / 2 - pad) + "px" });
+      }
       let x = el.offsetLeft + (bw - cw) / 2, y = el.offsetTop + (bh - ch) / 2, w = cw, h = ch;
       if (shape === "4:3-in-16:9") { w = h * 4 / 3; x += (cw - w) / 2; }
       if (shape === "16:9-in-4:3") { h = w * 9 / 16; y += (ch - h) / 2; }
