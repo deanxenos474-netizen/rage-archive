@@ -169,6 +169,8 @@ ol.tracks .tr.noart { grid-template-columns: 34px minmax(0, 1fr) auto }
 .d-head.noart { grid-template-columns: minmax(0, 1fr) auto } .d-head.noart .d-cover { display: none }
 .tag.vid { color: var(--hot); border-color: var(--hot) }
 .verified { margin: 6px 0 0; color: var(--ok); font: 500 13px var(--body) }
+.flag { justify-self: start; margin: 6px 0 0; padding: 0; border: 0; background: none; color: var(--bad); font: 500 13px var(--body); text-align: left; cursor: pointer }
+.flag:hover { text-decoration: underline }
 .thumb.bumper img { object-fit: contain; padding: 6px; background: #000 }
 .player .poster { position: absolute; inset: 0; background: #000 center / contain no-repeat }
 .player .shield { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; background: transparent; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent }
@@ -366,6 +368,7 @@ ol.steps a { color: var(--accent) }
     </div>
     <div id="d-video"></div>
     <p class="verified" id="d-verified" hidden>✓ Verified: this is the clip rage showed.</p>
+    <button class="flag" id="d-help" type="button" hidden>Have this clip? Let us know</button>
     <dl class="facts">
       <div><dt>Plays</dt><dd id="d-n"></dd></div>
       <div><dt>First</dt><dd id="d-first"></dd></div>
@@ -376,8 +379,6 @@ ol.steps a { color: var(--accent) }
     <div class="line"><code id="d-line"></code><button class="btn" id="d-copy">Copy</button></div>
     <div class="actions">
       <button class="btn" id="d-artist">All by this artist</button>
-      <a class="btn" id="d-yt" target="_blank" rel="noopener">Find on YouTube</a>
-      <button class="btn" id="d-help" type="button" hidden>Have this clip? Let us know</button>
     </div>
     <section class="edit" id="d-info" hidden aria-label="Song details">
       <h3>Song details</h3>
@@ -1181,7 +1182,6 @@ ol.steps a { color: var(--accent) }
     const counts = new Array(Y1 - Y0 + 1).fill(0);
     s.y.split(",").filter(Boolean).forEach(p => { const [k, c] = p.split(":"); counts[+k] = +c; });
     yearlyChart($("d-chart"), counts, 500, 120, 4);
-    $("d-yt").href = "https://www.youtube.com/results?search_query=" + encodeURIComponent(`${s.a} ${s.t}`);
     { const m = media.get(s.id), has = !!(m && (m.yt || m.video)), ok = has && !!m.verified;
       $("d-verified").hidden = !ok;
       $("d-help").hidden = ok;
