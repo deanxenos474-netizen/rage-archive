@@ -225,8 +225,15 @@ def main():
         sig = (p["date"], json.dumps(p["rows"]))
         if sig not in sigs:
             d["playlists"].append(p); sigs.add(sig); added += 1
+    new_upcoming = sorted(upcoming.values(), key=lambda p: (p["date"], p["title"]))
+    # something airing today moves an upcoming playlist into the counted ones, so check that too
+    aired_now = any(p["date"] <= today for p in d.get("upcoming", []))
+    if not added and not aired_now and json.dumps(new_upcoming) == json.dumps(d.get("upcoming", [])) \
+            and sorted(seen) == d.get("abc_seen", []):
+        print(f"checked {len(todo)} playlist pages: nothing new")
+        return 0
     d["abc_seen"] = sorted(seen)
-    d["upcoming"] = sorted(upcoming.values(), key=lambda p: (p["date"], p["title"]))
+    d["upcoming"] = new_upcoming
     sitebuild.save(d)
     meta = sitebuild.build(d)
     print(f"checked {len(todo)} playlist pages: {added} new aired, {waiting} upcoming; "

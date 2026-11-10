@@ -66,8 +66,10 @@ def load():
 
 
 def save(d):
-    with gzip.open(DATA, "wt", encoding="utf-8") as fh:
-        json.dump(d, fh, ensure_ascii=False, separators=(",", ":"))
+    # mtime=0 keeps the file byte-identical when the data hasn't changed
+    raw = json.dumps(d, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    with open(DATA, "wb") as fh:
+        fh.write(gzip.compress(raw, mtime=0))
 
 
 def build(d, out_dir=ROOT):
