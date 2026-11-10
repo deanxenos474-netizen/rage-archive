@@ -406,7 +406,7 @@ ol.steps a { color: var(--accent) }
           <option value="4:3">4:3 (YouTube shows black bars at the sides)</option>
           <option value="4:3-in-16:9">4:3 inside a 16:9 video (bars built into the video)</option>
           <option value="16:9-in-4:3">16:9 inside a 4:3 video (black bars top &amp; bottom)</option>
-          <option value="2.20:1">2.20:1 extra-wide film</option>
+          <option value="2.20:1">Wide film 2.20:1 or 2.35:1 (black bars top &amp; bottom)</option>
         </select>
       </label>
       <label class="f" for="f-logo" id="f-logo-l">rage logo appears at <input type="number" id="f-logo" autocomplete="off" min="0" max="600" step="0.1" value="8.2"> seconds</label>
@@ -959,9 +959,9 @@ ol.steps a { color: var(--accent) }
               l1: { x: 135.6, y: 909, size: 69.3, sx: 0.775 }, l2: { x: 134.8, y: 974, size: 54.7, sx: 0.947 } },
     "16:9": { W: 1920, logo: { x: 195, y: 836, width: 458, height: 152 },
               l1: { x: 195, y: 886, size: 77.1, sx: 0.79 },  l2: { x: 197, y: 965.5, size: 58.8, sx: 0.944 } },
-    // 2.20:1 extra-wide film: the 16:9 logo and caption at the same size, from the picture's left edge
-    "2.20:1": { W: 2376, logo: { x: 195, y: 836, width: 458, height: 152 },
-              l1: { x: 195, y: 886, size: 77.1, sx: 0.79 },  l2: { x: 197, y: 965.5, size: 58.8, sx: 0.944 } },
+    // wide film letterboxed in a 16:9 broadcast, measured from a real one (Santana, Soul Sacrifice), then moved down 29px because a 2.20:1 picture reaches lower than that 2.35:1 one
+    "2.20:1": { W: 1920, logo: { x: 185, y: 706, width: 531, height: 195 },
+              l1: { x: 186.5, y: 809.5, size: 80.5, sx: 0.82 }, l2: { x: 189, y: 893, size: 66.5, sx: 0.935 } },
   };
   let ytReady = null;
   function loadYT() {
@@ -1035,7 +1035,7 @@ ol.steps a { color: var(--accent) }
       const el = frameEl(); if (!el) return;
       const bw = el.clientWidth, bh = el.clientHeight; if (!bw || !bh) return;
       const shape = P.m.aspect || "16:9";
-      const fileAR = P.kind === "yt" ? (shape === "4:3" || shape === "16:9-in-4:3" ? 4 / 3 : shape === "2.20:1" ? 2.2 : 16 / 9) : (v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : 16 / 9);
+      const fileAR = shape === "2.20:1" ? 16 / 9 : P.kind === "yt" ? (shape === "4:3" || shape === "16:9-in-4:3" ? 4 / 3 : 16 / 9) : (v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : 16 / 9);
       const cw = Math.min(bw, bh * fileAR), ch = cw / fileAR;
       const ifr = P.kind === "yt" && ytbox.querySelector("iframe");
       if (ifr && wrap.classList.contains("admode")) Object.assign(ifr.style, { width: bw + "px", height: bh + "px", left: "0px", top: "0px" });   // an ad: shown whole
