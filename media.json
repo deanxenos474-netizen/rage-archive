@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-10T13:14:40.855Z",
+ "saved": "2026-11-10T13:15:40.650Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -230,6 +230,15 @@
    "yt": "8vwHQNQ88cM",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/d5/5f/28/d55f28f4-610c-ee81-dc16-a01cda46bbc4/886443546264.jpg/3698x3698bb-100.jpg",
    "aspect": "4:3",
+   "verified": true
+  },
+  "0c1d1e8a671e": {
+   "artist": "Michael Jackson",
+   "title": "Smooth Criminal",
+   "yt": "IocjToVHHLQ",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/d5/5f/28/d55f28f4-610c-ee81-dc16-a01cda46bbc4/886443546264.jpg/3698x3698bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 7,
    "verified": true
   }
  },
