@@ -96,6 +96,21 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/99/1a/37/991a3783-6b5b-f1bc-3fed-61f59a449368/886448990178.jpg/3000x3000bb-100.jpg",
    "aspect": "16:9-in-4:3",
    "logoAt": 21
+  },
+  "0b25a59258fe": {
+   "artist": "Michael Jackson",
+   "title": "Billie Jean",
+   "yt": "blZe6WB1dYU",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/32/4f/fd/324ffda2-9e51-8f6a-0c2d-c6fd2b41ac55/074643811224.jpg/1500x1500bb-100.jpg",
+   "aspect": "4:3-in-16:9",
+   "logoAt": 7
+  },
+  "69cb17656be0": {
+   "artist": "Michael Jackson",
+   "title": "Beat It",
+   "yt": "oRdxUFDoQe0",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/32/4f/fd/324ffda2-9e51-8f6a-0c2d-c6fd2b41ac55/074643811224.jpg/1500x1500bb-100.jpg",
+   "logoAt": 7
   }
  },
  "merges": {
