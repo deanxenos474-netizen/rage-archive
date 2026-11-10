@@ -171,6 +171,8 @@ html.nofsscroll, html.nofsscroll body { overflow: hidden }
 /* pressed play, waiting for the first frame: the play button turns into a spinner */
 .player.loading .bigplay { opacity: 1; border-color: rgb(255 255 255 / .25); border-top-color: #fff; background: rgb(0 0 0 / .35); animation: spin .8s linear infinite }
 .player.loading .bigplay::after { display: none }
+/* a YouTube ad is playing: show it as YouTube intends and let clicks reach it */
+.player.admode .shield { pointer-events: none } .player.admode .bigplay, .player.admode .ov { opacity: 0 }
 @keyframes spin { to { transform: rotate(360deg) } }
 .player .fsb { transition: opacity .2s }
 .player.playing .fsb { opacity: 0 }
@@ -871,16 +873,17 @@ ol.steps a { color: var(--accent) }
     };
     // if YouTube hasn't started a few seconds after asking, say so instead of sitting silently
     const watchStart = () => { clearTimeout(P.stall); P.stall = setTimeout(() => {
-      if (P.stop || P.kind !== "yt") return;
+      if (P.stop || P.kind !== "yt" || wrap.classList.contains("admode")) return;
       const st = P.yt && P.ytReady ? P.yt.getPlayerState() : -1;
       if (st !== 1 && st !== 3 && st !== 2) problem("YouTube hasn't started this video. It may be blocked in your country or need you to sign in on YouTube.");
     }, 9000); };
     // play/pause follows what the viewer asked for (P.want), not YouTube's in-between states,
     // so a second press while it's still starting doesn't pause it
     function ytPlay() {
-      P.want = true; P.warm = false; setLoading(true); watchStart();
+      P.want = true; setLoading(true); watchStart();
       if (!P.yt || !P.ytReady) { if (P.pending) P.pending.autoplay = true; return; }
       try { P.yt.unMute(); P.mutedByUs = false; } catch {}   // there's no volume control here, so real plays are never muted
+      P.endFired = false;
       P.yt.playVideo();
     }
     function ytPause() { P.want = false; setLoading(false); clearTimeout(P.stall); if (P.yt && P.ytReady) P.yt.pauseVideo(); setPlaying(false); }
@@ -900,7 +903,8 @@ ol.steps a { color: var(--accent) }
       const fileAR = P.kind === "yt" ? (shape === "4:3" || shape === "16:9-in-4:3" ? 4 / 3 : 16 / 9) : (v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : 16 / 9);
       const cw = Math.min(bw, bh * fileAR), ch = cw / fileAR;
       const ifr = P.kind === "yt" && ytbox.querySelector("iframe");
-      if (ifr) {   // exactly the picture's width, with an extra strip above and below for YouTube's overlays to fall into
+      if (ifr && wrap.classList.contains("admode")) Object.assign(ifr.style, { width: bw + "px", height: bh + "px", left: "0px", top: "0px" });   // an ad: shown whole
+      else if (ifr) {   // exactly the picture's width, with an extra strip above and below for YouTube's overlays to fall into
         const pad = Math.round(Math.max(90, ch * 0.22));
         Object.assign(ifr.style, { width: cw + "px", height: (ch + 2 * pad) + "px", left: ((bw - cw) / 2) + "px", top: ((bh - ch) / 2 - pad) + "px" });
       }
@@ -926,7 +930,27 @@ ol.steps a { color: var(--accent) }
     }
     const loop = () => { if (P.stop) return; frame(); P.raf = requestAnimationFrame(loop); };
     loop();
-    P.iv = setInterval(() => { if (!P.stop) frame(); }, 150);     // keeps going when the tab is in the background
+    P.iv = setInterval(() => { if (!P.stop) { frame(); ytSync(); } }, 150);     // keeps going when the tab is in the background
+    /* Ads: YouTube plays an ad first on some videos (the owner's choice). While it runs, YouTube still calls the video
+       "not started" but time moves. Then the player gets out of the way: no cover, no cropping, no logo, clicks go
+       straight to YouTube (so its Skip button works). Once the real video plays, the clean view comes back.
+       This also backs up YouTube's "playing" / "ended" signals, which don't always arrive. */
+    function setAd(on) {
+      if (wrap.classList.contains("admode") === on) return;
+      wrap.classList.toggle("admode", on);
+      if (on) { showPoster(false); setLoading(false); clearTimeout(P.stall); }
+      requestAnimationFrame(layout);
+    }
+    function ytSync() {
+      if (P.kind !== "yt" || !P.yt || !P.ytReady || !P.yt.getCurrentTime) return;
+      let t, st; try { t = P.yt.getCurrentTime() || 0; st = P.yt.getPlayerState(); } catch { return; }
+      const moving = P.lastT != null && t > P.lastT + 0.03; P.lastT = t;
+      if (st === 1) {
+        setAd(false);
+        if (P.want && !wrap.classList.contains("playing")) { setPlaying(true); showPoster(false); problem(""); wrap.classList.remove("paused"); }
+      } else if (P.want && moving && st !== 2) setAd(true);
+      if (st === 0 && P.want && !P.endFired) { P.endFired = true; P.want = false; setAd(false); setPlaying(false); showPoster(true); opts.onEnded?.(); }
+    }
     v.addEventListener("loadedmetadata", layout);
     v.addEventListener("ended", () => { if (P.kind === "video") { setPlaying(false); opts.onEnded?.(); } });
     v.addEventListener("playing", () => { if (P.kind === "video") setPlaying(true); });
@@ -958,7 +982,7 @@ ol.steps a { color: var(--accent) }
       l1.textContent = (song.a || "").toUpperCase(); l2.textContent = song.t || "";
       img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0");
       setPlaying(false); setLoading(!!autoplay); showPoster(false); problem(""); wrap.classList.remove("paused"); wrap.classList.toggle("yt", !!P.m.yt);
-      P.want = !!autoplay; P.warm = false;
+      P.want = !!autoplay; P.endFired = false; P.lastT = null; setAd(false);
       if (P.m.yt) {
         showPoster(true);
         P.kind = "yt"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = false;
@@ -976,22 +1000,15 @@ ol.steps a { color: var(--accent) }
                   P.ytReady = true; const p = P.pending; layout();
                   if (p && p.id !== first.id) { p.autoplay ? P.yt.loadVideoById(p.id) : P.yt.cueVideoById(p.id); }
                   else if (p && p.autoplay) P.yt.playVideo();
-                  else {   // warm-up: start it silently behind the cover and stop at once, so pressing play is instant
-                    P.warm = true; try { P.yt.mute(); P.mutedByUs = true; P.yt.playVideo(); } catch { P.warm = false; }
-                  }
                 },
                 onStateChange: e => {
                   if (P.kind !== "yt") return;
-                  if (e.data === 1 && !P.want) {   // the silent warm-up reached playing: stop it at the start, still hidden
-                    if (P.warm) { P.warm = false; P.yt.pauseVideo(); P.yt.seekTo(0, true); } else P.yt.pauseVideo();
-                    return;
-                  }
-                  if (e.data === 1) { try { if (P.yt.isMuted()) P.yt.unMute(); P.mutedByUs = false; } catch {} setPlaying(true); showPoster(false); problem(""); wrap.classList.remove("paused"); }
-                  else if (e.data === 2) { if (P.want && !P.warm) { P.want = false; setLoading(false); } if (!P.want) { setPlaying(false); if (!poster.hidden) return; wrap.classList.add("paused"); } }
-                  else if (e.data === 0) { P.want = false; setPlaying(false); showPoster(true); opts.onEnded?.(); }
+                  if (e.data === 1) { setAd(false); try { if (P.yt.isMuted()) P.yt.unMute(); P.mutedByUs = false; } catch {} setPlaying(true); showPoster(false); problem(""); wrap.classList.remove("paused"); }
+                  else if (e.data === 2) { if (P.want) { P.want = false; setLoading(false); } if (!P.want) { setPlaying(false); if (!poster.hidden) return; wrap.classList.add("paused"); } }
+                  else if (e.data === 0) { if (P.endFired) return; P.endFired = true; P.want = false; setPlaying(false); showPoster(true); opts.onEnded?.(); }
                   else if ((e.data === 5 || e.data === -1) && !P.want) { setPlaying(false); showPoster(true); }
                 },
-                onError: e => { P.want = false; P.warm = false; setLoading(false); problem(YT_ERR[e.data] || `YouTube couldn't play this video (error ${e.data}).`); opts.onError?.(); },
+                onError: e => { P.want = false; setAd(false); setLoading(false); problem(YT_ERR[e.data] || `YouTube couldn't play this video (error ${e.data}).`); opts.onError?.(); },
               },
             });
           }).catch(() => { ytbox.innerHTML = `<div class="vload">YouTube didn't load. Check your connection and try again.</div>`; });
