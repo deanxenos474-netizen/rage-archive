@@ -813,7 +813,7 @@ ol.steps a { color: var(--accent) }
   /* ---------- the player, with the rage logo + caption ----------
      Geometry measured from two real broadcasts (picture coordinates, 1080 high; x = text origin, y = baseline).
      Timing from the same clips: logo fades in over 0.55s, fades out 3.75-4.25s after it starts;
-     the caption cuts in 7.35s after the logo and cuts out 16.75s after it. */
+     the caption appears 7.35s after the logo and is gone 16.75s after it (both fade, like the logo). */
   const GEO = {
     "4:3":  { W: 1440, logo: { x: 142, y: 821, width: 401, height: 137 },
               l1: { x: 127, y: 898, size: 65.4, sx: 0.812 }, l2: { x: 130, y: 963.5, size: 52.3, sx: 0.977 } },
@@ -907,7 +907,10 @@ ol.steps a { color: var(--accent) }
       const t = now(), L = P.L;
       const lo = t < L ? 0 : t < L + .55 ? (t - L) / .55 : t < L + 3.75 ? 1 : t < L + 4.25 ? 1 - (t - L - 3.75) / .5 : 0;
       img.setAttribute("opacity", lo.toFixed(3));
-      capg.setAttribute("opacity", t >= L + 7.35 && t < L + 16.75 ? "1" : "0");
+      // caption: fades in over 0.55s from 7.35s after the logo, fades out over 0.5s ending 16.75s after it (like the logo)
+      const c0 = L + 7.35, c1 = L + 16.75;
+      const co = t < c0 ? 0 : t < c0 + .55 ? (t - c0) / .55 : t < c1 - .5 ? 1 : t < c1 ? (c1 - t) / .5 : 0;
+      capg.setAttribute("opacity", co.toFixed(3));
     }
     const loop = () => { if (P.stop) return; frame(); P.raf = requestAnimationFrame(loop); };
     loop();
