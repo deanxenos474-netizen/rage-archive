@@ -146,8 +146,10 @@ dialog::backdrop { background: rgb(5 6 14 / .6) }
 @font-face { font-family: "Eurostile Demi"; src: url("eurostile-demi.otf") format("opentype"); font-display: swap }
 .player { position: relative; background: #000; border-radius: 10px; overflow: hidden }
 .player video { width: 100%; max-height: 62vh; display: block; background: #000; object-fit: contain }
-.player .ytbox { width: 100%; aspect-ratio: 16 / 9; max-height: 62vh; background: #000 }
-.ytbox iframe { width: 100%; height: 100%; display: block; border: 0 }
+.player .ytbox { width: 100%; aspect-ratio: 16 / 9; max-height: 62vh; background: #000; position: relative; overflow: hidden }
+/* the YouTube frame is sized by layout(): taller than the picture, so YouTube's title bar and its
+   share / "More videos" / logo row fall in strips that are cropped off above and below */
+.ytbox iframe { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; border: 0 }
 .player:fullscreen, .player.fakefs { border-radius: 0; display: grid; place-items: center; width: 100vw; height: 100vh }
 .player.fakefs { position: fixed; inset: 0; z-index: 1000; height: 100dvh }   /* phones without real fullscreen (iPhone) */
 .player:fullscreen video, .player.fakefs video { max-height: none; height: 100%; width: 100% }
@@ -830,6 +832,8 @@ ol.steps a { color: var(--accent) }
     const img = svg.querySelector("image"), capg = svg.querySelector(".capg"), l1 = svg.querySelector(".l1"), l2 = svg.querySelector(".l2");
     const P = { stop: false, raf: 0, iv: 0, yt: null, ytReady: false, kind: null, m: {}, L: 8.2, pending: null };
     const shield = wrap.querySelector(".shield"), poster = wrap.querySelector(".poster");
+    // YouTube switches on automatic subtitles for some viewers; turn them off
+    const noCaptions = () => { try { P.yt.unloadModule("captions"); P.yt.unloadModule("cc"); } catch {} };
     function setPlaying(on) { wrap.classList.toggle("playing", on); shield.setAttribute("aria-label", on ? "Pause" : "Play"); }
     // covers YouTube's own title/thumbnail screen before it starts and its suggestions screen after it ends
     function showPoster(on) { const src = on && coverSrc(P.m); poster.hidden = !src; if (src) poster.style.backgroundImage = `url("${src.replace(/"/g, "%22")}")`; }
@@ -849,6 +853,11 @@ ol.steps a { color: var(--accent) }
       const shape = P.m.aspect || "16:9";
       const fileAR = P.kind === "yt" ? (shape === "4:3" || shape === "16:9-in-4:3" ? 4 / 3 : 16 / 9) : (v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : 16 / 9);
       const cw = Math.min(bw, bh * fileAR), ch = cw / fileAR;
+      const ifr = P.kind === "yt" && ytbox.querySelector("iframe");
+      if (ifr) {   // exactly the picture's width, plus hidden strips above and below for YouTube's overlays
+        const pad = Math.round(Math.max(110, ch * 0.2));
+        Object.assign(ifr.style, { width: cw + "px", height: (ch + 2 * pad) + "px", left: ((bw - cw) / 2) + "px", top: ((bh - ch) / 2 - pad) + "px" });
+      }
       let x = el.offsetLeft + (bw - cw) / 2, y = el.offsetTop + (bh - ch) / 2, w = cw, h = ch;
       if (shape === "4:3-in-16:9") { w = h * 4 / 3; x += (cw - w) / 2; }
       if (shape === "16:9-in-4:3") { h = w * 9 / 16; y += (ch - h) / 2; }
@@ -915,7 +924,7 @@ ol.steps a { color: var(--accent) }
                 onReady: () => { P.ytReady = true; const p = P.pending; if (p && p.id !== first.id) { p.autoplay ? P.yt.loadVideoById(p.id) : P.yt.cueVideoById(p.id); } else if (p && p.autoplay) P.yt.playVideo(); layout(); },
                 onStateChange: e => {
                   if (P.kind !== "yt") return;
-                  if (e.data === 1) { setPlaying(true); showPoster(false); }
+                  if (e.data === 1) { setPlaying(true); showPoster(false); noCaptions(); }
                   else if (e.data === 2) setPlaying(false);
                   else if (e.data === 0 || e.data === 5 || e.data === -1) { setPlaying(false); showPoster(true); if (e.data === 0) opts.onEnded?.(); }
                 },
