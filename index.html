@@ -7,6 +7,8 @@
 <meta name="description" content="Every song, interview and clip played on ABC's rage since 1998, with play counts, every broadcast's playlist, and the music videos.">
 <link rel="icon" href="rage-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://www.youtube.com">
+<link rel="preconnect" href="https://i.ytimg.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: a late-night TV guide. Masthead with the yearly signal, sticky control strip, then the song index, the broadcast log, or what's coming up. */
@@ -166,6 +168,10 @@ html.nofsscroll, html.nofsscroll body { overflow: hidden }
 .player .bigplay { width: 68px; height: 68px; border-radius: 50%; background: rgb(0 0 0 / .55); border: 2px solid rgb(255 255 255 / .8); position: relative; transition: opacity .2s }
 .player .bigplay::after { content: ""; position: absolute; left: 26px; top: 20px; border-style: solid; border-width: 13px 0 13px 21px; border-color: transparent transparent transparent #fff }
 .player.playing .bigplay { opacity: 0 }
+/* pressed play, waiting for the first frame: the play button turns into a spinner */
+.player.loading .bigplay { opacity: 1; border-color: rgb(255 255 255 / .25); border-top-color: #fff; background: rgb(0 0 0 / .35); animation: spin .8s linear infinite }
+.player.loading .bigplay::after { display: none }
+@keyframes spin { to { transform: rotate(360deg) } }
 .player .fsb { transition: opacity .2s }
 .player.playing .fsb { opacity: 0 }
 .player.playing:hover .fsb, .player .fsb:focus-visible { opacity: 1 }
@@ -833,7 +839,7 @@ ol.steps a { color: var(--accent) }
   let fsCounter = 0;
   function makePlayer(host, opts = {}) {
     const fid = "capsh" + (++fsCounter);
-    host.innerHTML = `<div class="player"><div class="ytbox" hidden><div class="ytel"></div></div><video playsinline preload="metadata" disablepictureinpicture hidden></video><div class="poster" hidden></div>
+    host.innerHTML = `<div class="player"><div class="ytbox" hidden><div class="ytel"></div></div><video playsinline preload="auto" disablepictureinpicture hidden></video><div class="poster" hidden></div>
       <svg class="ov" aria-hidden="true"><defs><filter id="${fid}" x="-5%" y="-20%" width="115%" height="160%"><feDropShadow dx="4" dy="4" stdDeviation="2.2" flood-color="#000" flood-opacity=".85"/></filter></defs>
         <image href="rage-logo.png" opacity="0" preserveAspectRatio="none"/><g class="capg" opacity="0" filter="url(#${fid})"><text class="l1"></text><text class="l2"></text></g></svg>
       <button class="shield" type="button" aria-label="Play"><span class="bigplay"></span></button>
@@ -843,7 +849,8 @@ ol.steps a { color: var(--accent) }
     const P = { stop: false, raf: 0, iv: 0, yt: null, ytReady: false, kind: null, m: {}, L: 8.2, pending: null };
     const shield = wrap.querySelector(".shield"), poster = wrap.querySelector(".poster");
 
-    function setPlaying(on) { wrap.classList.toggle("playing", on); shield.setAttribute("aria-label", on ? "Pause" : "Play"); }
+    function setPlaying(on) { wrap.classList.toggle("playing", on); if (on) wrap.classList.remove("loading"); shield.setAttribute("aria-label", on ? "Pause" : "Play"); }
+    const setLoading = on => wrap.classList.toggle("loading", on);   // pressed play, video not moving yet: show a spinner
     // covers YouTube's own title/thumbnail screen before it starts and its suggestions screen after it ends
     function showPoster(on) { const src = on && coverSrc(P.m); poster.hidden = !src; if (src) poster.style.backgroundImage = `url("${src.replace(/"/g, "%22")}")`; }
     // a plain message over the picture when a video can't play, with a way to watch it elsewhere
@@ -868,14 +875,19 @@ ol.steps a { color: var(--accent) }
       const st = P.yt && P.ytReady ? P.yt.getPlayerState() : -1;
       if (st !== 1 && st !== 3 && st !== 2) problem("YouTube hasn't started this video. It may be blocked in your country or need you to sign in on YouTube.");
     }, 9000); };
+    // play/pause follows what the viewer asked for (P.want), not YouTube's in-between states,
+    // so a second press while it's still starting doesn't pause it
+    function ytPlay() {
+      P.want = true; P.warm = false; setLoading(true); watchStart();
+      if (!P.yt || !P.ytReady) { if (P.pending) P.pending.autoplay = true; return; }
+      try { P.yt.unMute(); P.mutedByUs = false; } catch {}   // there's no volume control here, so real plays are never muted
+      P.yt.playVideo();
+    }
+    function ytPause() { P.want = false; setLoading(false); clearTimeout(P.stall); if (P.yt && P.ytReady) P.yt.pauseVideo(); setPlaying(false); }
     shield.onclick = () => {
       if (!pmsg.hidden) problem("");
-      if (P.kind === "yt") {
-        watchStart();
-        if (!P.yt || !P.ytReady) { if (P.pending) P.pending.autoplay = true; return; }
-        const st = P.yt.getPlayerState();
-        st === 1 || st === 3 ? P.yt.pauseVideo() : P.yt.playVideo();
-      } else if (P.kind === "video") v.paused || v.ended ? v.play().catch(() => {}) : v.pause();
+      if (P.kind === "yt") P.want ? ytPause() : ytPlay();
+      else if (P.kind === "video") v.paused || v.ended ? (setLoading(true), v.play().catch(() => setLoading(false))) : v.pause();
     };
     v.addEventListener("error", () => { if (P.kind === "video" && v.getAttribute("src")) problem("This video file couldn't be played."); });
 
@@ -917,8 +929,9 @@ ol.steps a { color: var(--accent) }
     P.iv = setInterval(() => { if (!P.stop) frame(); }, 150);     // keeps going when the tab is in the background
     v.addEventListener("loadedmetadata", layout);
     v.addEventListener("ended", () => { if (P.kind === "video") { setPlaying(false); opts.onEnded?.(); } });
-    v.addEventListener("play", () => { if (P.kind === "video") setPlaying(true); });
-    v.addEventListener("pause", () => { if (P.kind === "video") setPlaying(false); });
+    v.addEventListener("playing", () => { if (P.kind === "video") setPlaying(true); });
+    v.addEventListener("waiting", () => { if (P.kind === "video" && !v.paused) setLoading(true); });
+    v.addEventListener("pause", () => { if (P.kind === "video") { setPlaying(false); setLoading(false); } });
     const ro = new ResizeObserver(layout); ro.observe(wrap);
     // fullscreen: the real thing where the browser allows it, otherwise fill the window (iPhone)
     const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
@@ -944,11 +957,12 @@ ol.steps a { color: var(--accent) }
       P.m = m || {}; P.L = P.m.bare ? Infinity : Number.isFinite(+P.m.logoAt) ? +P.m.logoAt : 8.2;   // bare: titles/credits, no logo or caption
       l1.textContent = (song.a || "").toUpperCase(); l2.textContent = song.t || "";
       img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0");
-      setPlaying(false); showPoster(false); problem(""); wrap.classList.remove("paused"); wrap.classList.toggle("yt", !!P.m.yt);
+      setPlaying(false); setLoading(!!autoplay); showPoster(false); problem(""); wrap.classList.remove("paused"); wrap.classList.toggle("yt", !!P.m.yt);
+      P.want = !!autoplay; P.warm = false;
       if (P.m.yt) {
         showPoster(true);
         P.kind = "yt"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = false;
-        if (P.yt && P.ytReady) { autoplay ? P.yt.loadVideoById(P.m.yt) : P.yt.cueVideoById(P.m.yt); }
+        if (P.yt && P.ytReady) { try { if (P.mutedByUs) { P.yt.unMute(); P.mutedByUs = false; } } catch {} autoplay ? P.yt.loadVideoById(P.m.yt) : P.yt.cueVideoById(P.m.yt); }
         else {
           P.pending = { id: P.m.yt, autoplay };
           if (!P.yt) loadYT().then(YT => {
@@ -958,14 +972,26 @@ ol.steps a { color: var(--accent) }
               videoId: first.id, width: "100%", height: "100%",
               playerVars: { controls: 0, disablekb: 1, fs: 0, rel: 0, playsinline: 1, modestbranding: 1, iv_load_policy: 3, cc_load_policy: 0, autoplay: first.autoplay ? 1 : 0 },
               events: {
-                onReady: () => { P.ytReady = true; const p = P.pending; if (p && p.id !== first.id) { p.autoplay ? P.yt.loadVideoById(p.id) : P.yt.cueVideoById(p.id); } else if (p && p.autoplay) P.yt.playVideo(); layout(); },
+                onReady: () => {
+                  P.ytReady = true; const p = P.pending; layout();
+                  if (p && p.id !== first.id) { p.autoplay ? P.yt.loadVideoById(p.id) : P.yt.cueVideoById(p.id); }
+                  else if (p && p.autoplay) P.yt.playVideo();
+                  else {   // warm-up: start it silently behind the cover and stop at once, so pressing play is instant
+                    P.warm = true; try { P.yt.mute(); P.mutedByUs = true; P.yt.playVideo(); } catch { P.warm = false; }
+                  }
+                },
                 onStateChange: e => {
                   if (P.kind !== "yt") return;
-                  if (e.data === 1) { setPlaying(true); showPoster(false); problem(""); wrap.classList.remove("paused"); }
-                  else if (e.data === 2) { setPlaying(false); wrap.classList.add("paused"); }
-                  else if (e.data === 0 || e.data === 5 || e.data === -1) { setPlaying(false); showPoster(true); if (e.data === 0) opts.onEnded?.(); }
+                  if (e.data === 1 && !P.want) {   // the silent warm-up reached playing: stop it at the start, still hidden
+                    if (P.warm) { P.warm = false; P.yt.pauseVideo(); P.yt.seekTo(0, true); } else P.yt.pauseVideo();
+                    return;
+                  }
+                  if (e.data === 1) { try { if (P.yt.isMuted()) P.yt.unMute(); P.mutedByUs = false; } catch {} setPlaying(true); showPoster(false); problem(""); wrap.classList.remove("paused"); }
+                  else if (e.data === 2) { if (P.want && !P.warm) { P.want = false; setLoading(false); } if (!P.want) { setPlaying(false); if (!poster.hidden) return; wrap.classList.add("paused"); } }
+                  else if (e.data === 0) { P.want = false; setPlaying(false); showPoster(true); opts.onEnded?.(); }
+                  else if ((e.data === 5 || e.data === -1) && !P.want) { setPlaying(false); showPoster(true); }
                 },
-                onError: e => { problem(YT_ERR[e.data] || `YouTube couldn't play this video (error ${e.data}).`); opts.onError?.(); },
+                onError: e => { P.want = false; P.warm = false; setLoading(false); problem(YT_ERR[e.data] || `YouTube couldn't play this video (error ${e.data}).`); opts.onError?.(); },
               },
             });
           }).catch(() => { ytbox.innerHTML = `<div class="vload">YouTube didn't load. Check your connection and try again.</div>`; });
@@ -1405,7 +1431,9 @@ ol.steps a { color: var(--accent) }
     let mine = null; try { mine = localStorage.getItem(ADMIN_KEY); } catch {}
     admin = !!(adminCfg && mine === adminCfg.hash);
   });
-  Promise.all([songsP, mediaP, adminP]).then(() => { refreshAll(); if (wantLogin && !admin) openAdmin(false); routeHash(); loadBroadcasts().catch(() => {}); })
+  Promise.all([songsP, mediaP, adminP]).then(() => { refreshAll();
+    /* get YouTube's player ready before anyone presses play */ if ([...media.values()].some(m => m.yt)) loadYT().catch(() => {});
+    if (wantLogin && !admin) openAdmin(false); routeHash(); loadBroadcasts().catch(() => {}); })
     .catch(err => { listEl.innerHTML = `<div class="empty">The song list didn't load (${esc(String(err.message || err))}). Reload the page to try again.</div>`; $("count").textContent = ""; });
 })();
 </script>
