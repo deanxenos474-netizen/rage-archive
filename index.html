@@ -277,7 +277,7 @@ ol.steps a { color: var(--accent) }
     <div id="ctl-bc" hidden>
       <div class="row1">
         <label class="f" for="year">Year <select id="year"></select></label>
-        <label class="f" for="jump">Go to date <input type="date" id="jump" min="1998-01-01"></label>
+        <label class="f" for="jump">Go to date <input type="date" id="jump" min="1998-01-01" autocomplete="off"></label>
         <label class="search" for="bq">
           <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>
           <input id="bq" type="search" placeholder="Filter this year, e.g. Bowie, Hottest 100, Christmas" autocomplete="off" aria-label="Filter broadcasts by title or special">
@@ -358,8 +358,8 @@ ol.steps a { color: var(--accent) }
     </section>
     <section class="edit" id="d-edit" hidden aria-label="Video and cover">
       <h3>Video &amp; cover</h3>
-      <div class="line"><input type="url" id="f-link" placeholder="YouTube link (or a direct .mp4 link)" aria-label="Video link"></div>
-      <div class="line"><input type="url" id="f-cover" placeholder="Cover image link (leave empty to use the YouTube thumbnail)" aria-label="Cover image link"></div>
+      <div class="line"><input type="url" id="f-link" autocomplete="off" placeholder="YouTube link (or a direct .mp4 link)" aria-label="Video link"></div>
+      <div class="line"><input type="url" id="f-cover" autocomplete="off" placeholder="Cover image link (leave empty to use the YouTube thumbnail)" aria-label="Cover image link"></div>
       <label class="f" for="f-aspect" style="flex-wrap:wrap">Picture shape
         <select id="f-aspect">
           <option value="16:9">16:9 widescreen</option>
@@ -368,7 +368,7 @@ ol.steps a { color: var(--accent) }
           <option value="16:9-in-4:3">16:9 inside a 4:3 video (black bars top &amp; bottom)</option>
         </select>
       </label>
-      <label class="f" for="f-logo">rage logo appears at <input type="number" id="f-logo" min="0" max="600" step="0.1" value="8.2"> seconds</label>
+      <label class="f" for="f-logo">rage logo appears at <input type="number" id="f-logo" autocomplete="off" min="0" max="600" step="0.1" value="8.2"> seconds</label>
       <div class="actions"><button class="btn primary" id="ed-save">Save</button><button class="btn danger" id="ed-clear">Remove video &amp; cover</button></div>
       <p class="hint">Pick the shape that matches what you see, so the logo and caption sit inside the picture.</p>
     </section>
@@ -469,6 +469,10 @@ ol.steps a { color: var(--accent) }
   // admin: logged in with the admin password (only shows the edit tools; publishing still needs the GitHub token)
   let admin = false;
   const wantLogin = new URLSearchParams(location.search).has("edit");
+  // on refresh some browsers put typed text back into boxes, sometimes the wrong ones (the logo time "8.2" landing in search); start clean
+  const resetBoxes = () => document.querySelectorAll("input:not([type=checkbox]):not([type=radio])").forEach(i => { i.value = i.defaultValue; });
+  resetBoxes();
+  addEventListener("pageshow", e => { if (e.persisted) { resetBoxes(); if (S.length) apply(); } });
   const KINDS = { song: "", live: "live", clip: "clip", special: "special", other: "other" };   // type -> tag shown
   const isMisc = k => k === "clip" || k === "special" || k === "other";                          // "Interviews & clips" filter
   const tagHTML = k => KINDS[k] ? `<span class="tag ${k}">${KINDS[k]}</span>` : "";
