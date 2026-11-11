@@ -1146,10 +1146,11 @@ ol.steps a { color: var(--accent) }
       let t, st; try { t = P.yt.getCurrentTime() || 0; st = P.yt.getPlayerState(); } catch { return; }
       const moving = P.lastT != null && t > P.lastT + 0.03; P.lastT = t;
       if (st === 1 || st === 3) P.fresh = false;
+      if (st === 3) P.sawBuf = true;
       if (st === 1) {
         setAd(false);
         if (P.want && !wrap.classList.contains("playing")) { setPlaying(true); showPoster(false); problem(""); wrap.classList.remove("paused"); }
-      } else if (P.want && moving && st !== 2) setAd(true);
+      } else if (P.want && st !== 2 && (moving || st === -1 && P.sawBuf)) setAd(true);   // an ad: time moves, or (some ads) YouTube goes back to "not started" after loading
       if (st === 0 && P.want && !P.endFired && !P.fresh) { P.endFired = true; P.want = false; setAd(false); setPlaying(false); showPoster(true); opts.onEnded?.(); }
     }
     v.addEventListener("loadedmetadata", layout);
@@ -1183,7 +1184,7 @@ ol.steps a { color: var(--accent) }
       l1.textContent = (song.a || "").toUpperCase(); l2.textContent = song.t || ""; P.noArt = song.kind === "clip";
       img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0");
       setPlaying(false); setLoading(!!autoplay); showPoster(false); problem(""); wrap.classList.remove("paused"); wrap.classList.toggle("yt", !!P.m.yt);
-      P.want = !!autoplay; P.endFired = false; P.lastT = null; P.fresh = true; setAd(false);   // fresh: ignore "ended" until this video has started loading
+      P.want = !!autoplay; P.endFired = false; P.lastT = null; P.fresh = true; P.sawBuf = false; P.loadNo = (P.loadNo || 0) + 1; setAd(false);   // fresh: ignore "ended" until this video has started loading
       const vm = !P.m.yt && vmId(P.m.video);
       if (!vm) vmStop();
       if (P.m.yt) {
@@ -1271,8 +1272,15 @@ ol.steps a { color: var(--accent) }
                 onStateChange: e => {
                   if (P.kind !== "yt") return;
                   if (e.data === 1 || e.data === 3) P.fresh = false;
+                  if (e.data === 3) P.sawBuf = true;
                   if (e.data === 1) { setAd(false); try { if (P.yt.isMuted()) P.yt.unMute(); P.mutedByUs = false; } catch {} setPlaying(true); showPoster(false); problem(""); wrap.classList.remove("paused"); }
-                  else if (e.data === 2) { if (P.want) { P.want = false; setLoading(false); } if (!P.want) { setPlaying(false); if (!poster.hidden) return; wrap.classList.add("paused"); } }
+                  /* paused by YouTube itself. Loading the next video sends a stray "paused" for the old one: that isn't the
+                     viewer pausing, and taking it as one stopped ads being spotted (they ran hidden under the cover picture) */
+                  else if (e.data === 2) { if (P.fresh) return; const id = P.loadNo; setTimeout(() => {
+                    if (P.stop || P.kind !== "yt" || id !== P.loadNo) return;
+                    try { if (P.yt.getPlayerState() !== 2) return; } catch { return; }
+                    if (P.want) { P.want = false; setLoading(false); } setPlaying(false); if (!poster.hidden) return; wrap.classList.add("paused");
+                  }, 300); }
                   else if (e.data === 0) { if (P.endFired || P.fresh) return; P.endFired = true; P.want = false; setPlaying(false); showPoster(true); opts.onEnded?.(); }
                   else if ((e.data === 5 || e.data === -1) && !P.want) { setPlaying(false); showPoster(true); }
                 },
