@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-11T04:44:49.763Z",
+ "saved": "2026-11-11T04:47:36.378Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -558,6 +558,15 @@
    "title": "Summertime Clothes",
    "yt": "GxhaRgJUMl8",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/64/79/67/64796709-9482-2221-b1b7-64cdbe1b99f2/dj.fuppzyzi.jpg/3000x3000bb-100.jpg",
+   "logoAt": 7,
+   "verified": true
+  },
+  "be64a9c5c101": {
+   "artist": "Here We Go Magic",
+   "title": "Fangela",
+   "video": "https://vimeo.com/4946722?turnstile=1.mnveGjjIEjUL-vkfYfm99edgkslC0jxP8ccOIlpa892-5e7WJv3AzQ8LcIBZh-SJN9sXOJ-WbHpZHvr-uIHZ1vyFngMD6MRb5MEKaPaI6BiNs0afIIdsydQoN0LgIfJHorGplwEMQD6zFe8EAf4ojrdKD2Z-FajpkDNhryq4e9yLN5zh6nf8LENr9LYaq4vyIs50S82xi-QLPVJBSeAiSO6zbxUVh4QbVii8nd9Lq32W6DUh_qtOKzvNe_Xjd9K6ZV-BEroHsRNOWgQ6PG8D1y0sQywfmV5qFPMtxqBlWkVdIL0eNf8ItHgJVIuEs34-YMBFUTwHETjx4VtmxOBy6kmhMDsONL4aipRyDeiR9VA_ZWGuf1SAyc1FHmxgg5xqqboZayLcqqmfDmmHLXq7yYlmklsl9AVoyeS6GCuzRvDppTn0Thz2_VnLvFMxPs2Kp_U8WcUhU1HH7ArSJKNEhvKH2dGgGBcTyL3nmHqiO7kUokF3MHYtIY62cmJLtRcW-qBqonY10IyO7mAiVzBIewgKKJeEnpHwBYRriRs178rTNv4onxE6Ca6fytZcWm7qwVzhVAWh8OiRd3arEqMgQe5Hyv2mLPc2JY0rwN59-hcQaY6FoF9p0-d7ZhkyLm-Xw1UzTujSCAJBAre3-tUd0g.ZihnPEJxJ4aiGBTatw0RHg.6646f02dc0617cb30e219137c2f48b41f2719b0d286673fd0ceb639421f92501",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/3c/2b/33/3c2b338f-a192-0b75-dccc-d047b58f9e9a/mzi.mztsmjvl.jpg/900x900bb-100.jpg",
+   "aspect": "4:3",
    "logoAt": 7,
    "verified": true
   }
