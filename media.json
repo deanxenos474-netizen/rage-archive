@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-11T06:00:44.806Z",
+ "saved": "2026-11-11T06:04:11.171Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -612,6 +612,14 @@
    "aspect": "4:3-in-16:9",
    "logoAt": 7,
    "burned": true,
+   "verified": true
+  },
+  "2c6b010ea372": {
+   "artist": "Red Riders",
+   "title": "Ordinary",
+   "yt": "SkpgCzlxzMo",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/62/31/20/62312065-4fa9-9c49-dbfd-0ca6a81cff49/22UMGIM28804.rgb.jpg/1415x1400bb-100.jpg",
+   "logoAt": 7,
    "verified": true
   }
  },
