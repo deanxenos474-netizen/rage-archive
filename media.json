@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-11T07:43:16.360Z",
+ "saved": "2026-11-11T07:55:39.275Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -654,6 +654,24 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/71/45/df/7145df87-a85f-9307-e0b2-cced10a3f74e/00602577610516.rgb.jpg/3000x3000bb-100.jpg",
    "aspect": "4:3",
    "logoAt": 10,
+   "verified": true
+  },
+  "2da8f08845bc": {
+   "artist": "Gary Numan",
+   "title": "On Broadway",
+   "yt": "d38sofI3Z1c",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/6d/48/fd/6d48fdae-76f8-cb9b-62c6-51606741c7d5/607618001063.png/4000x4001bb-100.jpg",
+   "aspect": "4:3-in-16:9",
+   "logoAt": 7,
+   "verified": true
+  },
+  "4468cb0878c4": {
+   "artist": "XTC",
+   "title": "Statue Of Liberty",
+   "yt": "9_Zg_ZWfYkg",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music6/v4/29/ca/e5/29cae511-8e86-cf5a-2940-3b675e9d9c05/00724385069154.jpg/1417x1417bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 7,
    "verified": true
   }
  },
