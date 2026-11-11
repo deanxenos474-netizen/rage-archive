@@ -1,0 +1,1137 @@
+{
+ "note": "Corrections applied by tools/sitebuild.py on every rebuild (the stored playlist data is never changed). remove: wrongly dated copies; redate: real date (and corrected title) for a playlist ABC titled wrongly; add: full nights from the RageAgain archive missing from the site. Matched by date + page link + title.",
+ "remove": [
+  {
+   "date": "1999-01-02",
+   "url": "http://www.abc.net.au/rage/playlist/archive/2000/20000101.htm",
+   "title": "Saturday 1st January, 2000",
+   "why": "copy of the 1 Jan 2000 broadcast filed under 1999 (same page)"
+  },
+  {
+   "date": "2002-04-18",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-morning-18-april-2002-on-abc-1/12158496",
+   "title": "Saturday morning 18 April 2002 on ABC",
+   "why": "Ed O'Brien (EOB) guest program from April 2020; ABC typed 2002; songs from 2019"
+  },
+  {
+   "date": "2008-03-05",
+   "url": "http://www.abc.net.au/rage/archive/s2207968.htm",
+   "title": "Wednesday, 5 March",
+   "why": "copy of 5 Apr 2008 (Calvin Harris); 5 Mar 2008 was a Wednesday"
+  },
+  {
+   "date": "2010-07-05",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-morning-5th-july-2010-on/9650246",
+   "title": "Saturday morning 5th July 2010 on",
+   "why": "copy of 5 Jul 2014; songs released 2013-2014"
+  },
+  {
+   "date": "2011-12-29",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-morning-29th-december-2011-on/9649490",
+   "title": "Saturday morning 29th December 2011 on",
+   "why": "copy of 29 Dec 2012; all checked songs released 2012"
+  },
+  {
+   "date": "2012-01-28",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-morning-28th-january-2012-on-abc/9649448",
+   "title": "Saturday morning 28th January 2012 on ABC",
+   "why": "copy of 28 Jan 2017; songs released 2016-2017"
+  },
+  {
+   "date": "2012-02-27",
+   "url": "http://www.abc.net.au/rage/archive/s3555223.htm",
+   "title": "Friday night  Monday, 27 February",
+   "why": "copy of 27 Jul 2012 (old-site page from July 2012)"
+  },
+  {
+   "date": "2012-12-13",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-morning-13th-december-2012-on/9648976",
+   "title": "Saturday morning 13th December 2012 on",
+   "why": "copy of 13 Dec 2014; songs released 2014-2015"
+  },
+  {
+   "date": "2013-01-03",
+   "url": "https://www.abc.net.au/rage/playlist/friday-night-3rd-january-2013-on/9648942",
+   "title": "Friday night 3rd January 2013 on",
+   "why": "copy of 3 Jan 2014; 3 Jan 2013 was a Thursday"
+  },
+  {
+   "date": "2013-01-04",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-night-4th-january-2013-on/9648936",
+   "title": "Saturday night 4th January 2013 on",
+   "why": "copy of 4 Jan 2014; 4 Jan 2013 was a Friday"
+  },
+  {
+   "date": "2013-02-02",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-night-2nd-february-2013-on/9648892",
+   "title": "Saturday night 2nd February 2013 on",
+   "why": "copy of 1 Feb 2014 (Spiderbait); song released 2014"
+  },
+  {
+   "date": "2013-02-21",
+   "url": "https://www.abc.net.au/rage/playlist/friday-night-21st-february-2013-on/9648862",
+   "title": "Friday night 21st February 2013 on",
+   "why": "copy of 21 Feb 2014; songs released 2014"
+  },
+  {
+   "date": "2014-01-03",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-night-3rd-january-2014-on/9648270",
+   "title": "Saturday night 3rd January 2014 on",
+   "why": "copy of 3 Jan 2015 (Retro Month); song released 2015"
+  },
+  {
+   "date": "2014-01-20",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-night-20th-january-2014-on-abc/9648244",
+   "title": "Saturday night 20th January 2014 on ABC",
+   "why": "copy of 20 Jan 2017 (Retro Month); songs released 2016"
+  },
+  {
+   "date": "2015-06-01",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-morning-1st-june-2015-on-abc/9647178",
+   "title": "Saturday morning 1st June 2015 on ABC",
+   "why": "copy of 18 Jun 2016; songs released 2016"
+  },
+  {
+   "date": "2015-08-02",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-night-2nd-august-2015-on-abc/9647082",
+   "title": "Saturday night 2nd August 2015 on ABC",
+   "why": "copy of 18 Jun 2016; 2 Aug 2015 was a Sunday"
+  },
+  {
+   "date": "2016-07-06",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-night-6th-july-2016-on-abc/9646380",
+   "title": "Saturday night 6th July 2016 on ABC",
+   "why": "copy of 6 Aug 2016 (Gypsy and the Cat); 6 Jul 2016 was a Wednesday"
+  },
+  {
+   "date": "2016-09-01",
+   "url": "https://www.abc.net.au/rage/playlist/friday-night-1st-september-2016-on-abc/9646272",
+   "title": "Friday night 1st September 2016 on ABC",
+   "why": "copy of 30 Sep 2016; 1 Sep 2016 was a Thursday"
+  },
+  {
+   "date": "2017-01-04",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-night-4th-january-2017-on-abc/9645886",
+   "title": "Saturday night 4th January 2017 on ABC",
+   "why": "copy of 4 Feb 2017 (Dune Rats); 4 Jan 2017 was a Wednesday"
+  },
+  {
+   "date": "2018-07-06",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-night-28-july-2018-on-abc/10061918",
+   "title": "Saturday night 28 July 2018 on ABC",
+   "why": "copy of 28 Jul 2018 (Splendour); same page"
+  },
+  {
+   "date": "2019-07-30",
+   "url": "https://www.abc.net.au/rage/playlist/sunday-morning-30-july-2019-on-abc/11261728",
+   "title": "Sunday morning 30 July 2019 on ABC",
+   "why": "the 30 June 2019 broadcast filed under July; same page as the June copy"
+  },
+  {
+   "date": "2019-12-05",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-morning-5-december-2019-on-abc/10685680",
+   "title": "Saturday morning 5 December 2019 on ABC",
+   "why": "the 5 January 2019 broadcast (SKEGSS) filed under December; same page"
+  },
+  {
+   "date": "2019-12-28",
+   "url": "https://www.abc.net.au/rage/playlist/monday-night-28-december-2019-on-abc-me/10751460",
+   "title": "Monday night 28 December 2019 on ABC ME",
+   "why": "the 28 January 2019 broadcast filed under December; same page"
+  },
+  {
+   "date": "2020-01-18",
+   "url": "https://www.abc.net.au/rage/playlist/monday-night-18-january-2020-on-abc-1/13066698",
+   "title": "Monday night 18 January 2020 on ABC 1",
+   "why": "the 18 Jan 2021 broadcast filed under 2020; same page"
+  },
+  {
+   "date": "2020-01-29",
+   "url": "https://www.abc.net.au/rage/playlist/friday-night-29-january-2020-on-abc-1/13103218",
+   "title": "Friday night 29 January 2020 on ABC 1",
+   "why": "Hottest 100 of 2020 weekend (Jan 2021); songs released Mar-Nov 2020"
+  },
+  {
+   "date": "2020-01-30",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-morning-30-january-2020-on-abc-1/13103252",
+   "title": "Saturday morning 30 January 2020 on ABC 1",
+   "why": "the 30 Jan 2021 broadcast filed under 2020; songs released 2021"
+  },
+  {
+   "date": "2020-01-30",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-night-30-january-2020-on-abc-1/13103318",
+   "title": "Saturday night 30 January 2020 on ABC 1",
+   "why": "the 30 Jan 2021 broadcast filed under 2020; same page"
+  },
+  {
+   "date": "2020-01-31",
+   "url": "https://www.abc.net.au/rage/playlist/sunday-night-31-january-2020-on-abc-1/13103364",
+   "title": "Sunday night 31 January 2020 on ABC 1",
+   "why": "the 31 Jan 2021 broadcast filed under 2020; songs released 2021"
+  },
+  {
+   "date": "2022-03-16",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-night-16-march-2022-on-abc-tv/13813232",
+   "title": "Saturday night 26 March 2022 on ABC TV",
+   "why": "copy of 26 Mar 2022 (Dave Faulkner); its own title says 26 March"
+  }
+ ],
+ "redate": [
+  {
+   "date": "2019-01-04",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-morning-5-december-2019-on-abc/10685680",
+   "title": "Saturday morning 5 December 2019 on ABC",
+   "to": "2019-01-05",
+   "why": "Saturday morning 5 January 2019 (ABC title says December)",
+   "to_title": "Saturday morning 5 January 2019 on ABC"
+  },
+  {
+   "date": "2019-01-25",
+   "url": "https://www.abc.net.au/rage/playlist/monday-night-28-december-2019-on-abc-me/10751460",
+   "title": "Monday night 28 December 2019 on ABC ME",
+   "to": "2019-01-28",
+   "why": "Monday night 28 January 2019 (ABC title says December)",
+   "to_title": "Monday night 28 January 2019 on ABC ME"
+  },
+  {
+   "date": "2019-06-28",
+   "url": "https://www.abc.net.au/rage/playlist/sunday-morning-30-july-2019-on-abc/11261728",
+   "title": "Sunday morning 30 July 2019 on ABC",
+   "to": "2019-06-30",
+   "why": "Sunday morning 30 June 2019 (ABC title says July)",
+   "to_title": "Sunday morning 30 June 2019 on ABC"
+  },
+  {
+   "date": "2020-04-17",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-morning-18-april-2002-on-abc-1/12158496",
+   "title": "Saturday morning 18 April 2002 on ABC 1",
+   "to": "2020-04-18",
+   "why": "Saturday morning 18 April 2020 (ABC title says 2002)",
+   "to_title": "Saturday morning 18 April 2020 on ABC 1"
+  }
+ ],
+ "add": [
+  {
+   "date": "2013-02-01",
+   "title": "Friday night  Friday, 1 February",
+   "url": "http://www.abc.net.au/rage/archive/s3681197.htm",
+   "src": "ra",
+   "abc_id": null,
+   "sp": null,
+   "rows": [
+    [
+     "FIDLAR",
+     "Cheep Beer",
+     ""
+    ],
+    [
+     "BIRDS OF TOKYO",
+     "Lanterns",
+     ""
+    ],
+    [
+     "TAME IMPALA",
+     "Mind Mischief",
+     ""
+    ],
+    [
+     "NANTES",
+     "Drones",
+     ""
+    ],
+    [
+     "NERVO and HOOK N SLING",
+     "Reason",
+     ""
+    ],
+    [
+     "AVICII vs NICKY ROMERO",
+     "I Could Be The One",
+     ""
+    ],
+    [
+     "SANTIGOLD",
+     "Girls",
+     ""
+    ],
+    [
+     "STEVE AOKI featuring LIL JOHN and CHIDDY BANG",
+     "Emergency",
+     ""
+    ],
+    [
+     "SKYLAR GREY featuring EMINEM",
+     "C'mon Let Me Ride",
+     ""
+    ],
+    [
+     "COURTNEY BARNETT",
+     "History Eraser",
+     ""
+    ],
+    [
+     "SETH SENTRY",
+     "Dear Science",
+     ""
+    ],
+    [
+     "ALLDAY X C 1",
+     "So Good",
+     ""
+    ],
+    [
+     "DIZZEE RASCAL",
+     "Bassline Junkie (Dirtee)",
+     ""
+    ],
+    [
+     "BINGO PLAYERS featuring FAR EAST MOVEMENT",
+     "Get Up (Rattle)",
+     ""
+    ],
+    [
+     "FUTURE LOVE HANGOVER",
+     "Sunlight",
+     ""
+    ],
+    [
+     "CLUBFEET",
+     "Everything You Wanted",
+     ""
+    ],
+    [
+     "TODD TERJE",
+     "Inspector Norse",
+     ""
+    ],
+    [
+     "HUNGRY KIDS OF HUNGARY",
+     "Twin Cities",
+     ""
+    ],
+    [
+     "SONS OF RICO",
+     "You Don't Know What You're Missin'",
+     ""
+    ],
+    [
+     "THE LAURELS",
+     "Manic Saturday",
+     ""
+    ],
+    [
+     "ROYAL HEADACHE",
+     "Girls",
+     ""
+    ],
+    [
+     "DEAP VALLY",
+     "Lies",
+     ""
+    ],
+    [
+     "MILO GREENE",
+     "1957",
+     ""
+    ],
+    [
+     "ELECTRIC GUEST",
+     "Bait",
+     ""
+    ],
+    [
+     "CALVIN HARRIS featuring TINIE TEMPAH",
+     "Drinking From The Bottle",
+     ""
+    ],
+    [
+     "A$AP ROCKY",
+     "F**kin' Problems",
+     ""
+    ],
+    [
+     "MAJOR LAZER featuring AMBER COFFMAN",
+     "Get Free",
+     ""
+    ],
+    [
+     "FLIGHT FACILITIES ft. CHRISTINE HOBERG",
+     "Clair De Lune",
+     ""
+    ],
+    [
+     "NICK CAVE and THE BAD SEEDS",
+     "We No Who U R",
+     ""
+    ],
+    [
+     "DIVINE FITS",
+     "My Love Is Real",
+     ""
+    ],
+    [
+     "I AM KLOOT",
+     "Hold Back The Night",
+     ""
+    ],
+    [
+     "DAVID BOWIE",
+     "Where Are We Now?",
+     ""
+    ],
+    [
+     "SARAH BLASKO",
+     "God Fearing",
+     ""
+    ],
+    [
+     "BAT FOR LASHES",
+     "A Wall",
+     ""
+    ],
+    [
+     "FRIGHTENED RABBIT",
+     "The Woodpile",
+     ""
+    ],
+    [
+     "TENSNAKE featuring SYRON",
+     "Mainline",
+     ""
+    ],
+    [
+     "HAIM",
+     "Don't Save Me",
+     ""
+    ],
+    [
+     "ASTA",
+     "My Heart Is On Fire",
+     ""
+    ],
+    [
+     "TORO Y MOI",
+     "So Many Details",
+     ""
+    ],
+    [
+     "PEAKING LIGHTS",
+     "Beautiful Son",
+     ""
+    ],
+    [
+     "STRANGE TALK",
+     "Falling In Love",
+     ""
+    ],
+    [
+     "CHAIRLIFT",
+     "I Belong In Your Arms (Japanese Version)",
+     ""
+    ],
+    [
+     "KAVINSKY",
+     "ProtoVision",
+     ""
+    ],
+    [
+     "STEREOLOVE featuring TINA CROSS",
+     "I Wish That",
+     ""
+    ],
+    [
+     "HOW TO DESTROY ANGELS",
+     "The Loop Closes",
+     ""
+    ],
+    [
+     "HOLY BALM",
+     "Losing Control",
+     ""
+    ],
+    [
+     "PURITY RING",
+     "Lofticries",
+     ""
+    ],
+    [
+     "TEXTURE LIKE SUN",
+     "One Great Prize",
+     ""
+    ],
+    [
+     "JONATHAN WILSON",
+     "Desert Raven",
+     ""
+    ],
+    [
+     "HIGH HIGHS",
+     "Once Around The House",
+     ""
+    ],
+    [
+     "CAPITOL",
+     "Let You Down",
+     ""
+    ],
+    [
+     "BORED NOTHING",
+     "Bliss",
+     ""
+    ],
+    [
+     "KINGSWOOD",
+     "She's My Baby",
+     ""
+    ],
+    [
+     "SMITH STREET BAND",
+     "Young Drunk",
+     ""
+    ],
+    [
+     "SINCERELY, GRIZZLY",
+     "Isaac",
+     ""
+    ],
+    [
+     "THE JON SPENCER BLUES EXPLOSION",
+     "Bag Of Bones",
+     ""
+    ],
+    [
+     "GUARDS",
+     "Silver Lining",
+     ""
+    ],
+    [
+     "ESBEN AND THE WITCH",
+     "Deathwaltz",
+     ""
+    ],
+    [
+     "STEVE MASON",
+     "Fight Them Back",
+     ""
+    ],
+    [
+     "BULLET FOR MY VALENTINE",
+     "Riot",
+     ""
+    ],
+    [
+     "OFF!",
+     "Wrong",
+     ""
+    ],
+    [
+     "MUNICIPAL WASTE",
+     "You're Cut Off",
+     ""
+    ],
+    [
+     "BRING ME THE HORIZON",
+     "Shadow Moses",
+     ""
+    ],
+    [
+     "GRAVEYARD",
+     "Endless Night",
+     ""
+    ],
+    [
+     "BLACKCHORDS",
+     "Oh No",
+     ""
+    ],
+    [
+     "MAMMOTH MAMMOTH",
+     "Go",
+     ""
+    ],
+    [
+     "KREATOR",
+     "Civilization Collapse",
+     ""
+    ],
+    [
+     "DESTRUCTION",
+     "Carnivore",
+     ""
+    ],
+    [
+     "BURIED IN VERONA",
+     "Forget What You Know",
+     ""
+    ],
+    [
+     "KING PARROT",
+     "Shit On The Liver",
+     ""
+    ],
+    [
+     "DEAD RECKONER",
+     "Head Down",
+     ""
+    ],
+    [
+     "NEKROGOBLIKON",
+     "No One Survives",
+     ""
+    ],
+    [
+     "INCRYPT",
+     "No Regrets",
+     ""
+    ],
+    [
+     "CUT",
+     "Chainsaws",
+     ""
+    ],
+    [
+     "ALICE IN CHAINS",
+     "Hollow",
+     ""
+    ],
+    [
+     "THE HALLS",
+     "Dancing On Your Grave",
+     ""
+    ],
+    [
+     "ROBERT DE LONG",
+     "Global Concepts",
+     ""
+    ],
+    [
+     "TOUCAN",
+     "Warrior",
+     ""
+    ],
+    [
+     "GRETA GERTLER and THE UNIVERSAL THUMP",
+     "Darkened Sky",
+     ""
+    ],
+    [
+     "VENUS FIRE",
+     "Ooh La La",
+     ""
+    ],
+    [
+     "BELLA FERRARO",
+     "Set Me On Fire",
+     ""
+    ],
+    [
+     "MACKLEMORE & RYAN LEWIS featuring WANZ",
+     "Thrift Shop",
+     ""
+    ],
+    [
+     "THE RUBENS",
+     "The Best We Got",
+     ""
+    ],
+    [
+     "TAYLOR SWIFT",
+     "I Knew You Were Trouble",
+     ""
+    ],
+    [
+     "ED SHEERAN",
+     "Give Me Love",
+     ""
+    ],
+    [
+     "DAVID GUETTA featuring TAPED RAI",
+     "Just One Last Time",
+     ""
+    ],
+    [
+     "WILL.I.AM featuring BRITNEY SPEARS",
+     "Scream And Shout",
+     ""
+    ],
+    [
+     "NE-YO",
+     "Forever Now",
+     ""
+    ],
+    [
+     "RUDIMENTAL featuring JOHN NEWMAN and ALEX CLARE",
+     "Not Giving In",
+     ""
+    ],
+    [
+     "ICONA POP",
+     "I Love It",
+     ""
+    ],
+    [
+     "OTTO KNOWS",
+     "Million Voices",
+     ""
+    ],
+    [
+     "DAVID GUETTA featuring SIA",
+     "She Wolf (Falling To Pieces)",
+     ""
+    ],
+    [
+     "NEON TREES",
+     "Everybody Talks",
+     ""
+    ],
+    [
+     "FLORENCE AND THE MACHINE",
+     "Lover To Lover",
+     ""
+    ],
+    [
+     "KE$HA",
+     "C'mon",
+     ""
+    ]
+   ],
+   "why": "full Friday night missing from the site (RageAgain archive)"
+  },
+  {
+   "date": "2018-05-18",
+   "title": "Friday Night 18 May 2018 on ABC",
+   "url": "https://www.abc.net.au/rage/playlist/test-friday-night-playlist-17-may-2018-on-abc/9771750",
+   "src": "ra",
+   "abc_id": null,
+   "sp": null,
+   "rows": [
+    [
+     "FRIGHTENED RABBIT",
+     "The Woodpile",
+     "Warner"
+    ],
+    [
+     "FRIGHTENED RABBIT",
+     "Holy",
+     "Warner"
+    ],
+    [
+     "FRIGHTENED RABBIT",
+     "Nothing Like You",
+     "Inertia"
+    ],
+    [
+     "PNAU",
+     "Changa",
+     "Etc Etc"
+    ],
+    [
+     "KATAKLYSM",
+     "Narcissist",
+     "Nuclear Blast"
+    ],
+    [
+     "GRAVEYARD",
+     "The Fox",
+     "Nuclear Blast"
+    ],
+    [
+     "SPRING KING",
+     "Animal",
+     "Dew Process"
+    ],
+    [
+     "ORLEAN",
+     "Horizons",
+     "Hotel Motel / Inertia"
+    ],
+    [
+     "SERPENTWITHFEET",
+     "Cherubim",
+     "Secretly Canadian"
+    ],
+    [
+     "SPEEDY ORTIZ",
+     "Villain",
+     "Carpark Records"
+    ],
+    [
+     "JESS WILLIAMSON",
+     "Wild Rain",
+     "Mexican Summer"
+    ],
+    [
+     "THE PRESETS",
+     "Downtown Shutdown",
+     "Universal"
+    ],
+    [
+     "SHALLOU ft. RIAH",
+     "Lie",
+     "Sweat It Out"
+    ],
+    [
+     "SAM SMITH ft. LOGIC",
+     "Pray",
+     "Universal"
+    ],
+    [
+     "FLORENCE AND THE MACHINE",
+     "Hunger",
+     "Universal"
+    ],
+    [
+     "TOTALLY MILD",
+     "Take Today",
+     "Chapter Music"
+    ],
+    [
+     "PRINCESS NOKIA",
+     "For The Night",
+     "Remote Control"
+    ],
+    [
+     "JUNGLE",
+     "Happy Man",
+     "Remote Control"
+    ],
+    [
+     "DAN SULTAN ft. CAMP COPE",
+     "Killer",
+     "Liberation"
+    ],
+    [
+     "RUBENS, THE ft. SARAH",
+     "Never Ever",
+     "Ivy League"
+    ],
+    [
+     "CITY CALM DOWN",
+     "Pride",
+     "I OH YOU"
+    ],
+    [
+     "DZ DEATHRAYS",
+     "Guillotine",
+     "I OH YOU"
+    ],
+    [
+     "OSCAR KEY SUNG",
+     "Simple Luv",
+     "Good Manners"
+    ],
+    [
+     "ARCTIC MONKEYS",
+     "Four Out Of Five",
+     "Universal"
+    ],
+    [
+     "PHANTASTIC FERNITURE",
+     "Fuckin 'N' Rollin",
+     "Universal"
+    ],
+    [
+     "HATCHIE",
+     "Sleep",
+     "Ivy League"
+    ],
+    [
+     "FATHER JOHN MISTY",
+     "Mr. Tillman",
+     "Sub Pop"
+    ],
+    [
+     "PARQUET COURTS",
+     "Mardi Gras Beads",
+     "Rough Trade"
+    ],
+    [
+     "RAAVE TAPES",
+     "Suds",
+     "Independent"
+    ],
+    [
+     "EAST BRUNSWICK ALL GIRLS CHOIR",
+     "Essendon 1986",
+     "Milk! Records"
+    ],
+    [
+     "JACK LADDER and THE DREAMLANDERS",
+     "Susan",
+     "Barely Dressed"
+    ],
+    [
+     "TOTTY",
+     "Uncomfortable",
+     "Ratbag Records"
+    ],
+    [
+     "CHANNEL TRES",
+     "Controller",
+     "Independent"
+    ],
+    [
+     "BILLIE EILISH ft. KHALID",
+     "Lovely",
+     "Universal"
+    ],
+    [
+     "JANELLE MONAE",
+     "Pynk",
+     "Warner"
+    ],
+    [
+     "CHILDISH GAMBINO",
+     "This Is America",
+     "Wolf and Rothsten / Liberator Music"
+    ],
+    [
+     "SZA ft. KENDRICK LAMAR",
+     "Doves In The Wind",
+     "Sony"
+    ],
+    [
+     "SAMPA THE GREAT",
+     "Black Girl Magik",
+     "Independent"
+    ],
+    [
+     "NICKI MINAJ",
+     "Barbie Tingz",
+     "Universal"
+    ],
+    [
+     "NICKI MINAJ",
+     "Chun-Li",
+     "Universal"
+    ],
+    [
+     "RAE SREMMURD ft. TRAVIS SCOTT",
+     "Close",
+     "Universal"
+    ],
+    [
+     "FLORENCE and THE MACHINE",
+     "Sky Full Of Song",
+     "Universal"
+    ],
+    [
+     "ROADHOUSES",
+     "Black Lights",
+     "Independent"
+    ],
+    [
+     "ALMOND SOY",
+     "ICBTO",
+     "Independent"
+    ],
+    [
+     "DAN SULTAN ft. MEG MAC",
+     "Reaction",
+     "Liberation"
+    ],
+    [
+     "BAD SOUNDS",
+     "Evil Powers",
+     "Sony"
+    ],
+    [
+     "COSMO'S MIDNIGHT ft. WINSTON SURFSHIRT",
+     "Get To Know",
+     "Sony"
+    ],
+    [
+     "LAST DINOSAURS",
+     "Dominos",
+     "Dew Process"
+    ],
+    [
+     "PARCELS",
+     "Tieduprightnow",
+     "Kitsune Records"
+    ],
+    [
+     "BORNEO",
+     "Jesse",
+     "Habit Music"
+    ],
+    [
+     "PATCHES PARADISE",
+     "Fever",
+     "White Label"
+    ],
+    [
+     "JOHNNY MARR",
+     "The Tracers",
+     "Warner"
+    ],
+    [
+     "LANKS",
+     "twentyseven",
+     "Independent"
+    ],
+    [
+     "DREAMS",
+     "Silence",
+     "Universal"
+    ],
+    [
+     "DUKE DUMONT _and_ EBENEZER",
+     "Inhale",
+     "Etc Etc"
+    ],
+    [
+     "CHVRCHES",
+     "Miracle",
+     "Liberator / Goodbye Music"
+    ],
+    [
+     "CALVIN HARRIS and DUA LIPA",
+     "One Kiss",
+     "Sony"
+    ],
+    [
+     "LSD",
+     "Genius",
+     "Sony"
+    ],
+    [
+     "CHILDREN OF ZEUS",
+     "Slow Down/All Night",
+     "Independent"
+    ],
+    [
+     "PARKWAY DRIVE",
+     "Prey",
+     "Resist Records"
+    ],
+    [
+     "BURY TOMORROW",
+     "Black Flame",
+     "Music For Nations"
+    ],
+    [
+     "TERRORBRAWL",
+     "Who Stole My Pouch?",
+     "Independent"
+    ],
+    [
+     "GHOST",
+     "Rats",
+     "Loma Vista"
+    ],
+    [
+     "DEAFHEAVEN",
+     "Honeycomb",
+     "ANTI"
+    ],
+    [
+     "CONFORM",
+     "Blood Eagle",
+     "Independent"
+    ],
+    [
+     "HAMMERS",
+     "Speak Of The Devil",
+     "Independent"
+    ],
+    [
+     "REMI",
+     "My People",
+     "House Of Beige"
+    ],
+    [
+     "DRAKE",
+     "Nice For What",
+     "Universal"
+    ],
+    [
+     "J COLE",
+     "ATM",
+     "Universal"
+    ],
+    [
+     "DAN SULTAN ft. MEG MAC",
+     "Reaction",
+     "Liberation"
+    ],
+    [
+     "SAMPA THE GREAT",
+     "Black Girl Magik",
+     "Independent"
+    ],
+    [
+     "MIDDLE KIDS",
+     "On My Knees",
+     "Sony"
+    ],
+    [
+     "EAST BRUNSWICK ALL GIRLS CHOIR",
+     "Essendon 1986",
+     "Milk! Records"
+    ],
+    [
+     "PARQUET COURTS",
+     "Mardi Gras Beads",
+     "Rough Trade"
+    ],
+    [
+     "JACK LADDER and THE DREAMLANDERS",
+     "Susan",
+     "Barely Dressed"
+    ],
+    [
+     "LSD",
+     "Genius",
+     "Sony"
+    ],
+    [
+     "NICOLE MILLAR",
+     "Gimme A Break",
+     "EMI"
+    ],
+    [
+     "REMI",
+     "My People",
+     "House Of Beige"
+    ],
+    [
+     "COSMO'S MIDNIGHT ft. WINSTON SURFSHIRT",
+     "Get To Know",
+     "Sony"
+    ],
+    [
+     "ILUKA",
+     "Ritual",
+     "Independent"
+    ],
+    [
+     "MANSIONAIR",
+     "Violet City",
+     "Liberation"
+    ],
+    [
+     "MELODY'S ECHO CHAMBER",
+     "Breathe In, Breathe Out",
+     "Pod / Inertia"
+    ],
+    [
+     "ALMOND SOY",
+     "ICBTO",
+     "Independent"
+    ],
+    [
+     "AURORA",
+     "Queendom",
+     "Liberator / Glassnote Records"
+    ],
+    [
+     "ONEOHTRIX POINT NEVER",
+     "Black Snow",
+     "Warp"
+    ]
+   ],
+   "why": "full Friday night missing from the site (RageAgain archive)"
+  }
+ ]
+}

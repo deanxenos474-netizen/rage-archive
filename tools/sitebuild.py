@@ -72,9 +72,41 @@ def save(d):
         fh.write(gzip.compress(raw, mtime=0))
 
 
+CORRECTIONS = os.path.join(ROOT, "data", "corrections.json")
+
+
+def corrected(playlists):
+    """Apply data/corrections.json: drop wrongly dated copies, move playlists to their real date, add missing ones.
+    Entries are matched by date + page link + title; the stored data file itself is never changed."""
+    try:
+        with open(CORRECTIONS, encoding="utf-8") as fh:
+            c = json.load(fh)
+    except FileNotFoundError:
+        return playlists
+    key = lambda e: (e["date"], e.get("url") or "", e.get("title") or "")
+    drop = {key(e) for e in c.get("remove", [])}
+    move = {key(e): e for e in c.get("redate", [])}
+    out, used = [], set()
+    for p in playlists:
+        k = key(p)
+        if k in drop:
+            used.add(k); continue
+        if k in move:
+            used.add(k); p = dict(p, date=move[k]["to"], title=move[k].get("to_title") or p.get("title"))
+        out.append(p)
+    for k in (drop | set(move)) - used:
+        print("corrections.json: no playlist matched", k)
+    have = {key(p) for p in out}
+    for e in c.get("add", []):
+        p = {f: e.get(f) for f in ("date", "title", "url", "src", "abc_id", "sp", "rows")}
+        if key(p) not in have:
+            out.append(p)
+    return out
+
+
 def build(d, out_dir=ROOT):
     today = today_au()
-    pls = sorted([p for p in d["playlists"] if p["date"] <= today], key=lambda p: (p["date"], p.get("url") or ""))
+    pls = sorted([p for p in corrected(d["playlists"]) if p["date"] <= today], key=lambda p: (p["date"], p.get("url") or ""))
     plays, play_page = [], []
     for pi, p in enumerate(pls):
         for r in p["rows"]:
