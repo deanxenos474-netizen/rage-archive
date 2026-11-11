@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-11T12:59:54.137Z",
+ "saved": "2026-11-11T13:02:48.195Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -192,7 +192,7 @@
    "title": "Eaten Alive",
    "yt": "SjhRAZStS9M",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music3/v4/62/98/51/62985110-c17c-d4d6-be80-91a5a421f404/886445099515.jpg/1425x1416bb-100.jpg",
-   "logoAt": 7,
+   "logoAt": 10,
    "verified": true
   },
   "d58cc1f47f89": {
@@ -419,7 +419,7 @@
    "yt": "AWRWn9QXzHk",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Features124/v4/88/0e/c7/880ec7fa-a044-f02d-95b6-9567b4be8eb9/dj.jdlrmrsu.jpg/600x600bb-100.jpg",
    "aspect": "4:3-in-16:9",
-   "logoAt": 7,
+   "logoAt": 10,
    "verified": true
   },
   "5671f59f8329": {
@@ -463,7 +463,7 @@
    "yt": "UIt3dx4an9c",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/dd/1e/32/dd1e3206-7f59-6744-c461-d29e723a9961/074645275826.jpg/3713x3713bb-100.jpg",
    "aspect": "4:3",
-   "logoAt": 7
+   "logoAt": 10
   },
   "9a53ae0d9323": {
    "artist": "Weird Al Yankovic",
@@ -488,7 +488,7 @@
    "title": "Beat It",
    "yt": "sk8Pb17pcQI",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/8b/11/7c/8b117c71-5fc3-4f2d-37f2-061970cbf418/00602517643352.rgb.jpg/900x893bb-100.jpg",
-   "logoAt": 7,
+   "logoAt": 10,
    "verified": true
   },
   "354deb6bb5e9": {
@@ -496,7 +496,7 @@
    "title": "Smooth Criminal",
    "yt": "CDl9ZMfj6aE",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/30/26/6b/30266b6b-7fb8-6261-5232-d989b3a5d7b9/26UMGIM78349.rgb.jpg/3000x3000bb-100.jpg",
-   "logoAt": 7,
+   "logoAt": 10,
    "verified": true
   },
   "4b61e1bccc60": {
@@ -512,7 +512,8 @@
    "title": "Hold the Line",
    "yt": "558F1EaxH8c",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/78/69/4d/78694d4b-e171-2543-fddd-ab6ac032085f/1842.jpg/2969x3000bb-100.jpg",
-   "logoAt": 7,
+   "logoAt": 10,
+   "burned": true,
    "verified": true
   },
   "6f4d827aa958": {
@@ -538,7 +539,7 @@
    "yt": "Z5TtSrBN0Yg",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music2/v4/c0/88/89/c088894d-a54d-6367-a7e1-3b063d273a5e/859714375436_cover.jpg/1600x1600bb-100.jpg",
    "aspect": "2.20:1",
-   "logoAt": 7,
+   "logoAt": 10,
    "verified": true
   },
   "f1c0a5ba6f5a": {
@@ -547,7 +548,7 @@
    "yt": "EFxUJ9A4HRk",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/c6/a0/a7/c6a0a719-cbaa-abb9-82cf-aaab6d7626cb/00602527111988.rgb.jpg/1417x1417bb-100.jpg",
    "aspect": "2.20:1",
-   "logoAt": 7,
+   "logoAt": 10,
    "verified": true
   },
   "c4be39761d7b": {
@@ -563,7 +564,7 @@
    "title": "Summertime Clothes",
    "yt": "GxhaRgJUMl8",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/64/79/67/64796709-9482-2221-b1b7-64cdbe1b99f2/dj.fuppzyzi.jpg/3000x3000bb-100.jpg",
-   "logoAt": 7,
+   "logoAt": 10,
    "verified": true
   },
   "be64a9c5c101": {
@@ -572,7 +573,7 @@
    "video": "https://vimeo.com/4946722?turnstile=1.mnveGjjIEjUL-vkfYfm99edgkslC0jxP8ccOIlpa892-5e7WJv3AzQ8LcIBZh-SJN9sXOJ-WbHpZHvr-uIHZ1vyFngMD6MRb5MEKaPaI6BiNs0afIIdsydQoN0LgIfJHorGplwEMQD6zFe8EAf4ojrdKD2Z-FajpkDNhryq4e9yLN5zh6nf8LENr9LYaq4vyIs50S82xi-QLPVJBSeAiSO6zbxUVh4QbVii8nd9Lq32W6DUh_qtOKzvNe_Xjd9K6ZV-BEroHsRNOWgQ6PG8D1y0sQywfmV5qFPMtxqBlWkVdIL0eNf8ItHgJVIuEs34-YMBFUTwHETjx4VtmxOBy6kmhMDsONL4aipRyDeiR9VA_ZWGuf1SAyc1FHmxgg5xqqboZayLcqqmfDmmHLXq7yYlmklsl9AVoyeS6GCuzRvDppTn0Thz2_VnLvFMxPs2Kp_U8WcUhU1HH7ArSJKNEhvKH2dGgGBcTyL3nmHqiO7kUokF3MHYtIY62cmJLtRcW-qBqonY10IyO7mAiVzBIewgKKJeEnpHwBYRriRs178rTNv4onxE6Ca6fytZcWm7qwVzhVAWh8OiRd3arEqMgQe5Hyv2mLPc2JY0rwN59-hcQaY6FoF9p0-d7ZhkyLm-Xw1UzTujSCAJBAre3-tUd0g.ZihnPEJxJ4aiGBTatw0RHg.6646f02dc0617cb30e219137c2f48b41f2719b0d286673fd0ceb639421f92501",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/3c/2b/33/3c2b338f-a192-0b75-dccc-d047b58f9e9a/mzi.mztsmjvl.jpg/900x900bb-100.jpg",
    "aspect": "4:3",
-   "logoAt": 7,
+   "logoAt": 10,
    "verified": true
   },
   "4ee2628bdb02": {
@@ -589,7 +590,7 @@
    "title": "22",
    "yt": "tWjNFC-FinU",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Features125/v4/82/e3/db/82e3db05-46ca-dfc4-73e1-bf4e123ffe07/dj.zinxcldv.jpg/1429x1429bb-100.jpg",
-   "logoAt": 7,
+   "logoAt": 10,
    "verified": true
   },
   "c1042327bac9": {
@@ -597,7 +598,7 @@
    "title": "Two Weeks",
    "yt": "tjecYugTbIQ",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/4e/10/fe/mzi.rxsrrqqz.jpg/1000x1000bb-100.jpg",
-   "logoAt": 7,
+   "logoAt": 10,
    "verified": true
   },
   "657c7fac783e": {
@@ -633,7 +634,7 @@
    "yt": "q9GHEjSOoOU",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/11/22/70/1122704e-bffc-8d21-4a6a-47e2b3480c67/22UMGIM28772.rgb.jpg/2400x2400bb-100.jpg",
    "aspect": "4:3",
-   "logoAt": 7,
+   "logoAt": 10,
    "verified": true
   },
   "365c6de8ad9b": {
@@ -641,7 +642,7 @@
    "title": "Strawberry Swing",
    "yt": "h3pJZSTQqIg",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/52/aa/85/52aa851f-15b7-6322-f91f-df84b15b7b19/190295978044.jpg/1535x1535bb-100.jpg",
-   "logoAt": 7,
+   "logoAt": 10,
    "verified": true
   },
   "66169ed7e9f0": {
@@ -667,7 +668,7 @@
    "yt": "d38sofI3Z1c",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/6d/48/fd/6d48fdae-76f8-cb9b-62c6-51606741c7d5/607618001063.png/4000x4001bb-100.jpg",
    "aspect": "4:3-in-16:9",
-   "logoAt": 7,
+   "logoAt": 10,
    "verified": true
   },
   "4468cb0878c4": {
@@ -694,7 +695,7 @@
    "yt": "PJwt2dxx9yg",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/23/74/62/23746272-49a1-fd05-d64f-9c5235b024b3/00075021333420.rgb.jpg/1436x1436bb-100.jpg",
    "aspect": "4:3",
-   "logoAt": 7,
+   "logoAt": 10,
    "verified": true
   },
   "b9b4eb69a811": {
