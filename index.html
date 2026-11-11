@@ -151,7 +151,7 @@ dialog::backdrop { background: rgb(5 6 14 / .6) }
 .player .ytbox { width: 100%; aspect-ratio: 16 / 9; max-height: 62vh; background: #000; position: relative; overflow: hidden }
 /* YouTube's frame is made taller than the box (layout()), so its title bar and share / "More videos" / logo
    row land in strips above and below that are cut off; the picture itself is shown whole */
-.ytbox iframe { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; border: 0 }
+.ytbox iframe { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; border: 0; background: #000 }
 .player:fullscreen, .player.fakefs { border-radius: 0; display: grid; place-items: center; width: 100vw; height: 100vh }
 .player.fakefs { position: fixed; inset: 0; z-index: 1000; height: 100dvh }   /* phones without real fullscreen (iPhone) */
 .player:fullscreen video, .player.fakefs video { max-height: none; height: 100%; width: 100% }
@@ -399,7 +399,7 @@ ol.steps a { color: var(--accent) }
     </section>
     <section class="edit" id="d-edit" hidden aria-label="Video and cover">
       <h3>Video &amp; cover</h3>
-      <div class="line"><input type="url" id="f-link" autocomplete="off" placeholder="YouTube link (or a direct .mp4 link)" aria-label="Video link"></div>
+      <div class="line"><input type="url" id="f-link" autocomplete="off" placeholder="YouTube or Vimeo link (or a direct .mp4 link)" aria-label="Video link"></div>
       <div class="line"><input type="url" id="f-cover" autocomplete="off" placeholder="Cover image link (leave empty to use the YouTube thumbnail)" aria-label="Cover image link"></div>
       <label class="f" for="f-aspect" style="flex-wrap:wrap">Picture shape
         <select id="f-aspect">
@@ -593,6 +593,24 @@ ol.steps a { color: var(--accent) }
   // published data, plus this browser's unpublished changes when logged in as admin
   const effective = kind => { const out = {}; for (const [k, v] of Object.entries({ ...published[kind], ...(admin ? drafts[kind] : {}) })) if (v) out[k] = v; return out; };
 
+  // a Vimeo page link (vimeo.com/123456789, also unlisted ones with a hash after it) -> { id, h }
+  function vmId(u) {
+    const m = /^https:\/\/(?:www\.|player\.)?vimeo\.com\/(?:video\/)?(\d{5,12})(?:\/([0-9a-f]{6,20}))?/i.exec(u || "");
+    if (!m) return null;
+    const h = m[2] || (/[?&]h=([0-9a-f]{6,20})/i.exec(u) || [])[1];
+    return { id: m[1], h: h || "" };
+  }
+  let vmReady = null;
+  function loadVM() {
+    if (!vmReady) vmReady = new Promise((res, rej) => {
+      if (window.Vimeo && window.Vimeo.Player) return res(window.Vimeo);
+      const sc = document.createElement("script"); sc.src = "https://player.vimeo.com/api/player.js";
+      sc.onload = () => window.Vimeo && window.Vimeo.Player ? res(window.Vimeo) : (vmReady = null, rej(new Error("Vimeo didn't load")));
+      sc.onerror = () => { vmReady = null; rej(new Error("Vimeo didn't load")); };
+      document.head.appendChild(sc);
+    });
+    return vmReady;
+  }
   function ytId(u) {
     const m = /(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/))([A-Za-z0-9_-]{11})/.exec(u || "");
     return m ? m[1] : (/^[A-Za-z0-9_-]{11}$/.test(u || "") ? u : null);
@@ -977,12 +995,12 @@ ol.steps a { color: var(--accent) }
   let fsCounter = 0;
   function makePlayer(host, opts = {}) {
     const fid = "capsh" + (++fsCounter);
-    host.innerHTML = `<div class="player"><div class="ytbox" hidden><div class="ytel"></div></div><video playsinline preload="auto" disablepictureinpicture hidden></video><div class="poster" hidden></div>
+    host.innerHTML = `<div class="player"><div class="ytbox" hidden><div class="ytel"></div></div><div class="ytbox vmbox" hidden></div><video playsinline preload="auto" disablepictureinpicture hidden></video><div class="poster" hidden></div>
       <svg class="ov" aria-hidden="true"><defs><filter id="${fid}" x="-5%" y="-20%" width="115%" height="160%"><feDropShadow dx="4" dy="4" stdDeviation="2.2" flood-color="#000" flood-opacity=".85"/></filter></defs>
         <image href="rage-logo.png" opacity="0" preserveAspectRatio="none"/><g class="capg" opacity="0" filter="url(#${fid})"><text class="l1"></text><text class="l2"></text></g></svg>
       <button class="shield" type="button" aria-label="Play"><span class="bigplay"></span></button>
       <button class="fsb" type="button">Fullscreen</button><div class="pmsg" hidden></div></div>`;
-    const wrap = host.querySelector(".player"), svg = wrap.querySelector("svg"), ytbox = wrap.querySelector(".ytbox"), v = wrap.querySelector("video");
+    const wrap = host.querySelector(".player"), svg = wrap.querySelector("svg"), ytbox = wrap.querySelector(".ytbox:not(.vmbox)"), vmbox = wrap.querySelector(".vmbox"), v = wrap.querySelector("video");
     const img = svg.querySelector("image"), capg = svg.querySelector(".capg"), l1 = svg.querySelector(".l1"), l2 = svg.querySelector(".l2");
     const P = { stop: false, raf: 0, iv: 0, yt: null, ytReady: false, kind: null, m: {}, L: 8.2, pending: null };
     const shield = wrap.querySelector(".shield"), poster = wrap.querySelector(".poster");
@@ -996,7 +1014,8 @@ ol.steps a { color: var(--accent) }
     function problem(text) {
       if (!text) { pmsg.hidden = true; clearTimeout(P.stall); return; }
       const link = P.m.yt ? `https://www.youtube.com/watch?v=${P.m.yt}` : P.m.video;
-      pmsg.innerHTML = `<p>${esc(text)}</p>${link ? `<a href="${esc(link)}" target="_blank" rel="noopener">${P.m.yt ? "Watch it on YouTube" : "Open the video file"}</a>` : ""}`;
+      const label = P.m.yt ? "Watch it on YouTube" : P.kind === "vimeo" ? "Watch it on Vimeo" : "Open the video file";
+      pmsg.innerHTML = `<p>${esc(text)}</p>${link ? `<a href="${esc(link)}" target="_blank" rel="noopener">${label}</a>` : ""}`;
       pmsg.hidden = false; setPlaying(false);
     }
     const YT_ERR = {
@@ -1026,19 +1045,21 @@ ol.steps a { color: var(--accent) }
     shield.onclick = () => {
       if (!pmsg.hidden) problem("");
       if (P.kind === "yt") P.want ? ytPause() : ytPlay();
+      else if (P.kind === "vimeo") P.want ? vmPause() : vmPlay();
       else if (P.kind === "video") v.paused || v.ended ? (setLoading(true), v.play().catch(() => setLoading(false))) : v.pause();
     };
     v.addEventListener("error", () => { if (P.kind === "video" && v.getAttribute("src")) problem("This video file couldn't be played."); });
 
-    const frameEl = () => P.kind === "yt" ? ytbox : v;
-    const now = () => P.kind === "yt" ? (P.yt && P.ytReady && P.yt.getCurrentTime ? P.yt.getCurrentTime() || 0 : 0) : v.currentTime;
+    const frameEl = () => P.kind === "yt" ? ytbox : P.kind === "vimeo" ? vmbox : v;
+    const now = () => P.kind === "yt" ? (P.yt && P.ytReady && P.yt.getCurrentTime ? P.yt.getCurrentTime() || 0 : 0)
+      : P.kind === "vimeo" ? (P.vt || 0) + (P.vPlaying ? (performance.now() - P.vtAt) / 1000 : 0) : v.currentTime;
     function layout() {
       const el = frameEl(); if (!el) return;
       const bw = el.clientWidth, bh = el.clientHeight; if (!bw || !bh) return;
       const shape = P.m.aspect || "16:9";
-      const fileAR = shape === "2.20:1" ? 16 / 9 : P.kind === "yt" ? (shape === "4:3" || shape === "16:9-in-4:3" ? 4 / 3 : 16 / 9) : (v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : 16 / 9);
+      const fileAR = shape === "2.20:1" ? 16 / 9 : P.kind === "yt" || P.kind === "vimeo" ? (shape === "4:3" || shape === "16:9-in-4:3" ? 4 / 3 : 16 / 9) : (v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : 16 / 9);
       const cw = Math.min(bw, bh * fileAR), ch = cw / fileAR;
-      const ifr = P.kind === "yt" && ytbox.querySelector("iframe");
+      const ifr = P.kind === "yt" ? ytbox.querySelector("iframe") : P.kind === "vimeo" && vmbox.querySelector("iframe");
       if (ifr && wrap.classList.contains("admode")) Object.assign(ifr.style, { width: bw + "px", height: bh + "px", left: "0px", top: "0px" });   // an ad: shown whole
       else if (ifr) {   // exactly the picture's width, with an extra strip above and below for YouTube's overlays to fall into
         const pad = Math.round(Math.max(90, ch * 0.22));
@@ -1119,16 +1140,60 @@ ol.steps a { color: var(--accent) }
       img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0");
       setPlaying(false); setLoading(!!autoplay); showPoster(false); problem(""); wrap.classList.remove("paused"); wrap.classList.toggle("yt", !!P.m.yt);
       P.want = !!autoplay; P.endFired = false; P.lastT = null; setAd(false);
+      const vm = !P.m.yt && vmId(P.m.video);
+      if (!vm) vmStop();
       if (P.m.yt) {
         showPoster(true);
         P.kind = "yt"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = false;
         if (P.yt && P.ytReady) { try { if (P.mutedByUs) { P.yt.unMute(); P.mutedByUs = false; } } catch {} autoplay ? P.yt.loadVideoById(P.m.yt) : P.yt.cueVideoById(P.m.yt); }
         else { P.pending = { id: P.m.yt, autoplay }; if (!P.yt) makeYT(); }
+      } else if (vm) {
+        showPoster(true);
+        P.kind = "vimeo"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = true; vmbox.hidden = false;
+        try { P.yt && P.ytReady && P.yt.pauseVideo(); } catch {}
+        P.vt = 0; P.vPlaying = false;
+        vmLoad(vm, autoplay);
       } else if (P.m.video) {
         P.kind = "video"; ytbox.hidden = true; try { P.yt && P.ytReady && P.yt.pauseVideo(); } catch {}
         v.hidden = false; v.src = P.m.video; if (autoplay) v.play().catch(() => {});
       }
       requestAnimationFrame(layout);
+    }
+    /* Vimeo: its own player in a frame, cropped and covered the same way as YouTube's; no ads on Vimeo */
+    function vmStop() { vmbox.hidden = true; P.vPlaying = false; if (P.vm) P.vm.pause().catch(() => {}); }
+    function vmFail(err) {
+      P.want = false; P.vPlaying = false; setLoading(false); setPlaying(false);
+      const n = err && err.name;
+      problem(n === "PrivacyError" ? "The video's owner doesn't let it play on other websites." : n === "NotAllowedError" ? "" : "Vimeo couldn't play this video.");
+      if (n === "NotAllowedError") showPoster(true);
+    }
+    function vmPlay() { P.want = true; setLoading(true); if (P.vm) P.vm.play().catch(vmFail); }
+    function vmPause() { P.want = false; setLoading(false); if (P.vm) P.vm.pause().catch(() => {}); setPlaying(false); }
+    /* P.vmWait settles once the video in P.vmCued is ready to play. early = only get it ready (prepare), don't play */
+    function vmLoad(vm, autoplay, early) {
+      const token = P.vmToken = (P.vmToken || 0) + 1;
+      const go = () => { if (P.stop || token !== P.vmToken || early || !P.vm) return; if (autoplay) P.vm.play().catch(vmFail); };
+      const fail = e => { if (!early && token === P.vmToken && P.kind === "vimeo") { vmFail(e); opts.onError?.(); } };
+      if (P.vmCued === vm.id && P.vmWait) { P.vmWait.then(go, fail); return; }
+      P.vmCued = vm.id;
+      if (P.vm) { P.vmWait = P.vm.loadVideo(vm.h ? `https://vimeo.com/${vm.id}/${vm.h}` : +vm.id).then(() => {}); P.vmWait.then(go, fail); return; }
+      P.vmWait = loadVM().then(Vimeo => {
+        if (P.stop) throw new Error("closed");
+        const q = new URLSearchParams({ controls: 0, title: 0, byline: 0, portrait: 0, dnt: 1, autopause: 0, playsinline: 1, keyboard: 0, pip: 0, transparent: 0 });
+        if (vm.h) q.set("h", vm.h);
+        vmbox.innerHTML = `<iframe src="https://player.vimeo.com/video/${vm.id}?${q}" allow="autoplay; fullscreen" title="Video"></iframe>`;
+        P.vm = new Vimeo.Player(vmbox.querySelector("iframe"));
+        const on = (ev, f) => P.vm.on(ev, d => { if (P.kind === "vimeo" && !P.stop) f(d || {}); });
+        on("timeupdate", d => { P.vt = d.seconds || 0; P.vtAt = performance.now(); });
+        on("playing", () => { P.vPlaying = true; P.vtAt = performance.now(); setPlaying(true); showPoster(false); problem(""); wrap.classList.remove("paused"); });
+        on("pause", () => { P.vPlaying = false; if (!P.want) setPlaying(false); });
+        on("bufferstart", () => { if (P.want) setLoading(true); });
+        on("bufferend", () => setLoading(false));
+        on("ended", () => { P.vPlaying = false; P.want = false; setPlaying(false); showPoster(true); opts.onEnded?.(); });
+        on("error", e => { vmFail(e); opts.onError?.(); });
+        return P.vm.ready().then(() => { layout(); });
+      });
+      P.vmWait.then(go, e => { if (!P.vm) P.vmCued = null, vmbox.innerHTML = `<div class="vload">Vimeo didn't load. Check your connection and try again.</div>`; fail(e); });
     }
     /* builds the YouTube player. Called as soon as a video is needed, or early by prepare() so the player is already
        built (with the next video cued, never playing) while a titles clip runs; that removes a few seconds of waiting. */
@@ -1162,7 +1227,10 @@ ol.steps a { color: var(--accent) }
     }
     // get YouTube ready for a video that's coming up next, without playing it
     function prepare(m) {
-      if (!m || !m.yt || P.stop) return;
+      if (!m || P.stop) return;
+      const vm = !m.yt && vmId(m.video);
+      if (vm) { if (P.kind !== "vimeo") vmLoad(vm, false, true); return; }   // Vimeo has no ads, so it can wait ready and paused
+      if (!m.yt) return;
       if (!P.yt) return makeYT(m.yt);
       if (P.ytReady && P.kind !== "yt") { try { P.yt.cueVideoById(m.yt); } catch {} }
     }
@@ -1172,6 +1240,7 @@ ol.steps a { color: var(--accent) }
       document.removeEventListener("keydown", onKey, true);
       if (wrap.classList.contains("fakefs")) document.documentElement.classList.remove("nofsscroll");
       try { P.yt && P.yt.destroy(); } catch {}
+      try { P.vm && P.vm.destroy(); } catch {}
       if (document.fullscreenElement === wrap) document.exitFullscreen().catch(() => {});
       host.innerHTML = "";
     }
@@ -1283,7 +1352,9 @@ ol.steps a { color: var(--accent) }
     const k = tv.playable[tv.pos], it = tv.items[k];
     const m = it.bumper ? it.m : mediaFor(it.sid);
     tv.player.load(m, it.bumper ? { a: "", t: "" } : it, autoplay);
-    if (!(m && m.yt)) { const nk = tv.playable[tv.pos + 1], nx = nk != null && tv.items[nk]; if (nx && !nx.bumper) tv.player.prepare(mediaFor(nx.sid)); }
+    { const nk = tv.playable[tv.pos + 1], nx = nk != null && tv.items[nk], nm = nx && !nx.bumper && mediaFor(nx.sid);
+      // the next YouTube video is cued while something else plays; a Vimeo one can always wait ready (no ads)
+      if (nm && (!(m && m.yt) || (!nm.yt && nm.video))) tv.player.prepare(nm); }
     const vidNo = tv.playable.slice(0, tv.pos + 1).filter(j => !tv.items[j].bumper).length;
     $("tv-now").innerHTML = it.bumper ? `rage – ${esc(it.t)}<small>${it.bumper === "intro" ? `Then ${tv.nv} music video${tv.nv === 1 ? "" : "s"}` : "End of the broadcast"}</small>`
       : `${esc(it.a)} – ${esc(it.t)}<small>Video ${vidNo} of ${tv.nv} · song ${k} in the running order</small>`;
@@ -1334,7 +1405,7 @@ ol.steps a { color: var(--accent) }
     const raw = $("f-link").value.trim(), coverRaw = $("f-cover").value.trim();
     const id = raw ? ytId(raw) : null;
     const direct = raw && !id ? safeLink(raw) : null;
-    if (raw && !id && !direct) { status("That isn't a YouTube link or a web link to a video file.", "err"); return; }
+    if (raw && !id && !direct) { status("That isn't a YouTube or Vimeo link, or a web link to a video file.", "err"); return; }
     if (coverRaw && !safeLink(coverRaw)) { status("The cover link should start with https://", "err"); return; }
     const logo = +$("f-logo").value;
     if (!Number.isFinite(logo) || logo < 0) { status("Enter the logo time in seconds, like 8.2", "err"); return; }
