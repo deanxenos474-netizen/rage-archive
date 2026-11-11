@@ -171,6 +171,9 @@ ol.tracks .tr.noart { grid-template-columns: 34px minmax(0, 1fr) auto }
 .verified { margin: 6px 0 0; color: var(--ok); font: 500 13px var(--body) }
 .flag { justify-self: start; margin: 6px 0 0; padding: 0; border: 0; background: none; color: var(--bad); font: 500 13px var(--body); text-align: left; cursor: pointer }
 .flag:hover { text-decoration: underline }
+.introdates { display: grid; gap: 4px; max-height: 240px; overflow: auto; border: 1px solid var(--line); border-radius: 8px; padding: 8px }
+.introdates label { display: flex; gap: 8px; align-items: center; font: 13px/1.3 var(--body); color: var(--fg) }
+.introdates small { color: var(--muted) }
 .thumb.bumper img { object-fit: contain; padding: 6px; background: #000 }
 .player .poster { position: absolute; inset: 0; background: #000 center / contain no-repeat }
 .player .shield { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; background: transparent; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent }
@@ -436,6 +439,17 @@ ol.steps a { color: var(--accent) }
       <div class="line"><input type="search" id="i-q" placeholder="Search for the song it also includes" aria-label="Search for the song it also includes" autocomplete="off"></div>
       <div class="picks" id="i-picks"></div>
     </section>
+    <section class="edit" id="d-intro" hidden aria-label="Intro before this song">
+      <h3>Intro before this song</h3>
+      <p class="hint">For broadcasts where a guest programmer or host introduced this song on air. The intro plays straight before the song in "Watch this broadcast", only on the broadcasts ticked below.</p>
+      <div class="line"><input type="url" id="n-link" autocomplete="off" placeholder="YouTube or Vimeo link (or a direct .mp4 link)" aria-label="Intro video link"></div>
+      <label class="f" for="n-start">Start at <input type="number" id="n-start" autocomplete="off" min="0" step="0.1"> seconds</label>
+      <label class="f" for="n-end">Stop at <input type="number" id="n-end" autocomplete="off" min="0" step="0.1"> seconds (leave both empty to play the whole clip)</label>
+      <label class="f" for="n-logo" style="text-transform:none;letter-spacing:0;font:13px/1.35 var(--body);align-items:flex-start"><input type="checkbox" id="n-logo" style="margin-top:2px"> Show the rage logo during the intro</label>
+      <p class="lbl">Plays on these broadcasts</p>
+      <div class="introdates" id="n-dates"><span class="count">Loading…</span></div>
+      <div class="actions"><button class="btn primary" id="n-save" type="button">Save intro</button><button class="btn" id="n-del" type="button">Remove from ticked broadcasts</button></div>
+    </section>
     <p class="status" id="ed-status" role="status"></p>
   </div>
 </dialog>
@@ -586,16 +600,16 @@ ol.steps a { color: var(--accent) }
 
   /* ---------- covers, videos and merges (media.json + edits) ---------- */
   const DRAFT_KEY = "rage-media-drafts", TOKEN_KEY = "rage-gh-token";
-  const emptyDrafts = () => ({ media: {}, merges: {}, edits: {}, includes: {}, settings: {} });
+  const emptyDrafts = () => ({ media: {}, merges: {}, edits: {}, includes: {}, settings: {}, intros: {} });
   let published = emptyDrafts();
   let drafts = emptyDrafts();
   try {
     const raw = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
-    if (raw && (raw.media || raw.merges || raw.edits || raw.includes || raw.settings)) drafts = { media: raw.media || {}, merges: raw.merges || {}, edits: raw.edits || {}, includes: raw.includes || {}, settings: raw.settings || {} };
+    if (raw && (raw.media || raw.merges || raw.edits || raw.includes || raw.settings || raw.intros)) drafts = { media: raw.media || {}, merges: raw.merges || {}, edits: raw.edits || {}, includes: raw.includes || {}, settings: raw.settings || {}, intros: raw.intros || {} };
     else if (raw) drafts.media = raw;           // older format: just media
   } catch {}
   const saveDrafts = () => { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(drafts)); } catch {} };
-  const nDrafts = () => Object.keys(drafts.media).length + Object.keys(drafts.merges).length + Object.keys(drafts.edits).length + Object.keys(drafts.includes).length + Object.keys(drafts.settings).length;
+  const nDrafts = () => Object.keys(drafts.media).length + Object.keys(drafts.merges).length + Object.keys(drafts.edits).length + Object.keys(drafts.includes).length + Object.keys(drafts.settings).length + Object.keys(drafts.intros).length;
   // published data, plus this browser's unpublished changes when logged in as admin
   const effective = kind => { const out = {}; for (const [k, v] of Object.entries({ ...published[kind], ...(admin ? drafts[kind] : {}) })) if (v) out[k] = v; return out; };
 
@@ -1109,7 +1123,10 @@ ol.steps a { color: var(--accent) }
     }
     const loop = () => { if (P.stop) return; frame(); P.raf = requestAnimationFrame(loop); };
     loop();
-    P.iv = setInterval(() => { if (!P.stop) { frame(); ytSync(); } }, 150);     // keeps going when the tab is in the background
+    P.iv = setInterval(() => {
+      if (P.stop) return; frame(); ytSync();
+      if (P.kind === "video" && P.m.end && !P.endFired && v.currentTime >= +P.m.end) { P.endFired = true; v.pause(); setPlaying(false); opts.onEnded?.(); }   // stop time reached
+    }, 150);     // keeps going when the tab is in the background
     /* Ads: YouTube plays an ad first on some videos (the owner's choice). While it runs, YouTube still calls the video
        "not started" but time moves. Then the player gets out of the way: no cover, no cropping, no logo, clicks go
        straight to YouTube (so its Skip button works). Once the real video plays, the clean view comes back.
@@ -1124,11 +1141,12 @@ ol.steps a { color: var(--accent) }
       if (P.kind !== "yt" || !P.yt || !P.ytReady || !P.yt.getCurrentTime) return;
       let t, st; try { t = P.yt.getCurrentTime() || 0; st = P.yt.getPlayerState(); } catch { return; }
       const moving = P.lastT != null && t > P.lastT + 0.03; P.lastT = t;
+      if (st === 1 || st === 3) P.fresh = false;
       if (st === 1) {
         setAd(false);
         if (P.want && !wrap.classList.contains("playing")) { setPlaying(true); showPoster(false); problem(""); wrap.classList.remove("paused"); }
       } else if (P.want && moving && st !== 2) setAd(true);
-      if (st === 0 && P.want && !P.endFired) { P.endFired = true; P.want = false; setAd(false); setPlaying(false); showPoster(true); opts.onEnded?.(); }
+      if (st === 0 && P.want && !P.endFired && !P.fresh) { P.endFired = true; P.want = false; setAd(false); setPlaying(false); showPoster(true); opts.onEnded?.(); }
     }
     v.addEventListener("loadedmetadata", layout);
     v.addEventListener("ended", () => { if (P.kind === "video") { setPlaying(false); opts.onEnded?.(); } });
@@ -1161,14 +1179,16 @@ ol.steps a { color: var(--accent) }
       l1.textContent = (song.a || "").toUpperCase(); l2.textContent = song.t || ""; P.noArt = song.kind === "clip";
       img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0");
       setPlaying(false); setLoading(!!autoplay); showPoster(false); problem(""); wrap.classList.remove("paused"); wrap.classList.toggle("yt", !!P.m.yt);
-      P.want = !!autoplay; P.endFired = false; P.lastT = null; setAd(false);
+      P.want = !!autoplay; P.endFired = false; P.lastT = null; P.fresh = true; setAd(false);   // fresh: ignore "ended" until this video has started loading
       const vm = !P.m.yt && vmId(P.m.video);
       if (!vm) vmStop();
       if (P.m.yt) {
         showPoster(true);
         P.kind = "yt"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = false;
-        if (P.yt && P.ytReady) { try { if (P.mutedByUs) { P.yt.unMute(); P.mutedByUs = false; } } catch {} autoplay ? (P.cuedId === P.m.yt ? P.yt.playVideo() : P.yt.loadVideoById(P.m.yt)) : P.yt.cueVideoById(P.m.yt); P.cuedId = null; }
-        else { P.pending = { id: P.m.yt, autoplay }; if (!P.yt) makeYT(); }
+        // a clip taken from part of a longer video: start / stop times
+        const rng = P.m.start || P.m.end ? { videoId: P.m.yt, ...(P.m.start ? { startSeconds: +P.m.start } : {}), ...(P.m.end ? { endSeconds: +P.m.end } : {}) } : null;
+        if (P.yt && P.ytReady) { try { if (P.mutedByUs) { P.yt.unMute(); P.mutedByUs = false; } } catch {} autoplay ? (P.cuedId === P.m.yt && !rng ? P.yt.playVideo() : P.yt.loadVideoById(rng || P.m.yt)) : P.yt.cueVideoById(rng || P.m.yt); P.cuedId = null; }
+        else { P.pending = { id: P.m.yt, autoplay, rng }; if (!P.yt) makeYT(); }
       } else if (vm) {
         showPoster(true);
         P.kind = "vimeo"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = true; vmbox.hidden = false;
@@ -1178,6 +1198,7 @@ ol.steps a { color: var(--accent) }
       } else if (P.m.video) {
         P.kind = "video"; ytbox.hidden = true; try { P.yt && P.ytReady && P.yt.pauseVideo(); } catch {}
         v.hidden = false; v.src = P.m.video; if (autoplay) v.play().catch(() => {});
+        if (P.m.start) v.addEventListener("loadedmetadata", () => { if (P.kind === "video") v.currentTime = +P.m.start; }, { once: true });
       }
       requestAnimationFrame(layout);
     }
@@ -1194,7 +1215,11 @@ ol.steps a { color: var(--accent) }
     /* P.vmWait settles once the video in P.vmCued is ready to play. early = only get it ready (prepare), don't play */
     function vmLoad(vm, autoplay, early) {
       const token = P.vmToken = (P.vmToken || 0) + 1;
-      const go = () => { if (P.stop || token !== P.vmToken || early || !P.vm) return; if (autoplay) P.vm.play().catch(vmFail); };
+      const go = () => {
+        if (P.stop || token !== P.vmToken || early || !P.vm) return;
+        const seek = P.m.start ? P.vm.setCurrentTime(+P.m.start) : Promise.resolve();
+        if (autoplay) seek.then(() => P.vm.play()).catch(vmFail);
+      };
       const fail = e => { if (!early && token === P.vmToken && P.kind === "vimeo") { vmFail(e); opts.onError?.(); } };
       if (P.vmCued === vm.id && P.vmWait) { P.vmWait.then(go, fail); return; }
       P.vmCued = vm.id;
@@ -1206,12 +1231,15 @@ ol.steps a { color: var(--accent) }
         vmbox.innerHTML = `<iframe src="https://player.vimeo.com/video/${vm.id}?${q}" allow="autoplay; fullscreen" title="Video"></iframe>`;
         P.vm = new Vimeo.Player(vmbox.querySelector("iframe"));
         const on = (ev, f) => P.vm.on(ev, d => { if (P.kind === "vimeo" && !P.stop) f(d || {}); });
-        on("timeupdate", d => { P.vt = d.seconds || 0; P.vtAt = performance.now(); });
+        on("timeupdate", d => {
+          P.vt = d.seconds || 0; P.vtAt = performance.now();
+          if (P.m.end && !P.endFired && P.vt >= +P.m.end) { P.endFired = true; P.vPlaying = false; P.want = false; P.vm.pause().catch(() => {}); setPlaying(false); showPoster(true); opts.onEnded?.(); }
+        });
         on("playing", () => { P.vPlaying = true; P.vtAt = performance.now(); setPlaying(true); showPoster(false); problem(""); wrap.classList.remove("paused"); });
         on("pause", () => { P.vPlaying = false; if (!P.want) setPlaying(false); });
         on("bufferstart", () => { if (P.want) setLoading(true); });
         on("bufferend", () => setLoading(false));
-        on("ended", () => { P.vPlaying = false; P.want = false; setPlaying(false); showPoster(true); opts.onEnded?.(); });
+        on("ended", () => { if (P.endFired) return; P.endFired = true; P.vPlaying = false; P.want = false; setPlaying(false); showPoster(true); opts.onEnded?.(); });
         on("error", e => { vmFail(e); opts.onError?.(); });
         return P.vm.ready().then(() => { layout(); });
       });
@@ -1233,14 +1261,15 @@ ol.steps a { color: var(--accent) }
               events: {
                 onReady: () => {
                   P.ytReady = true; const p = P.pending; layout();
-                  if (p && p.id !== first.id) { p.autoplay ? P.yt.loadVideoById(p.id) : P.yt.cueVideoById(p.id); }
+                  if (p && (p.id !== first.id || p.rng)) { p.autoplay ? P.yt.loadVideoById(p.rng || p.id) : P.yt.cueVideoById(p.rng || p.id); }
                   else if (p && p.autoplay) P.yt.playVideo();
                 },
                 onStateChange: e => {
                   if (P.kind !== "yt") return;
+                  if (e.data === 1 || e.data === 3) P.fresh = false;
                   if (e.data === 1) { setAd(false); try { if (P.yt.isMuted()) P.yt.unMute(); P.mutedByUs = false; } catch {} setPlaying(true); showPoster(false); problem(""); wrap.classList.remove("paused"); }
                   else if (e.data === 2) { if (P.want) { P.want = false; setLoading(false); } if (!P.want) { setPlaying(false); if (!poster.hidden) return; wrap.classList.add("paused"); } }
-                  else if (e.data === 0) { if (P.endFired) return; P.endFired = true; P.want = false; setPlaying(false); showPoster(true); opts.onEnded?.(); }
+                  else if (e.data === 0) { if (P.endFired || P.fresh) return; P.endFired = true; P.want = false; setPlaying(false); showPoster(true); opts.onEnded?.(); }
                   else if ((e.data === 5 || e.data === -1) && !P.want) { setPlaying(false); showPoster(true); }
                 },
                 onError: e => { if (P.kind !== "yt") return; P.want = false; setAd(false); setLoading(false); problem(YT_ERR[e.data] || `YouTube couldn't play this video (error ${e.data}).`); opts.onError?.(); },
@@ -1294,7 +1323,7 @@ ol.steps a { color: var(--accent) }
     $("d-copy").textContent = "Copy";
     status("");
     renderMedia();
-    renderMergeUI(); renderIncUI();
+    renderMergeUI(); renderIncUI(); renderIntroUI();
     $("d-dates").innerHTML = '<span class="count">Loading…</span>';
     loadBroadcasts().then(() => {
       if (cur !== i) return;
@@ -1360,12 +1389,15 @@ ol.steps a { color: var(--accent) }
     const nv = songs.filter(hasVideo).length;
     if (!nv) return;
     const items = [BUMPERS.intro, ...songs, BUMPERS.credits];
-    const playable = items.map((it, k) => canPlay(it) ? k : -1).filter(k => k >= 0);
+    // intros for this broadcast, by position in the running order (items[k] is song k-1)
+    const allIntros = up ? {} : effective("intros"), intros = {};
+    songs.forEach((it, p) => { const x = allIntros[introKey(b, p)]; if (x && x.sid === it.sid && (x.yt || x.video)) intros[p + 1] = x; });
+    const playable = items.map((it, k) => canPlay(it) || intros[k] ? k : -1).filter(k => k >= 0);
     $("tv-title").textContent = b.kind ? b.sp : (b.title || "Playlist");
     $("tv-sub").textContent = `${up ? "Upcoming · " : ""}${dow(b.date)} ${fmtDate(b.date)} · ${nv} of ${songs.length} songs have videos`;
-    $("tv-queue").innerHTML = items.map((it, k) => `<li><button data-k="${k}"${!it.bumper && it.kind === "clip" ? ' class="noart"' : ""}${canPlay(it) ? "" : " disabled"}>${tvThumb(it)}<span class="t"><span class="a">${esc(it.a)}</span><span class="s">${esc(it.t)}${canPlay(it) ? "" : " · no video yet"}</span></span></button></li>`).join("");
+    $("tv-queue").innerHTML = items.map((it, k) => `<li><button data-k="${k}"${!it.bumper && it.kind === "clip" ? ' class="noart"' : ""}${canPlay(it) || intros[k] ? "" : " disabled"}>${tvThumb(it)}<span class="t"><span class="a">${esc(it.a)}</span><span class="s">${esc(it.t)}${intros[k] ? " · with intro" : ""}${canPlay(it) ? "" : " · no video yet"}</span></span></button></li>`).join("");
     if (tv) tv.player.destroy();
-    tv = { items, playable, nsongs: songs.length, nv, pos: 0, sting: false, nSting: 0, player: makePlayer($("tv-player"), { onEnded: afterEnd, onError: () => setTimeout(() => step(1), 1500),
+    tv = { items, playable, nsongs: songs.length, nv, pos: 0, sting: false, nSting: 0, intros, inIntro: false, player: makePlayer($("tv-player"), { onEnded: afterEnd, onError: () => setTimeout(() => step(1), 1500),
       onFs: on => { $("tv-fs").textContent = on ? "⛶ Exit fullscreen" : "⛶ Fullscreen"; } }) };
     $("tv-fs").textContent = "⛶ Fullscreen";
     if (!$("tv").open) $("tv").showModal();
@@ -1375,6 +1407,7 @@ ol.steps a { color: var(--accent) }
   function afterEnd() {
     if (!tv) return;
     if (tv.sting) return step(1);
+    if (tv.inIntro) return play(tv.pos, true, true);   // intro done: now the song
     const it = tv.items[tv.playable[tv.pos]], nk = tv.playable[tv.pos + 1], nx = nk != null && tv.items[nk];
     const vidNo = tv.playable.slice(0, tv.pos + 1).filter(j => !tv.items[j].bumper).length;
     if (!it.bumper && nx && !nx.bumper && vidNo % STING_EVERY === 0) playSting(nx); else step(1);
@@ -1387,11 +1420,24 @@ ol.steps a { color: var(--accent) }
     $("tv-now").innerHTML = `rage<small>Next: ${esc(nx.a)} – ${esc(nx.t)}</small>`;
     $("tv-prev").disabled = false;
   }
-  function play(p, autoplay) {
+  const introMedia = x => ({ yt: x.yt, video: x.video, start: x.start, end: x.end, bare: !x.logo, logoAt: (x.start || 0) + 8.2 });
+  function play(p, autoplay, noIntro) {
     if (!tv) return;
     tv.sting = false;
     tv.pos = Math.max(0, Math.min(tv.playable.length - 1, p));
     const k = tv.playable[tv.pos], it = tv.items[k];
+    const intro = !noIntro && tv.intros[k];
+    tv.inIntro = !!intro;
+    if (intro) {
+      tv.player.load(introMedia(intro), { a: "", t: "" }, autoplay);
+      if (hasVideo(it)) tv.player.prepare(mediaFor(it.sid));
+      $("tv-now").innerHTML = `Intro<small>Then: ${esc(it.a)} – ${esc(it.t)}</small>`;
+      $("tv-prev").disabled = tv.pos === 0; $("tv-next").disabled = false; $("tv-song").disabled = it.i == null;
+      document.querySelectorAll("#tv-queue button").forEach(bt => bt.setAttribute("aria-current", String(+bt.dataset.k === k)));
+      document.querySelector(`#tv-queue button[data-k="${k}"]`)?.scrollIntoView({ block: "nearest" });
+      return;
+    }
+    if (!it.bumper && !hasVideo(it)) { if (tv.pos < tv.playable.length - 1) play(tv.pos + 1, autoplay); return; }   // an intro with no song video: move on
     const m = it.bumper ? it.m : mediaFor(it.sid);
     tv.player.load(m, it.bumper ? { a: "", t: "" } : it, autoplay);
     { const nk = tv.playable[tv.pos + 1], nx = nk != null && tv.items[nk], nm = nx && !nx.bumper && mediaFor(nx.sid);
@@ -1408,6 +1454,7 @@ ol.steps a { color: var(--accent) }
   function step(d) {
     if (!tv) return;
     if (tv.sting) { play(d > 0 ? tv.pos + 1 : tv.pos, true); return; }   // during a bumper: Next = the coming song, Previous = the one that just played
+    if (tv.inIntro && d > 0) { play(tv.pos, true, true); return; }        // during an intro: Next = straight to its song
     if (tv.pos + d >= 0 && tv.pos + d < tv.playable.length) play(tv.pos + d, true);
   }
   $("tv-prev").onclick = () => step(-1);
@@ -1497,6 +1544,64 @@ ol.steps a { color: var(--accent) }
     status("Back to the original listing. Click Publish to put it live.", "ok");
   });
 
+  /* ---------- intros: a guest programmer's or host's introduction before a song, on chosen broadcasts only ----------
+     Stored in media.json "intros" by broadcast link and position in its running order: { "b-20090801-1/42": { sid, yt|video, start, end, logo } } */
+  const introKey = (b, p) => `${linkOf(b, false)}/${p}`;
+  const sameIntro = (a, b) => a && b && (a.yt || "") === (b.yt || "") && (a.video || "") === (b.video || "") && (a.start || 0) === (b.start || 0) && (a.end || 0) === (b.end || 0);
+  // every place this song sits in an aired broadcast's running order
+  function introSpots(i) {
+    const ids = [...new Set([i, ...(members.get(i) || []), ...(includedBy.get(i) || [])].flatMap(j => plays.get(j) || []))].sort((a, b) => a - b);
+    const out = [];
+    for (const bi of ids) { const b = B[bi]; itemsOf(b, false).forEach((x, p) => { if (x.i === i) out.push({ b, p, key: introKey(b, p) }); }); }
+    return out;
+  }
+  function renderIntroUI() {
+    if (!admin) return;
+    const i = cur;
+    $("n-dates").innerHTML = '<span class="count">Loading…</span>';
+    loadBroadcasts().then(() => {
+      if (cur !== i) return;
+      const spots = introSpots(i), all = effective("intros");
+      const first = spots.map(s => all[s.key]).find(Boolean);
+      $("n-link").value = first ? (first.yt ? "https://www.youtube.com/watch?v=" + first.yt : first.video || "") : "";
+      $("n-start").value = first && first.start ? first.start : ""; $("n-end").value = first && first.end ? first.end : "";
+      $("n-logo").checked = !!(first && first.logo);
+      const per = {}; spots.forEach(s => { per[s.b.i] = (per[s.b.i] || 0) + 1; });
+      const nth = {}, ORD = ["1st", "2nd", "3rd", "4th", "5th"];
+      $("n-dates").innerHTML = spots.length ? spots.map(s => {
+        nth[s.b.i] = (nth[s.b.i] || 0) + 1;
+        const twice = per[s.b.i] > 1 ? ` · ${ORD[nth[s.b.i] - 1] || nth[s.b.i] + "th"} of ${per[s.b.i]} that night` : "";
+        const has = all[s.key], note = has ? (sameIntro(has, first) ? " · has this intro" : " · has a different intro") : "";
+        const what = s.b.kind ? s.b.sp : (s.b.title || "Playlist");
+        return `<label><input type="checkbox" data-k="${esc(s.key)}"${has && sameIntro(has, first) ? " checked" : ""}> ${dow(s.b.date)} ${fmtDate(s.b.date)}<small>${esc(what)} · song ${s.p + 1}${twice}${note}</small></label>`;
+      }).join("") : '<span class="count">No broadcast listing found.</span>';
+    }).catch(() => { $("n-dates").innerHTML = '<span class="count">The broadcast list didn’t load.</span>'; });
+  }
+  const tickedIntroKeys = () => [...$("n-dates").querySelectorAll("input[data-k]:checked")].map(x => x.dataset.k);
+  $("n-save").onclick = () => {
+    const s = S[cur], raw = $("n-link").value.trim();
+    const id = raw ? ytId(raw) : null, direct = raw && !id ? safeLink(raw) : null;
+    if (!id && !direct) { status("Paste a YouTube or Vimeo link, or a web link to a video file.", "err"); return; }
+    const st = $("n-start").value === "" ? 0 : +$("n-start").value, en = $("n-end").value === "" ? 0 : +$("n-end").value;
+    if (!Number.isFinite(st) || !Number.isFinite(en) || st < 0 || en < 0 || (en && en <= st)) { status("Check the start and stop times (stop has to be after start).", "err"); return; }
+    const keys = tickedIntroKeys();
+    if (!keys.length) { status("Tick at least one broadcast the intro played on.", "err"); return; }
+    const entry = { sid: s.id };
+    if (id) entry.yt = id; else entry.video = direct;
+    if (st) entry.start = st; if (en) entry.end = en;
+    if ($("n-logo").checked) entry.logo = true;
+    for (const k of keys) drafts.intros[k] = entry;
+    saveDrafts(); refreshAll(); renderIntroUI();
+    status(`Intro saved for ${keys.length} broadcast${keys.length === 1 ? "" : "s"}. Click Publish at the bottom to put it live for everyone.`, "ok");
+  };
+  $("n-del").onclick = () => {
+    const keys = tickedIntroKeys();
+    if (!keys.length) { status("Tick the broadcasts to remove the intro from.", "err"); return; }
+    for (const k of keys) { if (published.intros[k]) drafts.intros[k] = null; else delete drafts.intros[k]; }
+    saveDrafts(); refreshAll(); renderIntroUI();
+    status(`Intro removed from ${keys.length} broadcast${keys.length === 1 ? "" : "s"}. Click Publish to put it live.`, "ok");
+  };
+
   // "also includes": split an entry that is really two segments
   const incList = s => (effective("includes")[s.id] || []).filter(tid => idIndex.has(tid));
   function setInc(s, list) {
@@ -1576,13 +1681,13 @@ ol.steps a { color: var(--accent) }
     bar.hidden = !admin;
     document.body.style.paddingBottom = admin ? "70px" : "";
     $("adm-open").textContent = admin ? "Admin: logged in" : "Admin login";
-    for (const id of ["d-info", "d-edit", "d-merge", "d-inc"]) $(id).hidden = !admin;
+    for (const id of ["d-info", "d-edit", "d-merge", "d-inc", "d-intro"]) $(id).hidden = !admin;
     if (!admin) return;
     const n = nDrafts();
     $("edbar-n").textContent = n ? `${n} change${n === 1 ? "" : "s"} not published yet` : "Edit mode: open any song to fix its name, add a video or merge a duplicate";
     $("edbar-pub").disabled = !n; $("edbar-dl").disabled = !n; $("edbar-x").disabled = !n;
   }
-  const fileJSON = () => JSON.stringify({ saved: new Date().toISOString(), media: effective("media"), merges: effective("merges"), edits: effective("edits"), includes: effective("includes"), settings: effective("settings") }, null, 1);
+  const fileJSON = () => JSON.stringify({ saved: new Date().toISOString(), media: effective("media"), merges: effective("merges"), edits: effective("edits"), includes: effective("includes"), settings: effective("settings"), intros: effective("intros") }, null, 1);
   $("edbar-dl").onclick = () => {
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([fileJSON()], { type: "application/json" }));
@@ -1622,7 +1727,7 @@ ol.steps a { color: var(--accent) }
     $("edbar-pub").disabled = true; $("edbar-n").textContent = "Publishing…";
     try {
       await publish(token);
-      published = { media: effective("media"), merges: effective("merges"), edits: effective("edits"), includes: effective("includes"), settings: effective("settings") };
+      published = { media: effective("media"), merges: effective("merges"), edits: effective("edits"), includes: effective("includes"), settings: effective("settings"), intros: effective("intros") };
       drafts = emptyDrafts(); saveDrafts(); refreshAll();
       $("edbar-n").textContent = "Published. Saved to GitHub; everyone sees it within a few minutes.";
       return true;
@@ -1816,7 +1921,7 @@ ol.steps a { color: var(--accent) }
     const ok = all.filter(d => d && typeof d === "object" && d.media);
     if (!ok.length) { $("media-note").textContent = "Videos didn't load. Reload the page to try again."; return; }
     const d = ok.reduce((best, x) => (x.saved || "") > (best.saved || "") ? x : best);   // newest publish (copies without a stamp count as oldest)
-    published = { media: d.media || {}, merges: d.merges || {}, edits: d.edits || {}, includes: d.includes || {}, settings: d.settings || {} };
+    published = { media: d.media || {}, merges: d.merges || {}, edits: d.edits || {}, includes: d.includes || {}, settings: d.settings || {}, intros: d.intros || {} };
   });
   const songsP = fetch("songs.json", { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
     const A = d.artists, L = d.labels;
