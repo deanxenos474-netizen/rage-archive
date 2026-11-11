@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-11T07:57:49.728Z",
+ "saved": "2026-11-11T08:01:24.643Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -681,6 +681,15 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/64/0e/d8/mzi.huvdvnki.jpg/600x600bb-100.jpg",
    "aspect": "4:3",
    "logoAt": 13,
+   "verified": true
+  },
+  "7e30462ca0fe": {
+   "artist": "Joe Jackson",
+   "title": "Steppin' Out",
+   "yt": "PJwt2dxx9yg",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/23/74/62/23746272-49a1-fd05-d64f-9c5235b024b3/00075021333420.rgb.jpg/1436x1436bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 7,
    "verified": true
   }
  },
