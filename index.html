@@ -999,7 +999,7 @@ ol.steps a { color: var(--accent) }
     // (measured from an off-air frame, AC/DC "It's A Long Way To The Top")
     host.innerHTML = `<div class="player"><div class="ytbox" hidden><div class="ytel"></div></div><div class="ytbox vmbox" hidden></div><video playsinline preload="auto" disablepictureinpicture hidden></video><div class="poster" hidden></div>
       <svg class="ov" aria-hidden="true"><defs><filter id="${fid}" x="-5%" y="-20%" width="120%" height="175%"><feMorphology in="SourceAlpha" operator="dilate" radius="0.7" result="o"/><feOffset in="o" dx="0.65" dy="1.02" result="s1"/><feOffset in="o" dx="1.30" dy="2.05" result="s2"/><feOffset in="o" dx="1.95" dy="3.07" result="s3"/><feOffset in="o" dx="2.60" dy="4.10" result="s4"/><feOffset in="o" dx="3.25" dy="5.12" result="s5"/><feOffset in="o" dx="3.90" dy="6.15" result="s6"/><feOffset in="o" dx="4.55" dy="7.17" result="s7"/><feOffset in="o" dx="5.20" dy="8.20" result="s8"/><feMerge result="m"><feMergeNode in="o"/><feMergeNode in="s1"/><feMergeNode in="s2"/><feMergeNode in="s3"/><feMergeNode in="s4"/><feMergeNode in="s5"/><feMergeNode in="s6"/><feMergeNode in="s7"/><feMergeNode in="s8"/></feMerge><feFlood flood-color="#000"/><feComposite in2="m" operator="in" result="sh"/><feMerge><feMergeNode in="sh"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-        <image href="rage-logo.png" opacity="0" preserveAspectRatio="none"/><g class="capg" opacity="0" filter="url(#${fid})"><text class="l1"></text><text class="l2"></text></g></svg>
+        <filter id="${fid}L" x="-5%" y="-5%" width="115%" height="125%"></filter><image href="rage-logo.png" opacity="0" preserveAspectRatio="none" filter="url(#${fid}L)"/><g class="capg" opacity="0" filter="url(#${fid})"><text class="l1"></text><text class="l2"></text></g></svg>
       <button class="shield" type="button" aria-label="Play"><span class="bigplay"></span></button>
       <button class="fsb" type="button">Fullscreen</button><div class="pmsg" hidden></div></div>`;
     const wrap = host.querySelector(".player"), svg = wrap.querySelector("svg"), ytbox = wrap.querySelector(".ytbox:not(.vmbox)"), vmbox = wrap.querySelector(".vmbox"), v = wrap.querySelector("video");
@@ -1075,8 +1075,20 @@ ol.steps a { color: var(--accent) }
       svg.setAttribute("viewBox", `0 0 ${G.W} 1080`);
       svg.setAttribute("preserveAspectRatio", "none");
       Object.entries(G.logo).forEach(([a, val]) => img.setAttribute(a, val));
+      logoShadow(G.logo.height);
       l1.setAttribute("transform", `translate(${G.l1.x} ${G.l1.y}) scale(${G.l1.sx} 1)`); l1.setAttribute("font-size", G.l1.size);
       l2.setAttribute("transform", `translate(${G.l2.x} ${G.l2.y}) scale(${G.l2.sx} 1)`); l2.setAttribute("font-size", G.l2.size);
+    }
+    /* the logo's black outline and the shadow below-right of it, measured from an off-air frame: with the logo box
+       202 high, the shadow reaches about 8 right and 12 down, the outline is about 2 wide (scaled to the logo's size here) */
+    function logoShadow(h) {
+      if (P.logoH === h) return; P.logoH = h;
+      const k = h / 202, dx = 8 * k, dy = 12 * k, steps = 8;
+      let f = `<feMorphology in="SourceAlpha" operator="dilate" radius="${(2 * k).toFixed(2)}" result="o"/>`, nodes = '<feMergeNode in="o"/>';
+      for (let i = 1; i <= steps; i++) { f += `<feOffset in="o" dx="${(dx * i / steps).toFixed(2)}" dy="${(dy * i / steps).toFixed(2)}" result="s${i}"/>`; nodes += `<feMergeNode in="s${i}"/>`; }
+      f += `<feMerge result="m">${nodes}</feMerge><feGaussianBlur in="m" stdDeviation="${k.toFixed(2)}" result="mb"/><feFlood flood-color="#000"/><feComposite in2="mb" operator="in" result="sh"/>`
+         + `<feMerge><feMergeNode in="sh"/><feMergeNode in="SourceGraphic"/></feMerge>`;
+      svg.querySelector(`#${fid}L`).innerHTML = f;
     }
     function frame() {
       const t = now(), L = P.L;
