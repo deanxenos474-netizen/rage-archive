@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-11T05:41:58.980Z",
+ "saved": "2026-11-11T05:42:12.889Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -116,7 +116,7 @@
    "title": "Billie Jean",
    "yt": "blZe6WB1dYU",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/32/4f/fd/324ffda2-9e51-8f6a-0c2d-c6fd2b41ac55/074643811224.jpg/1500x1500bb-100.jpg",
-   "aspect": "4:3-in-16:9",
+   "aspect": "4:3",
    "logoAt": 7,
    "verified": true
   },
