@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-11T11:50:22.553Z",
+ "saved": "2026-11-11T11:51:58.364Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -704,7 +704,8 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/9b/39/f7/9b39f7df-e57f-5a21-3cb9-d104661f2672/0602567438410.jpg/4000x4000bb-100.jpg",
    "aspect": "4:3",
    "burned": true,
-   "verified": true
+   "verified": true,
+   "lowq": true
   },
   "13b8dd1ae074": {
    "artist": "The Jacksons",
