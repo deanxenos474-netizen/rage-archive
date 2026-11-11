@@ -14,7 +14,7 @@
 /* Layout: a late-night TV guide. Masthead with the yearly signal, sticky control strip, then the song index, the broadcast log, or what's coming up. */
 :root {
   --bg: #f2f3f9; --surface: #ffffff; --raise: #e7e9f4; --fg: #141729; --muted: #5b6183;
-  --line: #d6d9ea; --accent: #1b66d1; --hot: #c3246c; --bar: #9fb9e6; --ok: #1d7a4c; --bad: #b3261e;
+  --line: #d6d9ea; --accent: #1b66d1; --hot: #c3246c; --bar: #9fb9e6; --ok: #1d7a4c; --bad: #b3261e; --warn: #9a5b00;
   --display: "Bricolage Grotesque", "Arial Black", system-ui, sans-serif;
   --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
@@ -22,10 +22,10 @@
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #0b0d18; --surface: #12152a; --raise: #1a1e37; --fg: #e8ebf8; --muted: #8d94b8;
-  --line: #262b4a; --accent: #6ab6ff; --hot: #ff5ea8; --bar: #33508a; --ok: #5fd39a; --bad: #ff8a80; color-scheme: dark } }
+  --line: #262b4a; --accent: #6ab6ff; --hot: #ff5ea8; --bar: #33508a; --ok: #5fd39a; --bad: #ff8a80; --warn: #ffc46b; color-scheme: dark } }
 :root[data-theme="dark"] {
   --bg: #0b0d18; --surface: #12152a; --raise: #1a1e37; --fg: #e8ebf8; --muted: #8d94b8;
-  --line: #262b4a; --accent: #6ab6ff; --hot: #ff5ea8; --bar: #33508a; --ok: #5fd39a; --bad: #ff8a80; color-scheme: dark }
+  --line: #262b4a; --accent: #6ab6ff; --hot: #ff5ea8; --bar: #33508a; --ok: #5fd39a; --bad: #ff8a80; --warn: #ffc46b; color-scheme: dark }
 
 * { box-sizing: border-box }
 html { padding-top: env(safe-area-inset-top, 0px) }
@@ -171,6 +171,8 @@ ol.tracks .tr.noart { grid-template-columns: 34px minmax(0, 1fr) auto }
 .verified { margin: 6px 0 0; color: var(--ok); font: 500 13px var(--body) }
 .flag { justify-self: start; margin: 6px 0 0; padding: 0; border: 0; background: none; color: var(--bad); font: 500 13px var(--body); text-align: left; cursor: pointer }
 .flag:hover { text-decoration: underline }
+.lowq { margin: 6px 0 0; color: var(--warn); font: 500 13px var(--body) }
+.lowq button { font: inherit; color: inherit; background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer }
 .introdates { display: grid; gap: 4px; max-height: 240px; overflow: auto; border: 1px solid var(--line); border-radius: 8px; padding: 8px }
 .introdates label { display: flex; gap: 8px; align-items: center; font: 13px/1.3 var(--body); color: var(--fg) }
 .introdates small { color: var(--muted) }
@@ -377,6 +379,7 @@ ol.steps a { color: var(--accent) }
     </div>
     <div id="d-video"></div>
     <p class="verified" id="d-verified" hidden>✓ Verified: this is the clip rage showed.</p>
+    <p class="lowq" id="d-lowq" hidden>This is a low quality video. <button type="button" id="d-lowq-msg">Message us</button> if you have a high quality one.</p>
     <button class="flag" id="d-help" type="button" hidden>Have this clip? Let us know</button>
     <dl class="facts">
       <div><dt>Plays</dt><dd id="d-n"></dd></div>
@@ -422,6 +425,7 @@ ol.steps a { color: var(--accent) }
       <label class="f" for="f-logo" id="f-logo-l">rage logo appears at <input type="number" id="f-logo" autocomplete="off" min="0" max="600" step="0.1" value="8.2"> seconds</label>
       <label class="f" for="f-burned" style="text-transform:none;letter-spacing:0;font:13px/1.35 var(--body);align-items:flex-start"><input type="checkbox" id="f-burned" style="margin-top:2px"> The rage logo and caption are already in this video (recorded off air), so don't add them</label>
       <label class="f" for="f-verified" style="text-transform:none;letter-spacing:0;font:13px/1.35 var(--body);align-items:flex-start"><input type="checkbox" id="f-verified" style="margin-top:2px"> Confirmed: this is the exact clip rage showed (shows "✓ Verified" in the song window and hides the "Wrong video?" button)</label>
+      <label class="f" for="f-lowq" style="text-transform:none;letter-spacing:0;font:13px/1.35 var(--body);align-items:flex-start"><input type="checkbox" id="f-lowq" style="margin-top:2px"> Low quality: shows a note in the song window asking for a better copy</label>
       <div class="actions"><button class="btn primary" id="ed-save">Save</button><button class="btn danger" id="ed-clear">Remove video &amp; cover</button></div>
       <p class="hint">Pick the shape that matches what you see, so the logo and caption sit inside the picture.</p>
     </section>
@@ -1316,6 +1320,8 @@ ol.steps a { color: var(--accent) }
     yearlyChart($("d-chart"), counts, 500, 120, 4);
     { const m = media.get(s.id), has = !!(m && (m.yt || m.video)), ok = has && !!m.verified;
       $("d-verified").hidden = !ok;
+      $("d-lowq").hidden = !(has && m.lowq);
+      $("d-lowq-msg").onclick = () => openFootage(`${s.a} – ${s.t}${s.l ? ` (${s.l})` : ""} [HIGHER QUALITY]`, false);
       $("d-help").hidden = ok;
       $("d-help").textContent = has ? "Wrong video? Send us the right one" : "Have this clip? Let us know";
       $("d-help").onclick = () => openFootage(`${s.a} – ${s.t}${s.l ? ` (${s.l})` : ""}`, has); }
@@ -1358,7 +1364,7 @@ ol.steps a { color: var(--accent) }
       $("f-cover").placeholder = s.kind === "clip" ? "Clips don't show album art: this entry uses a frame from its video" : "Cover image link (leave empty to use the YouTube thumbnail)";
       $("f-aspect").value = m.aspect || "16:9";
       $("f-logo").value = m.logoAt != null ? m.logoAt : 8.2;
-      $("f-burned").checked = !!m.burned; $("f-logo").disabled = !!m.burned; $("f-verified").checked = !!m.verified;
+      $("f-burned").checked = !!m.burned; $("f-logo").disabled = !!m.burned; $("f-verified").checked = !!m.verified; $("f-lowq").checked = !!m.lowq;
     }
   }
   $("dlg").addEventListener("close", () => { if ($("dlg").open) return; if (songPlayer) { songPlayer.destroy(); songPlayer = null; } songKey = ""; });
@@ -1509,6 +1515,7 @@ ol.steps a { color: var(--accent) }
     if (logo !== 8.2) entry.logoAt = logo;
     if ($("f-burned").checked) entry.burned = true;
     if ($("f-verified").checked) entry.verified = true;
+    if ($("f-lowq").checked) entry.lowq = true;
     drafts.media[s.id] = (entry.yt || entry.video || entry.cover) ? entry : null;
     saveDrafts(); refreshAll();
     status("Saved. Click Publish at the bottom to put it live for everyone.", "ok");
