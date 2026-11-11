@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-11T08:01:24.643Z",
+ "saved": "2026-11-11T08:05:29.526Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -690,6 +690,15 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/23/74/62/23746272-49a1-fd05-d64f-9c5235b024b3/00075021333420.rgb.jpg/1436x1436bb-100.jpg",
    "aspect": "4:3",
    "logoAt": 7,
+   "verified": true
+  },
+  "b9b4eb69a811": {
+   "artist": "Robin Gibb",
+   "title": "Another Lonely Night In New York",
+   "yt": "W_Nykcs7Zhg",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/9b/39/f7/9b39f7df-e57f-5a21-3cb9-d104661f2672/0602567438410.jpg/4000x4000bb-100.jpg",
+   "aspect": "4:3",
+   "burned": true,
    "verified": true
   }
  },
