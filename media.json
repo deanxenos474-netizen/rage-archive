@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-11T03:35:44.851Z",
+ "saved": "2026-11-11T04:34:15.220Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -524,6 +524,15 @@
    "yt": "oK6EXcdY1rc",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/8c/45/7d/8c457ddb-685c-ea0a-9d39-190a5e7e0e03/00602537386840.rgb.jpg/1423x1411bb-100.jpg",
    "aspect": "4:3",
+   "logoAt": 7,
+   "verified": true
+  },
+  "abec7d04a4a8": {
+   "artist": "Jack Ladder",
+   "title": "The Barber's Son",
+   "yt": "Z5TtSrBN0Yg",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music2/v4/c0/88/89/c088894d-a54d-6367-a7e1-3b063d273a5e/859714375436_cover.jpg/1600x1600bb-100.jpg",
+   "aspect": "2.20:1",
    "logoAt": 7,
    "verified": true
   }
