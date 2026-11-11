@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-11T04:34:15.220Z",
+ "saved": "2026-11-11T04:38:22.880Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -532,6 +532,15 @@
    "title": "The Barber's Son",
    "yt": "Z5TtSrBN0Yg",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music2/v4/c0/88/89/c088894d-a54d-6367-a7e1-3b063d273a5e/859714375436_cover.jpg/1600x1600bb-100.jpg",
+   "aspect": "2.20:1",
+   "logoAt": 7,
+   "verified": true
+  },
+  "f1c0a5ba6f5a": {
+   "artist": "Kisschasy",
+   "title": "Generation Why",
+   "yt": "EFxUJ9A4HRk",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/c6/a0/a7/c6a0a719-cbaa-abb9-82cf-aaab6d7626cb/00602527111988.rgb.jpg/1417x1417bb-100.jpg",
    "aspect": "2.20:1",
    "logoAt": 7,
    "verified": true
