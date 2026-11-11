@@ -296,6 +296,7 @@ ol.steps a { color: var(--accent) }
           <button class="chip" id="t-misc" aria-pressed="false">Interviews &amp; clips</button>
           <button class="chip" id="t-media" aria-pressed="false">With video</button>
           <button class="chip" id="t-need" aria-pressed="false">Needs a video</button>
+          <button class="chip" id="t-unconf" aria-pressed="false">Unconfirmed video</button>
         </div>
       </div>
       <nav class="letters" id="letters" aria-label="Jump to letter"></nav>
@@ -324,6 +325,11 @@ ol.steps a { color: var(--accent) }
 </div>
 
 <main class="wrap">
+  <section class="wanted" id="unconf" hidden aria-labelledby="unconf-h">
+    <h2 id="unconf-h">Unconfirmed videos</h2>
+    <p>Everything listed below has a video, but it's our best guess at what rage showed. It may be a different version, edit or performance. If you know which one rage actually aired (or have a recording), let us know.</p>
+    <div class="actions"><button class="btn primary" id="unconf-go" type="button">Tell us which version rage showed</button><span class="count" id="unconf-n"></span></div>
+  </section>
   <section class="wanted" id="wanted" hidden aria-labelledby="wanted-h">
     <h2 id="wanted-h">Got footage? Help fill the gaps</h2>
     <p>Everything listed below has no video on this site yet. If you have any of it, especially <b>off-air recordings of rage or Countdown, without archive watermarks</b>, we'd love to hear from you. Home tapes are perfect: the rage logo is fine, watermarks and timers from footage libraries aren't.</p>
@@ -719,6 +725,7 @@ ol.steps a { color: var(--accent) }
       const vid = media.get(s.id) && (media.get(s.id).yt || media.get(s.id).video);
       if (type === "media" && !vid) continue;
       if (type === "need" && vid) continue;
+      if (type === "unconf" && !(vid && !media.get(s.id).verified)) continue;
       if (terms.length && !terms.every(t => s.hay.includes(t))) continue;
       view.push(i);
     }
@@ -964,6 +971,7 @@ ol.steps a { color: var(--accent) }
     else if (h === "broadcasts") setMode("broadcasts", false);
     else if (h === "upcoming") setMode("upcoming", false);
     else if (h === "wanted") { setMode("songs", true); setType("need"); if (S.length) apply(); window.scrollTo({ top: 0 }); }
+    else if (h === "unconfirmed") { setMode("songs", true); setType("unconf"); if (S.length) apply(); window.scrollTo({ top: 0 }); }
     else if (h === "songs" || !h) setMode("songs", true);
   }
   addEventListener("hashchange", routeHash);
@@ -1563,7 +1571,7 @@ ol.steps a { color: var(--accent) }
 
   // the edit bar
   function updateBar() {
-    if (type === "need") showWanted();
+    if (type === "need" || type === "unconf") showWanted();
     const bar = $("edbar");
     bar.hidden = !admin;
     document.body.style.paddingBottom = admin ? "70px" : "";
@@ -1647,6 +1655,14 @@ ol.steps a { color: var(--accent) }
      media.json "settings", so the owner's email address never appears on the site. */
   const formUrl = () => { const u = effective("settings").formUrl; return u && safeLink(u) && u.startsWith("https://") ? u : null; };
   function showWanted() {
+    const un = type === "unconf";
+    $("unconf").hidden = !un;
+    if (un) {
+      let n = 0, nv = 0; for (const s of S) { if (s.hidden) continue; const m = media.get(s.id); if (m && (m.yt || m.video)) { nv++; if (!m.verified) n++; } }
+      $("unconf-n").textContent = nv ? `${fmt(n)} of ${fmt(nv)} videos aren't confirmed yet` : "";
+      $("unconf-go").disabled = !formUrl();
+      $("unconf-go").textContent = formUrl() ? "Tell us which version rage showed" : "Contact form coming soon";
+    }
     const on = type === "need";
     $("wanted").hidden = !on;
     if (!on) return;
@@ -1666,6 +1682,7 @@ ol.steps a { color: var(--accent) }
     $("ff").showModal(); (entry ? $("ff-what") : $("ff-entry")).focus();
   }
   $("wanted-go").onclick = () => openFootage("");
+  $("unconf-go").onclick = () => openFootage("", true);
   $("ff-close").onclick = () => $("ff").close();
   $("ff-form").addEventListener("submit", async e => {
     e.preventDefault();
@@ -1763,10 +1780,10 @@ ol.steps a { color: var(--accent) }
   /* ---------- filters ---------- */
   function setType(t) {
     type = t;
-    for (const [id, v] of [["t-all", "all"], ["t-songs", "songs"], ["t-misc", "misc"], ["t-media", "media"], ["t-need", "need"]]) $(id).setAttribute("aria-pressed", String(v === t));
+    for (const [id, v] of [["t-all", "all"], ["t-songs", "songs"], ["t-misc", "misc"], ["t-media", "media"], ["t-need", "need"], ["t-unconf", "unconf"]]) $(id).setAttribute("aria-pressed", String(v === t));
     showWanted();
   }
-  for (const [id, v] of [["t-all", "all"], ["t-songs", "songs"], ["t-misc", "misc"], ["t-media", "media"], ["t-need", "need"]]) $(id).onclick = () => { setType(v); apply(); setHash(v === "need" ? "wanted" : "songs"); };
+  for (const [id, v] of [["t-all", "all"], ["t-songs", "songs"], ["t-misc", "misc"], ["t-media", "media"], ["t-need", "need"], ["t-unconf", "unconf"]]) $(id).onclick = () => { setType(v); apply(); setHash(v === "need" ? "wanted" : v === "unconf" ? "unconfirmed" : "songs"); };
   $("sort").addEventListener("change", e => { sort = e.target.value; try { localStorage.setItem("rage-sort", sort); } catch {} apply(); window.scrollTo({ top: 0 }); });
   let deb; $("q").addEventListener("input", () => { clearTimeout(deb); deb = setTimeout(apply, 140); });
   // browser autofill sometimes drops a saved value into the search right after loading; clear anything not typed by the visitor
