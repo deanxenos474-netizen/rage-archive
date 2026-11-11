@@ -1159,7 +1159,7 @@ ol.steps a { color: var(--accent) }
       if (P.m.yt) {
         showPoster(true);
         P.kind = "yt"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = false;
-        if (P.yt && P.ytReady) { try { if (P.mutedByUs) { P.yt.unMute(); P.mutedByUs = false; } } catch {} autoplay ? P.yt.loadVideoById(P.m.yt) : P.yt.cueVideoById(P.m.yt); }
+        if (P.yt && P.ytReady) { try { if (P.mutedByUs) { P.yt.unMute(); P.mutedByUs = false; } } catch {} autoplay ? (P.cuedId === P.m.yt ? P.yt.playVideo() : P.yt.loadVideoById(P.m.yt)) : P.yt.cueVideoById(P.m.yt); P.cuedId = null; }
         else { P.pending = { id: P.m.yt, autoplay }; if (!P.yt) makeYT(); }
       } else if (vm) {
         showPoster(true);
@@ -1218,6 +1218,7 @@ ol.steps a { color: var(--accent) }
             if (P.stop || P.yt) return;
             const first = P.pending || { id: cueId, autoplay: false };
             if (!first.id) return;
+            if (!P.pending) P.cuedId = first.id;
             P.yt = new YT.Player(wrap.querySelector(".ytel"), {
               videoId: first.id, width: "100%", height: "100%",
               playerVars: { controls: 0, disablekb: 1, fs: 0, rel: 0, playsinline: 1, modestbranding: 1, iv_load_policy: 3, cc_load_policy: 0, autoplay: first.autoplay ? 1 : 0 },
@@ -1246,7 +1247,7 @@ ol.steps a { color: var(--accent) }
       if (vm) { if (P.kind !== "vimeo") vmLoad(vm, false, true); return; }   // Vimeo has no ads, so it can wait ready and paused
       if (!m.yt) return;
       if (!P.yt) return makeYT(m.yt);
-      if (P.ytReady && P.kind !== "yt") { try { P.yt.cueVideoById(m.yt); } catch {} }
+      if (P.ytReady && P.kind !== "yt") { try { P.yt.cueVideoById(m.yt); P.cuedId = m.yt; } catch {} }   // already cued: play() then starts it straight away
     }
     function destroy() {
       P.stop = true; cancelAnimationFrame(P.raf); clearInterval(P.iv); ro.disconnect();
@@ -1338,6 +1339,8 @@ ol.steps a { color: var(--accent) }
     intro:   { bumper: "intro",   a: "rage", t: "Opening titles",  i: null, sid: null, m: { video: "clips/intro.mp4", bare: true } },
     credits: { bumper: "credits", a: "rage", t: "Closing credits", i: null, sid: null, m: { video: "clips/credits.mp4", bare: true } },
   };
+  // rage's short station bumpers, played between songs after every 3rd video (not listed in the running order)
+  const STINGS = ["clips/bumper1.mp4", "clips/bumper2.mp4"], STING_EVERY = 3;
   const canPlay = it => it.bumper ? true : hasVideo(it);
   const tvThumb = it => it.bumper ? '<span class="thumb bumper" aria-hidden="true"><img src="rage-logo.png" alt=""></span>' : thumbHTML(it.sid, it.a);
   let tv = null;
@@ -1354,14 +1357,31 @@ ol.steps a { color: var(--accent) }
     $("tv-sub").textContent = `${up ? "Upcoming · " : ""}${dow(b.date)} ${fmtDate(b.date)} · ${nv} of ${songs.length} songs have videos`;
     $("tv-queue").innerHTML = items.map((it, k) => `<li><button data-k="${k}"${!it.bumper && it.kind === "clip" ? ' class="noart"' : ""}${canPlay(it) ? "" : " disabled"}>${tvThumb(it)}<span class="t"><span class="a">${esc(it.a)}</span><span class="s">${esc(it.t)}${canPlay(it) ? "" : " · no video yet"}</span></span></button></li>`).join("");
     if (tv) tv.player.destroy();
-    tv = { items, playable, nsongs: songs.length, nv, pos: 0, player: makePlayer($("tv-player"), { onEnded: () => step(1), onError: () => setTimeout(() => step(1), 1500),
+    tv = { items, playable, nsongs: songs.length, nv, pos: 0, sting: false, nSting: 0, player: makePlayer($("tv-player"), { onEnded: afterEnd, onError: () => setTimeout(() => step(1), 1500),
       onFs: on => { $("tv-fs").textContent = on ? "⛶ Exit fullscreen" : "⛶ Fullscreen"; } }) };
     $("tv-fs").textContent = "⛶ Fullscreen";
     if (!$("tv").open) $("tv").showModal();
     play(0, true);
   }
+  // when a video finishes by itself: after every 3rd music video a bumper comes first (never before the credits)
+  function afterEnd() {
+    if (!tv) return;
+    if (tv.sting) return step(1);
+    const it = tv.items[tv.playable[tv.pos]], nk = tv.playable[tv.pos + 1], nx = nk != null && tv.items[nk];
+    const vidNo = tv.playable.slice(0, tv.pos + 1).filter(j => !tv.items[j].bumper).length;
+    if (!it.bumper && nx && !nx.bumper && vidNo % STING_EVERY === 0) playSting(nx); else step(1);
+  }
+  function playSting(nx) {
+    tv.sting = true;
+    const m = { video: STINGS[tv.nSting++ % STINGS.length], bare: true };
+    tv.player.load(m, { a: "", t: "" }, true);
+    tv.player.prepare(mediaFor(nx.sid));
+    $("tv-now").innerHTML = `rage<small>Next: ${esc(nx.a)} – ${esc(nx.t)}</small>`;
+    $("tv-prev").disabled = false;
+  }
   function play(p, autoplay) {
     if (!tv) return;
+    tv.sting = false;
     tv.pos = Math.max(0, Math.min(tv.playable.length - 1, p));
     const k = tv.playable[tv.pos], it = tv.items[k];
     const m = it.bumper ? it.m : mediaFor(it.sid);
@@ -1377,7 +1397,11 @@ ol.steps a { color: var(--accent) }
     document.querySelectorAll("#tv-queue button").forEach(bt => bt.setAttribute("aria-current", String(+bt.dataset.k === k)));
     const curBtn = document.querySelector(`#tv-queue button[data-k="${k}"]`); curBtn?.scrollIntoView({ block: "nearest" });
   }
-  function step(d) { if (tv && tv.pos + d >= 0 && tv.pos + d < tv.playable.length) play(tv.pos + d, true); }
+  function step(d) {
+    if (!tv) return;
+    if (tv.sting) { play(d > 0 ? tv.pos + 1 : tv.pos, true); return; }   // during a bumper: Next = the coming song, Previous = the one that just played
+    if (tv.pos + d >= 0 && tv.pos + d < tv.playable.length) play(tv.pos + d, true);
+  }
   $("tv-prev").onclick = () => step(-1);
   $("tv-fs").onclick = () => tv && tv.player.toggleFs();
   // keyboard while watching: F fullscreen, arrow keys previous / next
