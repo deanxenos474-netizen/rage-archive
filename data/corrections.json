@@ -208,6 +208,14 @@
    "to": "2020-04-18",
    "why": "Saturday morning 18 April 2020 (ABC title says 2002)",
    "to_title": "Saturday morning 18 April 2020 on ABC 1"
+  },
+  {
+   "date": "2019-05-15",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-morning-15-may-2019-on-abc/11148088",
+   "title": "Saturday morning 15 May 2019 on ABC",
+   "to": "2019-05-25",
+   "to_title": "Saturday morning 25 May 2019 on ABC",
+   "why": "ABC page posted 24 May 2019, numbered between Friday 24 May and Saturday night 25 May; 15 May 2019 was a Wednesday"
   }
  ],
  "add": [
