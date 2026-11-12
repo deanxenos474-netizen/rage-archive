@@ -186,6 +186,7 @@ ol.tracks .tr.noart { grid-template-columns: 34px minmax(0, 1fr) auto }
 .player.loading .bigplay { opacity: 1; border-color: rgb(255 255 255 / .25); border-top-color: #fff; background: rgb(0 0 0 / .35); animation: spin .8s linear infinite }
 .player.loading .bigplay::after { display: none }
 /* a YouTube ad is playing: show it as YouTube intends and let clicks reach it */
+.dbg { position: absolute; left: 4px; top: 4px; z-index: 9; margin: 0; padding: 4px 6px; max-width: 70%; background: rgb(0 0 0 / .75); color: #7f7; font: 11px/1.3 ui-monospace, monospace; white-space: pre-wrap; pointer-events: none }
 .player.admode .shield { pointer-events: none } .player.admode .bigplay, .player.admode .ov { opacity: 0 }
 @keyframes spin { to { transform: rotate(360deg) } }
 .player .fsb { transition: opacity .2s }
@@ -1019,6 +1020,7 @@ ol.steps a { color: var(--accent) }
     return ytReady;
   }
   let fsCounter = 0;
+  const DEBUG = /[?&]debug\b/.test(location.search);
   const STUCK_MS = 2000;   // see ytSync()
   function makePlayer(host, opts = {}) {
     const fid = "capsh" + (++fsCounter);
@@ -1033,6 +1035,16 @@ ol.steps a { color: var(--accent) }
     const img = svg.querySelector("image"), capg = svg.querySelector(".capg"), l1 = svg.querySelector(".l1"), l2 = svg.querySelector(".l2");
     const P = { stop: false, raf: 0, iv: 0, yt: null, ytReady: false, kind: null, m: {}, L: 8.2, pending: null };
     const shield = wrap.querySelector(".shield"), poster = wrap.querySelector(".poster");
+    /* ?debug on the address: a status box over the video, to see what YouTube reports (e.g. in browsers we can't test) */
+    let dbg = null; const dbgLog = [];
+    function debugShow() {
+      if (!dbg) { dbg = document.createElement("pre"); dbg.className = "dbg"; wrap.appendChild(dbg); }
+      let st = "-", ct = "-", lf = "-"; try { if (P.yt && P.ytReady) { st = P.yt.getPlayerState(); ct = (P.yt.getCurrentTime() || 0).toFixed(2); lf = (P.yt.getVideoLoadedFraction() || 0).toFixed(3); } } catch (e) { st = "err"; }
+      const since = ((performance.now() - (P.askAt || 0)) / 1000).toFixed(1);
+      const key = st + "|" + wrap.classList.contains("admode") + "|" + !!P.retried;
+      if (key !== P.dbgKey) { P.dbgKey = key; dbgLog.push(`${since}s state ${st}${wrap.classList.contains("admode") ? " AD" : ""}${P.retried ? " retried" : ""}`); if (dbgLog.length > 8) dbgLog.shift(); }
+      dbg.textContent = `482e337+dbg  ${P.kind}  want ${!!P.want}  started ${!!P.started}\nstate ${st}  time ${ct}  loaded ${lf}\n${since}s since play  retried ${!!P.retried}\n` + dbgLog.join("\n");
+    }
 
     function setPlaying(on) { wrap.classList.toggle("playing", on); if (on) wrap.classList.remove("loading"); shield.setAttribute("aria-label", on ? "Pause" : "Play"); }
     const setLoading = on => wrap.classList.toggle("loading", on);   // pressed play, video not moving yet: show a spinner
@@ -1129,7 +1141,7 @@ ol.steps a { color: var(--accent) }
     const loop = () => { if (P.stop) return; frame(); P.raf = requestAnimationFrame(loop); };
     loop();
     P.iv = setInterval(() => {
-      if (P.stop) return; frame(); ytSync();
+      if (P.stop) return; frame(); ytSync(); if (DEBUG) debugShow();
       if (P.kind === "video" && P.m.end && !P.endFired && v.currentTime >= +P.m.end) { P.endFired = true; v.pause(); setPlaying(false); opts.onEnded?.(); }   // stop time reached
     }, 150);     // keeps going when the tab is in the background
     /* Ads: YouTube plays an ad first on some videos (the owner's choice). While it runs, YouTube still calls the video
