@@ -1019,6 +1019,7 @@ ol.steps a { color: var(--accent) }
     return ytReady;
   }
   let fsCounter = 0;
+  const STUCK_MS = 2000;   // see ytSync()
   function makePlayer(host, opts = {}) {
     const fid = "capsh" + (++fsCounter);
     // caption shadow as rage drew it: a hard black block extruded down and to the right, with a thin dark rim
@@ -1145,6 +1146,15 @@ ol.steps a { color: var(--accent) }
       if (P.kind !== "yt" || !P.yt || !P.ytReady || !P.yt.getCurrentTime) return;
       let t, st; try { t = P.yt.getCurrentTime() || 0; st = P.yt.getPlayerState(); } catch { return; }
       const moving = P.lastT != null && t > P.lastT + 0.03; P.lastT = t;
+      if (moving) P.moveAt = performance.now();
+      /* stuck: play was asked for 2s ago and nothing has moved since (no video, no ad: during an ad YouTube's clock
+         still ticks). YouTube sometimes sits spinning like this (seen in Edge, probably an ad that never arrives);
+         loading the video again gets it going. Only once per video, so a real problem can't loop */
+      if (P.want && !P.started && !P.retried && st !== 2 && st !== 0 && performance.now() - Math.max(P.askAt || 0, P.moveAt || 0) > STUCK_MS) {
+        P.retried = true; P.askAt = performance.now(); P.lastT = null;
+        try { P.yt.loadVideoById(P.rng || P.m.yt); } catch {}
+        return;
+      }
       if (st === 1 || st === 3) P.fresh = false;
       if (st === 3) P.sawBuf = true;
       if (st === 1) {
@@ -1186,14 +1196,14 @@ ol.steps a { color: var(--accent) }
       l1.textContent = (song.a || "").toUpperCase(); l2.textContent = song.t || ""; P.noArt = song.kind === "clip";
       img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0");
       setPlaying(false); setLoading(!!autoplay); showPoster(false); problem(""); wrap.classList.remove("paused"); wrap.classList.toggle("yt", !!P.m.yt);
-      P.want = !!autoplay; P.endFired = false; P.lastT = null; P.fresh = true; P.sawBuf = false; P.started = false; P.askAt = performance.now(); P.loadNo = (P.loadNo || 0) + 1; setAd(false);   // fresh: ignore "ended" until this video has started loading
+      P.want = !!autoplay; P.endFired = false; P.lastT = null; P.fresh = true; P.sawBuf = false; P.started = false; P.retried = false; P.moveAt = 0; P.askAt = performance.now(); P.loadNo = (P.loadNo || 0) + 1; setAd(false);   // fresh: ignore "ended" until this video has started loading
       const vm = !P.m.yt && vmId(P.m.video);
       if (!vm) vmStop();
       if (P.m.yt) {
         showPoster(true);
         P.kind = "yt"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = false;
         // a clip taken from part of a longer video: start / stop times
-        const rng = P.m.start || P.m.end ? { videoId: P.m.yt, ...(P.m.start ? { startSeconds: +P.m.start } : {}), ...(P.m.end ? { endSeconds: +P.m.end } : {}) } : null;
+        const rng = P.rng = P.m.start || P.m.end ? { videoId: P.m.yt, ...(P.m.start ? { startSeconds: +P.m.start } : {}), ...(P.m.end ? { endSeconds: +P.m.end } : {}) } : null;
         if (P.yt && P.ytReady) { try { if (P.mutedByUs) { P.yt.unMute(); P.mutedByUs = false; } } catch {} autoplay ? (P.cuedId === P.m.yt && !rng ? P.yt.playVideo() : P.yt.loadVideoById(rng || P.m.yt)) : P.yt.cueVideoById(rng || P.m.yt); P.cuedId = null; }
         else { P.pending = { id: P.m.yt, autoplay, rng }; if (!P.yt) makeYT(); }
       } else if (vm) {
