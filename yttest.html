@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>YouTube test</title>
+<style>
+body { margin: 0; padding: 16px; background: #10142a; color: #e8eaf6; font: 15px/1.4 system-ui, sans-serif }
+h2 { font-size: 16px; margin: 20px 0 6px } .box { width: 640px; max-width: 100%; aspect-ratio: 16/9; background: #000 }
+.box iframe, .box > div { width: 100%; height: 100% } pre { color: #7f7; font: 12px ui-monospace, monospace; margin: 6px 0 }
+</style></head><body>
+<p>A plain YouTube test with none of the rage site's code. Press play on each.</p>
+<h2>1. Plain YouTube embed</h2>
+<div class="box"><iframe src="https://www.youtube.com/embed/DxSfQeCoFUM" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Test 1"></iframe></div>
+<h2>2. YouTube player made by script (the way the rage site makes it, without the rest)</h2>
+<div class="box"><div id="p2"></div></div>
+<pre id="s2"></pre>
+<script>
+const t0 = performance.now(), log = [];
+window.onYouTubeIframeAPIReady = () => {
+  const p = new YT.Player("p2", { videoId: "DxSfQeCoFUM", width: "100%", height: "100%",
+    playerVars: { controls: 0, disablekb: 1, fs: 0, rel: 0, playsinline: 1, modestbranding: 1, iv_load_policy: 3, cc_load_policy: 0, autoplay: 0 },
+    events: { onStateChange: e => log.push(((performance.now() - t0) / 1000).toFixed(1) + "s state " + e.data) } });
+  setInterval(() => { try { document.getElementById("s2").textContent = `state ${p.getPlayerState()}  time ${(p.getCurrentTime() || 0).toFixed(2)}  loaded ${(p.getVideoLoadedFraction() || 0).toFixed(3)}\n` + log.slice(-6).join("\n"); } catch {} }, 250);
+};
+const s = document.createElement("script"); s.src = "https://www.youtube.com/iframe_api"; document.head.appendChild(s);
+</script>
+</body></html>
