@@ -61,9 +61,18 @@ def clean_row(r):
 RANK = re.compile(r"^\s*(the\s+)?(\d{1,2})\.\s*(?!\d)(\S.*)$", re.I)   # also the ABC's "THE 6. BANGLES"
 
 
+# library-style names: "Proclaimers, The" -> "The Proclaimers", "Tribe Called Quest, A" -> "A Tribe Called Quest"
+INVERTED = re.compile(r"^(.+?)\s*,\s*(the|a)\s*$", re.I)
+
+
 def split_rank(artist):
+    """(chart number or 0, artist as it should read): also turns "Proclaimers, The" round"""
     m = RANK.match(artist)
-    return (int(m.group(2)), ((m.group(1) or "") + m.group(3)).strip()) if m else (0, artist)
+    rank, artist = (int(m.group(2)), ((m.group(1) or "") + m.group(3)).strip()) if m else (0, artist)
+    m = INVERTED.match(artist)
+    if m:
+        artist = m.group(2).capitalize() + " " + m.group(1)
+    return rank, artist
 
 
 def today_au():
