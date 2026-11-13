@@ -853,7 +853,7 @@ ol.steps a { color: var(--accent) }
     const nv = items.filter(hasVideo).length;
     const watch = `<div class="bwatch"><button class="btn primary" data-watch="${key}"${nv ? "" : " disabled"}>▶ Watch this broadcast</button><button class="btn" data-copy="${linkOf(b, up)}">Copy link</button><span>${nv ? `${nv} of ${items.length} have music videos` : "No music videos added for these songs yet"}</span></div>`;
     const lis = items.map(it => {
-      const inner = `${thumbHTML(it.sid, it.a)}<span class="t"><span class="a">${esc(it.a)}${tagHTML(it.kind)}${it.i == null ? "" : vidTag(it.sid)}${isDebut(it) ? `<span class="tag debut">${b.date < 19990101 ? "debut in archive" : "debut"}</span>` : ""}</span><span class="s">${esc(it.t)}${it.l ? ` <i>${esc(it.l)}</i>` : ""}</span></span><span class="n">${it.i == null ? "" : fmt(it.n) + "×"}</span>`;
+      const inner = `${thumbHTML(it.sid, it.a)}<span class="t"><span class="a">${esc(it.a)}${tagHTML(it.kind)}${it.i == null ? "" : vidTag(it.sid)}${isDebut(it) ? '<span class="tag debut">debut</span>' : ""}</span><span class="s">${esc(it.t)}${it.l ? ` <i>${esc(it.l)}</i>` : ""}</span></span><span class="n">${it.i == null ? "" : fmt(it.n) + "×"}</span>`;
       const cls = "tr" + (it.kind === "clip" ? " noart" : "");
       return it.i == null ? `<li><div class="${cls}">${inner}</div></li>` : `<li><button class="${cls}" data-s="${it.i}">${inner}</button></li>`;
     }).join("");
@@ -861,7 +861,7 @@ ol.steps a { color: var(--accent) }
   }
   /* "debut": the song's first day on rage. Aired: the first date it's in any playlist (every playlist that day gets the tag,
      as the same night airs on ABC TV and ABC Entertains). Upcoming: not aired yet, and this is its first upcoming day.
-     In 1998, where the archive starts, it says "debut in archive": rage began in 1987, so a 1998 play may not be the song's first */
+     Not shown in 1998, where the archive starts: rage began in 1987, so a 1998 play may not be the song's first */
   let debutDates = null;
   function debutTest(b, up) {
     if (!debutDates) {
@@ -870,6 +870,7 @@ ol.steps a { color: var(--accent) }
       for (const x of U) for (const r of x.rows) { const i = idIndex.get(r[3]), k = i != null ? canon(i) : "s" + r[3]; if (!aired.has(k) && !coming.has(k)) coming.set(k, x.date); }
       debutDates = { aired, coming };
     }
+    if (b.date < 19990101) return () => false;
     const map = up ? debutDates.coming : debutDates.aired;
     return it => map.get(it.i != null ? canon(it.i) : "s" + it.sid) === b.date;
   }
