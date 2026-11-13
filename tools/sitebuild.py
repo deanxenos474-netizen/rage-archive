@@ -56,6 +56,16 @@ def clean_row(r):
     return artist, title, (label or "").strip()
 
 
+# a chart position written before the artist in countdown playlists: "3. Europe", "01.GOTYE". Not "7.30 Report",
+# and dash forms ("1 - The Vandals", "4-3-2-1 - Thursday") are left alone as they may be part of a name
+RANK = re.compile(r"^\s*(the\s+)?(\d{1,2})\.\s*(?!\d)(\S.*)$", re.I)   # also the ABC's "THE 6. BANGLES"
+
+
+def split_rank(artist):
+    m = RANK.match(artist)
+    return (int(m.group(2)), ((m.group(1) or "") + m.group(3)).strip()) if m else (0, artist)
+
+
 def today_au():
     return (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=10)).date().isoformat()
 
@@ -107,13 +117,15 @@ def corrected(playlists):
 def build(d, out_dir=ROOT):
     today = today_au()
     pls = sorted([p for p in corrected(d["playlists"]) if p["date"] <= today], key=lambda p: (p["date"], p.get("url") or ""))
-    plays, play_page = [], []
+    plays, play_page, play_rank = [], [], []
     for pi, p in enumerate(pls):
         for r in p["rows"]:
             c = clean_row(r)
             if c:
-                plays.append((*c, p["date"]))
+                rank, a = split_rank(c[0])
+                plays.append((a, c[1], c[2], p["date"]))
                 play_page.append(pi)
+                play_rank.append(rank)
 
     mixed = collections.defaultdict(collections.Counter)
     for a, t, l, dt in plays:
@@ -178,8 +190,10 @@ def build(d, out_dir=ROOT):
         songs.append([aidx[a], t, lidx[l], n, int(first.replace("-", "")), int(last.replace("-", "")), yc, misc, sid])
 
     ridx = {r[7]: i for i, r in enumerate(rows)}
-    tracks = collections.defaultdict(list)
-    for k, pi in zip(play_key, play_page):
+    tracks, ranks = collections.defaultdict(list), collections.defaultdict(list)
+    for k, pi, rank in zip(play_key, play_page, play_rank):
+        if rank:
+            ranks[pi].append([len(tracks[pi]), rank])   # [position in the running order, chart number]
         tracks[pi].append(ridx[k])
     lists = []
     for pi, p in enumerate(pls):
@@ -187,7 +201,8 @@ def build(d, out_dir=ROOT):
             continue
         sp = p.get("sp")
         lists.append([int(p["date"].replace("-", "")), p.get("title") or "", p.get("url") or "", tracks[pi],
-                      sp[1] if sp else "", (2 if sp[0] == "Guest programmer" else 1) if sp else 0])
+                      sp[1] if sp else "", (2 if sp[0] == "Guest programmer" else 1) if sp else 0]
+                     + ([ranks[pi]] if ranks[pi] else []))
     lists.sort(key=lambda x: (x[0], x[1]))
 
     # upcoming: posted by the ABC but not aired yet; rows carry their own text + song id (they don't count as plays)
@@ -200,7 +215,8 @@ def build(d, out_dir=ROOT):
         for r in p["rows"]:
             c = clean_row(r)
             if c:
-                rr.append([smart_case(c[0]), c[1], c[2], song_id(c[0], c[1])])
+                rank, a = split_rank(c[0])
+                rr.append([smart_case(a), c[1], c[2], song_id(a, c[1])] + ([rank] if rank else []))
         if rr:
             sp = p.get("sp")
             upcoming.append([int(p["date"].replace("-", "")), p.get("title") or "", p.get("url") or "", rr,

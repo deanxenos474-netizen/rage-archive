@@ -90,6 +90,7 @@ label.f { display: flex; align-items: center; gap: 8px; font: 500 12px var(--mon
 .n small { display: block; font-size: 11px; color: var(--muted); font-weight: 400 }
 .tag { font: 500 10px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--hot); border: 1px solid currentColor; border-radius: 4px; padding: 2px 4px; margin-left: 6px; vertical-align: 2px }
 .tag.new, .tag.debut { color: var(--accent) }
+.rank { font: 600 13px var(--mono); color: var(--hot); margin-right: 6px }
 .tag.live { color: var(--ok) }
 .tag.special, .tag.other { color: var(--muted) }
 .empty, .loading { padding: 40px 6px; color: var(--muted) }
@@ -804,7 +805,8 @@ ol.steps a { color: var(--accent) }
   /* ---------- broadcasts ---------- */
   function loadBroadcasts() {
     if (!bLoading) bLoading = fetch("broadcasts.json", { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
-      B = d.lists.map(([date, title, url, tr, sp, kind], i) => ({ i, date, title, url, tr, sp: sp || "", kind: kind || 0, hay: fold(`${title} ${sp || ""}`) }));
+      // rk: chart numbers in countdown playlists, [[position in the running order, number], ...]
+      B = d.lists.map(([date, title, url, tr, sp, kind, rk], i) => ({ i, date, title, url, tr, sp: sp || "", kind: kind || 0, rk: rk ? new Map(rk) : null, hay: fold(`${title} ${sp || ""}`) }));
       U = (d.upcoming || []).map(([date, title, url, rows, sp, kind], i) => ({ i, date, title, url, rows, sp: sp || "", kind: kind || 0 }));
       for (const list of [B, U]) { const n = {}; for (const b of list) b.ord = n[b.date] = (n[b.date] || 0) + 1; }   // 1st, 2nd... broadcast that day
       plays = new Map();
@@ -830,11 +832,11 @@ ol.steps a { color: var(--accent) }
   // a broadcast's running order as display items (aired: song indexes; upcoming: rows with their own text)
   function itemsOf(b, upcoming) {
     const item = c => { const s = S[c]; return { i: c, sid: s.id, a: s.a, t: s.t, l: s.l, n: s.n, kind: s.kind }; };
-    const withIncluded = i => [item(canon(i)), ...(includesOf.get(i) || []).map(item)];
-    if (!upcoming) return b.tr.flatMap(withIncluded);
-    return b.rows.flatMap(([a, t, l, sid]) => {
+    const withIncluded = (i, rank) => [{ ...item(canon(i)), rank }, ...(includesOf.get(i) || []).map(item)];
+    if (!upcoming) return b.tr.flatMap((i, p) => withIncluded(i, b.rk && b.rk.get(p)));
+    return b.rows.flatMap(([a, t, l, sid, rank]) => {
       const i = idIndex.get(sid);
-      return i != null ? withIncluded(i) : [{ i: null, sid, a, t, l, n: 0, kind: "song" }];
+      return i != null ? withIncluded(i, rank) : [{ i: null, sid, a, t, l, n: 0, kind: "song", rank }];
     });
   }
   const hasVideo = it => { const m = mediaFor(it.sid); return !!(m && (m.yt || m.video)); };
@@ -853,7 +855,7 @@ ol.steps a { color: var(--accent) }
     const nv = items.filter(hasVideo).length;
     const watch = `<div class="bwatch"><button class="btn primary" data-watch="${key}"${nv ? "" : " disabled"}>▶ Watch this broadcast</button><button class="btn" data-copy="${linkOf(b, up)}">Copy link</button><span>${nv ? `${nv} of ${items.length} have music videos` : "No music videos added for these songs yet"}</span></div>`;
     const lis = items.map(it => {
-      const inner = `${thumbHTML(it.sid, it.a)}<span class="t"><span class="a">${esc(it.a)}${tagHTML(it.kind)}${it.i == null ? "" : vidTag(it.sid)}${isDebut(it) ? '<span class="tag debut">debut</span>' : ""}</span><span class="s">${esc(it.t)}${it.l ? ` <i>${esc(it.l)}</i>` : ""}</span></span><span class="n">${it.i == null ? "" : fmt(it.n) + "×"}</span>`;
+      const inner = `${thumbHTML(it.sid, it.a)}<span class="t"><span class="a">${it.rank ? `<span class="rank">${it.rank}.</span>` : ""}${esc(it.a)}${tagHTML(it.kind)}${it.i == null ? "" : vidTag(it.sid)}${isDebut(it) ? '<span class="tag debut">debut</span>' : ""}</span><span class="s">${esc(it.t)}${it.l ? ` <i>${esc(it.l)}</i>` : ""}</span></span><span class="n">${it.i == null ? "" : fmt(it.n) + "×"}</span>`;
       const cls = "tr" + (it.kind === "clip" ? " noart" : "");
       return it.i == null ? `<li><div class="${cls}">${inner}</div></li>` : `<li><button class="${cls}" data-s="${it.i}">${inner}</button></li>`;
     }).join("");
