@@ -861,7 +861,7 @@ ol.steps a { color: var(--accent) }
   }
   /* "debut": the song's first day on rage. Aired: the first date it's in any playlist (every playlist that day gets the tag,
      as the same night airs on ABC TV and ABC Entertains). Upcoming: not aired yet, and this is its first upcoming day.
-     Not shown in 1998, where the archive starts: rage began in 1987, so a 1998 play may not be the song's first */
+     (1998, where the archive starts, shows it too, though rage began in 1987: the owner chose that) */
   let debutDates = null;
   function debutTest(b, up) {
     if (!debutDates) {
@@ -870,7 +870,6 @@ ol.steps a { color: var(--accent) }
       for (const x of U) for (const r of x.rows) { const i = idIndex.get(r[3]), k = i != null ? canon(i) : "s" + r[3]; if (!aired.has(k) && !coming.has(k)) coming.set(k, x.date); }
       debutDates = { aired, coming };
     }
-    if (b.date < 19990101) return () => false;
     const map = up ? debutDates.coming : debutDates.aired;
     return it => map.get(it.i != null ? canon(it.i) : "s" + it.sid) === b.date;
   }
