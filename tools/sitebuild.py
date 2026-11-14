@@ -71,7 +71,14 @@ TRANK = re.compile(r"^\s*(\d{1,2})\.(?:\s+|(?!\d)|(?=\d{1,2}\s*[ap]m\b))(\S.*)$"
 KEEP_TITLES = {"7.X"}   # Hviske
 
 
+# the Hottest 100 of 1999 (Feb 2000) pages: "No.9????Last Kiss" (the ? are a garbled separator)
+HRANK = re.compile(r"^\s*No\.\s*(\d{1,3})\?{2,}\s*(\S.*)$")
+
+
 def split_title_rank(title):
+    m = HRANK.match(title)
+    if m:
+        return int(m.group(1)), m.group(2).strip()
     m = TRANK.match(title)
     return (int(m.group(1)), m.group(2).strip()) if m and title.strip() not in KEEP_TITLES else (0, title)
 
