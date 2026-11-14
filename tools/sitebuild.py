@@ -67,7 +67,7 @@ INVERTED = re.compile(r"^(.+?)\s*,\s*(the|a)\s*$", re.I)
 
 # 1999 top 50 playlists put the number before the title instead: "Smash Mouth - 31.All Star".
 # Real titles that look like that are kept as they are.
-TRANK = re.compile(r"^\s*(\d{1,2})\.(?:\s+|(?!\d))(\S.*)$")   # "9. 2 Times" too (space after the dot)
+TRANK = re.compile(r"^\s*(\d{1,2})\.(?:\s+|(?!\d)|(?=\d{1,2}\s*[ap]m\b))(\S.*)$", re.I)   # also "9. 2 Times" and "22.9pm ('Til I Come)"
 KEEP_TITLES = {"7.X"}   # Hviske
 
 
