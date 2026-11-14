@@ -126,6 +126,25 @@ def corrected(playlists):
         out.append(p)
     for k in (drop | set(move)) - used:
         print("corrections.json: no playlist matched", k)
+    # rows: single rows the ABC's page split wrongly (e.g. the label glued to the artist), matched by date + exact row
+    fixes = {}
+    for e in c.get("rows", []):
+        fixes.setdefault(e["date"], {})[tuple(e["from"])] = e["to"]
+    hit = set()
+    for i, p in enumerate(out):
+        f = fixes.get(p["date"])
+        if f and any(tuple((r + ["", "", ""])[:3]) in f for r in p["rows"]):
+            rows = []
+            for r in p["rows"]:
+                k = tuple((r + ["", "", ""])[:3])
+                if k in f:
+                    hit.add((p["date"], k)); r = list(f[k])
+                rows.append(r)
+            out[i] = dict(p, rows=rows)
+    for dte, f in fixes.items():
+        for k in f:
+            if (dte, k) not in hit:
+                print("corrections.json: no row matched", dte, k)
     have = {key(p) for p in out}
     for e in c.get("add", []):
         p = {f: e.get(f) for f in ("date", "title", "url", "src", "abc_id", "sp", "rows")}

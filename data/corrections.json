@@ -1,5 +1,5 @@
 {
- "note": "Corrections applied by tools/sitebuild.py on every rebuild (the stored playlist data is never changed). remove: wrongly dated copies; redate: real date (and corrected title) for a playlist ABC titled wrongly; add: full nights from the RageAgain archive missing from the site. Matched by date + page link + title.",
+ "note": "Corrections applied by tools/sitebuild.py on every rebuild (the stored playlist data is never changed). remove: wrongly dated copies; redate: real date (and corrected title) for a playlist ABC titled wrongly; add: full nights from the RageAgain archive missing from the site. Matched by date + page link + title. rows: single rows the ABC page split wrongly (from -> to), matched by date + exact row.",
  "remove": [
   {
    "date": "1999-01-02",
@@ -1140,6 +1140,204 @@
     ]
    ],
    "why": "full Friday night missing from the site (RageAgain archive)"
+  }
+ ],
+ "rows": [
+  {
+   "date": "1999-04-30",
+   "from": [
+    "Busta Rhymes featuring Janet Jackson Warner",
+    "What's It Gonna Be?",
+    ""
+   ],
+   "to": [
+    "Busta Rhymes featuring Janet Jackson",
+    "What's It Gonna Be?",
+    "Warner"
+   ],
+   "why": "label split wrongly on the ABC page"
+  },
+  {
+   "date": "1999-05-14",
+   "from": [
+    "Savage Garden Roadshow",
+    "The Animal Song",
+    ""
+   ],
+   "to": [
+    "Savage Garden",
+    "The Animal Song",
+    "Roadshow"
+   ],
+   "why": "label split wrongly on the ABC page"
+  },
+  {
+   "date": "1999-06-12",
+   "from": [
+    "Damien Lovelock Festival",
+    "Dalai Lama",
+    ""
+   ],
+   "to": [
+    "Damien Lovelock",
+    "Dalai Lama",
+    "Festival"
+   ],
+   "why": "label split wrongly on the ABC page"
+  },
+  {
+   "date": "1999-06-18",
+   "from": [
+    "Sean Sennett & Crush 76 Festival",
+    "Sometimes Angels",
+    ""
+   ],
+   "to": [
+    "Sean Sennett & Crush 76",
+    "Sometimes Angels",
+    "Festival"
+   ],
+   "why": "label split wrongly on the ABC page"
+  },
+  {
+   "date": "1999-06-19",
+   "from": [
+    "Propellerheads featuring Shirley Bassey MDS",
+    "History Repeating",
+    ""
+   ],
+   "to": [
+    "Propellerheads featuring Shirley Bassey",
+    "History Repeating",
+    "MDS"
+   ],
+   "why": "label split wrongly on the ABC page"
+  },
+  {
+   "date": "1999-06-25",
+   "from": [
+    "Killers On The Loose Central Station",
+    "Tamarama Door Slammer",
+    ""
+   ],
+   "to": [
+    "Killers On The Loose",
+    "Tamarama Door Slammer",
+    "Central Station"
+   ],
+   "why": "label split wrongly on the ABC page"
+  },
+  {
+   "date": "1999-07-02",
+   "from": [
+    "Piet Blank & Jaspa Jones Central Station",
+    "Cream",
+    ""
+   ],
+   "to": [
+    "Piet Blank & Jaspa Jones",
+    "Cream",
+    "Central Station"
+   ],
+   "why": "label split wrongly on the ABC page"
+  },
+  {
+   "date": "1999-07-02",
+   "from": [
+    "Spiderbait Polydor",
+    "Shazam",
+    ""
+   ],
+   "to": [
+    "Spiderbait",
+    "Shazam",
+    "Polydor"
+   ],
+   "why": "label split wrongly on the ABC page"
+  },
+  {
+   "date": "1999-07-30",
+   "from": [
+    "Universal",
+    "She Elvis Costello",
+    "(MCA)"
+   ],
+   "to": [
+    "Elvis Costello",
+    "She",
+    "Universal (MCA)"
+   ],
+   "why": "label split wrongly on the ABC page"
+  },
+  {
+   "date": "1999-07-30",
+   "from": [
+    "Universal",
+    "Awful Hole",
+    "(MCA)"
+   ],
+   "to": [
+    "Hole",
+    "Awful",
+    "Universal (MCA)"
+   ],
+   "why": "label split wrongly on the ABC page"
+  },
+  {
+   "date": "1999-07-30",
+   "from": [
+    "Cast",
+    "Magic Hour ",
+    "(MCA)"
+   ],
+   "to": [
+    "Cast",
+    "Magic Hour",
+    "Universal (MCA)"
+   ],
+   "why": "label split wrongly on the ABC page"
+  },
+  {
+   "date": "1999-07-30",
+   "from": [
+    "Limp Bizkit",
+    "Faith",
+    "(MCA)"
+   ],
+   "to": [
+    "Limp Bizkit",
+    "Faith",
+    "Universal (MCA)"
+   ],
+   "why": "label split wrongly on the ABC page"
+  },
+  {
+   "date": "1999-09-25",
+   "from": [
+    "Nine Inch Nails Universal",
+    "We're In This Together",
+    "(MCA)"
+   ],
+   "to": [
+    "Nine Inch Nails",
+    "We're In This Together",
+    "Universal (MCA)"
+   ],
+   "why": "label split wrongly on the ABC page"
+  },
+  {
+   "date": "2004-10-09",
+   "from": [
+    " SONIC YOUTH Universal",
+    "100%",
+    " (MCA)"
+   ],
+   "to": [
+    "SONIC YOUTH",
+    "100%",
+    "Universal (MCA)"
+   ],
+   "why": "label split wrongly on the ABC page"
   }
  ]
 }
