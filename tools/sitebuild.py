@@ -65,6 +65,17 @@ RANK = re.compile(r"^\s*(the\s+)?(\d{1,2})\.\s*(?!\d)(\S.*)$", re.I)   # also th
 INVERTED = re.compile(r"^(.+?)\s*,\s*(the|a)\s*$", re.I)
 
 
+# 1999 top 50 playlists put the number before the title instead: "Smash Mouth - 31.All Star".
+# Real titles that look like that are kept as they are.
+TRANK = re.compile(r"^\s*(\d{1,2})\.(?:\s+|(?!\d))(\S.*)$")   # "9. 2 Times" too (space after the dot)
+KEEP_TITLES = {"7.X"}   # Hviske
+
+
+def split_title_rank(title):
+    m = TRANK.match(title)
+    return (int(m.group(1)), m.group(2).strip()) if m and title.strip() not in KEEP_TITLES else (0, title)
+
+
 def split_rank(artist):
     """(chart number or 0, artist as it should read): also turns "Proclaimers, The" round"""
     m = RANK.match(artist)
@@ -132,9 +143,10 @@ def build(d, out_dir=ROOT):
             c = clean_row(r)
             if c:
                 rank, a = split_rank(c[0])
-                plays.append((a, c[1], c[2], p["date"]))
+                trank, title = split_title_rank(c[1])
+                plays.append((a, title, c[2], p["date"]))
                 play_page.append(pi)
-                play_rank.append(rank)
+                play_rank.append(rank or trank)
 
     mixed = collections.defaultdict(collections.Counter)
     for a, t, l, dt in plays:
@@ -225,7 +237,9 @@ def build(d, out_dir=ROOT):
             c = clean_row(r)
             if c:
                 rank, a = split_rank(c[0])
-                rr.append([smart_case(a), c[1], c[2], song_id(a, c[1])] + ([rank] if rank else []))
+                trank, title = split_title_rank(c[1])
+                rank = rank or trank
+                rr.append([smart_case(a), title, c[2], song_id(a, title)] + ([rank] if rank else []))
         if rr:
             sp = p.get("sp")
             upcoming.append([int(p["date"].replace("-", "")), p.get("title") or "", p.get("url") or "", rr,
