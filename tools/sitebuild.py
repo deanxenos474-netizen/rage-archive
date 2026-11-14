@@ -53,7 +53,33 @@ def clean_row(r):
     artist, title = (artist or "").strip(" -"), (title or "").strip(" -\"“”")
     if not artist or not title or len(title) > 150:
         return None
+    artist, title = unsplit(artist, title)
+    artist, title = NOTE.sub(" ", artist).strip(), NOTE.sub(" ", title).strip()   # "Shaggy   ***Please Note: ...***"
     return artist, title, (label or "").strip()
+
+
+# the old ABC pages were split at the first hyphen, so a hyphen inside a title pushed the rest into the artist:
+# "Ray Of Light (Sasha Ultra" / "Violet Mix) - Madonna", "Woo" / "Hah!! (Got You All In Check) - BUSTA RHYMES".
+# A "live" note can also come first: "Live On Recovery - The Whitlams" -> "The Whitlams - Live On Recovery".
+NOTE = re.compile(r"\s*\*\*\*\s*(please note|abc tv)[^*]*\*\*\*\s*", re.I)
+HY_PAREN = re.compile(r"^([^()]*?\))\s*-\s*(\S.*)$")
+HY_REST = re.compile(r"^(\S[^-]*?)\s+-\s+(\S.*)$")
+QUAL = re.compile(r"(live|in concert|from the video)\b", re.I)
+QUAL_FIRST = re.compile(r"^((?:live|in concert|from the video)\b.*?)\s+-\s+(\S.*)$", re.I)
+
+
+def unsplit(artist, title):
+    m = HY_PAREN.match(artist)
+    if m and title.count("(") > title.count(")"):
+        return m.group(2), title + "-" + m.group(1)
+    m = HY_REST.match(artist)
+    if m and len(title) <= 3 and title[:1].isalpha() and not (len(title) > 1 and title.isupper()) \
+            and not QUAL.match(m.group(2)):    # not "Powderfinger - Live on Recovery" / "JC", nor "EPK"
+        return m.group(2), title + "-" + m.group(1)
+    m = QUAL_FIRST.match(artist)
+    if m:
+        return m.group(2) + " - " + m.group(1), title
+    return artist, title
 
 
 # a chart position written before the artist in countdown playlists: "3. Europe", "01.GOTYE". Not "7.30 Report",
@@ -83,8 +109,20 @@ def split_title_rank(title):
     return (int(m.group(1)), m.group(2).strip()) if m and title.strip() not in KEEP_TITLES else (0, title)
 
 
+# junk the old ABC pages left around artist names
+JUNK_TIME = re.compile(r"^\s*\d{1,2}:\d{2}\s*[ap]m\s+", re.I)          # "04:00am\r\n\r\nDAVID ESSEX"
+JUNK_V = re.compile(r"^v(?=[A-Z][a-z])")                                # "vSmash Mouth" (Aug-Oct 1999 pages)
+JUNK_INTOP = re.compile(r"^(.*?)\s+(\d{1,2})\s+in\s+top\s*50\s*$", re.I)  # "Westlife  19 in Top 50"
+JUNK_END = re.compile(r"\s+\W?\s*end of (the )?(top 50|triple j's hottest 100)\s*$", re.I)   # "Eiffel 65   End of the Top 50"
+
+
 def split_rank(artist):
     """(chart number or 0, artist as it should read): also turns "Proclaimers, The" round"""
+    artist = JUNK_V.sub("", JUNK_TIME.sub("", artist)).strip()
+    artist = JUNK_END.sub("", artist).strip()
+    m = JUNK_INTOP.match(artist)
+    if m:
+        return int(m.group(2)), m.group(1).strip()
     m = RANK.match(artist)
     rank, artist = (int(m.group(2)), ((m.group(1) or "") + m.group(3)).strip()) if m else (0, artist)
     m = INVERTED.match(artist)

@@ -1516,6 +1516,650 @@
     ]
    ],
    "why": "ARIA number 1 (week of 1 Aug 1999) missing from the ABC page; added at the owner's request from the chart (song already in the archive), not confirmed as aired"
+  },
+  {
+   "date": "1998-06-20",
+   "from": [
+    "from the video \"Pleas - The Birthday Party",
+    "Pleasure Heads Must Burn",
+    "Mushroom"
+   ],
+   "to": [
+    "The Birthday Party - from the video \"Pleasure Heads Must Burn\"",
+    "Pleasure Heads Must Burn",
+    "Mushroom"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-05-07",
+   "from": [
+    "Live On Recovery",
+    "Any Day Violetine",
+    "Mushroom"
+   ],
+   "to": [
+    "Violetine - Live On Recovery",
+    "Any Day",
+    "Mushroom"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-05-14",
+   "from": [
+    "Crowes, The",
+    "Only A Fool Black",
+    "Sony"
+   ],
+   "to": [
+    "The Black Crowes",
+    "Only A Fool",
+    "Sony"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-05-14",
+   "from": [
+    "Star Wars:The Phantom Menace - John Williams & The London Symphony Orchestra",
+    "Duel of The Fates",
+    "Sony"
+   ],
+   "to": [
+    "John Williams & The London Symphony Orchestra",
+    "Duel of The Fates",
+    "Sony"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-05-22",
+   "from": [
+    "Live In Concert",
+    "Maggie's Farm Bob Dylan",
+    "Sony"
+   ],
+   "to": [
+    "Bob Dylan - Live In Concert",
+    "Maggie's Farm",
+    "Sony"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-06-26",
+   "from": [
+    "from the video In Bed With Madonna",
+    "Holiday Madonna",
+    "Warner"
+   ],
+   "to": [
+    "Madonna - from the video In Bed With Madonna",
+    "Holiday",
+    "Warner"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-08-07",
+   "from": [
+    "Live",
+    "Release The Bats Birthday Party, The",
+    "Mushroom"
+   ],
+   "to": [
+    "Birthday Party, The - Live",
+    "Release The Bats",
+    "Mushroom"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-09-04",
+   "from": [
+    "Live On Countdown",
+    "Whip It Devo",
+    "Warner"
+   ],
+   "to": [
+    "Devo - Live On Countdown",
+    "Whip It",
+    "Warner"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-09-04",
+   "from": [
+    "In Concert",
+    "The Last Goodbye Jeff Buckley",
+    "Sony"
+   ],
+   "to": [
+    "Jeff Buckley - In Concert",
+    "The Last Goodbye",
+    "Sony"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-09-04",
+   "from": [
+    "Live",
+    "All Mine Portishead",
+    "Polydor"
+   ],
+   "to": [
+    "Portishead - Live",
+    "All Mine",
+    "Polydor"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-09-04",
+   "from": [
+    "Shrunk",
+    "Hot Robots Pre",
+    "Independent"
+   ],
+   "to": [
+    "Pre-Shrunk",
+    "Hot Robots",
+    "Independent"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-09-04",
+   "from": [
+    "Faces, The",
+    "Itchycoo Park Small ",
+    "BMG"
+   ],
+   "to": [
+    "The Small Faces",
+    "Itchycoo Park",
+    "BMG"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-09-04",
+   "from": [
+    "Live",
+    "Jordan Minnesota Big Black",
+    "Au-Go-Go"
+   ],
+   "to": [
+    "Big Black - Live",
+    "Jordan Minnesota",
+    "Au-Go-Go"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-09-04",
+   "from": [
+    "Live, The",
+    "Holiday In Cambodia Dead Kennedys",
+    "Virgin"
+   ],
+   "to": [
+    "Dead Kennedys - Live",
+    "Holiday In Cambodia",
+    "Virgin"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-09-04",
+   "from": [
+    "Live On Recovery",
+    "No Association silverchair",
+    "Murmur"
+   ],
+   "to": [
+    "silverchair - Live On Recovery",
+    "No Association",
+    "Murmur"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-09-04",
+   "from": [
+    "Live On Recovery",
+    "The Closing silverchair",
+    "Murmur"
+   ],
+   "to": [
+    "silverchair - Live On Recovery",
+    "The Closing",
+    "Murmur"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-09-18",
+   "from": [
+    "Live",
+    "Cambodia Limp Bizkit",
+    "Universal (MCA)"
+   ],
+   "to": [
+    "Limp Bizkit - Live",
+    "Cambodia",
+    "Universal (MCA)"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-09-18",
+   "from": [
+    "Live",
+    "Counterfeit Limp Bizkit",
+    "Universal (MCA)"
+   ],
+   "to": [
+    "Limp Bizkit - Live",
+    "Counterfeit",
+    "Universal (MCA)"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-09-18",
+   "from": [
+    "Live in Concert",
+    "Blind Korn",
+    "Sony"
+   ],
+   "to": [
+    "Korn - Live in Concert",
+    "Blind",
+    "Sony"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-09-24",
+   "from": [
+    "Obscene Breakbeat Era",
+    "Ultra",
+    "Shock"
+   ],
+   "to": [
+    "Breakbeat Era",
+    "Ultra-Obscene",
+    "Shock"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-09-24",
+   "from": [
+    "Live",
+    "Cambodia Limp Bizkit",
+    "Universal (MCA)"
+   ],
+   "to": [
+    "Limp Bizkit - Live",
+    "Cambodia",
+    "Universal (MCA)"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-09-24",
+   "from": [
+    "The Auditions Moby",
+    "Bodyrock",
+    "Mushroom"
+   ],
+   "to": [
+    "Moby",
+    "Bodyrock - The Auditions",
+    "Mushroom"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "1999-09-24",
+   "from": [
+    "Train Shootyz Groove",
+    "L",
+    "Warner"
+   ],
+   "to": [
+    "Shootyz Groove",
+    "L-Train",
+    "Warner"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2000-04-21",
+   "from": [
+    "Rewind - The Crowd Say Bo Selector - The Artful Dodger",
+    "Re",
+    "EMI"
+   ],
+   "to": [
+    "The Artful Dodger",
+    "Re-Rewind (The Crowd Say Bo Selector)",
+    "EMI"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2004-04-24",
+   "from": [
+    "Rewind - The Crowd Say Bo Selector - THE ARTFUL DODGER",
+    "Re",
+    "EMI"
+   ],
+   "to": [
+    "THE ARTFUL DODGER",
+    "Re-Rewind (The Crowd Say Bo Selector)",
+    "EMI"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2000-10-20",
+   "from": [
+    "DJ Culture",
+    "Blank & Jones",
+    "Central Station"
+   ],
+   "to": [
+    "Blank & Jones",
+    "DJ Culture",
+    "Central Station"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2000-04-28",
+   "from": [
+    "Rewind - The Crowd Say Bo Selector - The Artful Dodger",
+    "Re",
+    "EMI"
+   ],
+   "to": [
+    "The Artful Dodger",
+    "Re-Rewind (The Crowd Say Bo Selector)",
+    "EMI"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2000-05-05",
+   "from": [
+    "Rewind - The Crowd Say Bo Selector - The Artful Dodger",
+    "Re",
+    "EMI"
+   ],
+   "to": [
+    "The Artful Dodger",
+    "Re-Rewind (The Crowd Say Bo Selector)",
+    "EMI"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2000-05-12",
+   "from": [
+    "Rewind - The Crowd Say Bo Selector - The Artful Dodger",
+    "Re",
+    "EMI"
+   ],
+   "to": [
+    "The Artful Dodger",
+    "Re-Rewind (The Crowd Say Bo Selector)",
+    "EMI"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2000-05-19",
+   "from": [
+    "Rewind - The Crowd Say Bo Selector - The Artful Dodger",
+    "Re",
+    "EMI"
+   ],
+   "to": [
+    "The Artful Dodger",
+    "Re-Rewind (The Crowd Say Bo Selector)",
+    "EMI"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2000-05-20",
+   "from": [
+    "Rewind - The Crowd Say Bo Selector - The Artful Dodger",
+    "Re",
+    "EMI"
+   ],
+   "to": [
+    "The Artful Dodger",
+    "Re-Rewind (The Crowd Say Bo Selector)",
+    "EMI"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2000-05-26",
+   "from": [
+    "Rewind - The Crowd Say Bo Selector - The Artful Dodger",
+    "Re",
+    "EMI"
+   ],
+   "to": [
+    "The Artful Dodger",
+    "Re-Rewind (The Crowd Say Bo Selector)",
+    "EMI"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2000-06-02",
+   "from": [
+    "Rewind - The Crowd Say Bo Selector - The Artful Dodger",
+    "Re",
+    "EMI"
+   ],
+   "to": [
+    "The Artful Dodger",
+    "Re-Rewind (The Crowd Say Bo Selector)",
+    "EMI"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2000-06-09",
+   "from": [
+    "Rewind - The Crowd Say Bo Selector - The Artful Dodger",
+    "Re",
+    "EMI"
+   ],
+   "to": [
+    "The Artful Dodger",
+    "Re-Rewind (The Crowd Say Bo Selector)",
+    "EMI"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2000-06-16",
+   "from": [
+    "Rewind - The Crowd Say Bo Selector - The Artful Dodger",
+    "Re",
+    "EMI"
+   ],
+   "to": [
+    "The Artful Dodger",
+    "Re-Rewind (The Crowd Say Bo Selector)",
+    "EMI"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2000-06-23",
+   "from": [
+    "Rewind - The Crowd Say Bo Selector - The Artful Dodger",
+    "Re",
+    "EMI"
+   ],
+   "to": [
+    "The Artful Dodger",
+    "Re-Rewind (The Crowd Say Bo Selector)",
+    "EMI"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2000-06-30",
+   "from": [
+    "Rewind - The Crowd Say Bo Selector - The Artful Dodger",
+    "Re",
+    "EMI"
+   ],
+   "to": [
+    "The Artful Dodger",
+    "Re-Rewind (The Crowd Say Bo Selector)",
+    "EMI"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2000-07-07",
+   "from": [
+    "Rewind - The Crowd Say Bo Selector - The Artful Dodger",
+    "Re",
+    "EMI"
+   ],
+   "to": [
+    "The Artful Dodger",
+    "Re-Rewind (The Crowd Say Bo Selector)",
+    "EMI"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2000-07-14",
+   "from": [
+    "Rewind - The Crowd Say Bo Selector - The Artful Dodger",
+    "Re",
+    "EMI"
+   ],
+   "to": [
+    "The Artful Dodger",
+    "Re-Rewind (The Crowd Say Bo Selector)",
+    "EMI"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2000-07-21",
+   "from": [
+    "Rewind - The Crowd Say Bo Selector - The Artful Dodger",
+    "Re",
+    "EMI"
+   ],
+   "to": [
+    "The Artful Dodger",
+    "Re-Rewind (The Crowd Say Bo Selector)",
+    "EMI"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2000-08-11",
+   "from": [
+    "Rewind - The Crowd Say Bo Selector - The Artful Dodger",
+    "Re",
+    "EMI"
+   ],
+   "to": [
+    "The Artful Dodger",
+    "Re-Rewind (The Crowd Say Bo Selector)",
+    "EMI"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2000-10-20",
+   "from": [
+    "Rewind - The Crowd Say Bo Selector - The Artful Dodger",
+    "Re",
+    "EMI"
+   ],
+   "to": [
+    "The Artful Dodger",
+    "Re-Rewind (The Crowd Say Bo Selector)",
+    "EMI"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2000-10-28",
+   "from": [
+    "Rewind - The Crowd Say Bo Selector - The Artful Dodger",
+    "Re",
+    "EMI"
+   ],
+   "to": [
+    "The Artful Dodger",
+    "Re-Rewind (The Crowd Say Bo Selector)",
+    "EMI"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2000-12-29",
+   "from": [
+    "Rewind - The Crowd Say Bo Selector - The Artful Dodger",
+    "Re",
+    "EMI"
+   ],
+   "to": [
+    "The Artful Dodger",
+    "Re-Rewind (The Crowd Say Bo Selector)",
+    "EMI"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2001-03-17",
+   "from": [
+    "from the video \"Pleas - The Birthday Party",
+    "Pleasure Heads Must Burn",
+    "Mushroom"
+   ],
+   "to": [
+    "The Birthday Party - from the video \"Pleasure Heads Must Burn\"",
+    "Pleasure Heads Must Burn",
+    "Mushroom"
+   ],
+   "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2002-01-26",
+   "from": [
+    "from the video \"Pleasure Heads Must Burn\" - The BIRTHDAY PARTY",
+    "Pleasure Heads Must Burn",
+    "Mushroom"
+   ],
+   "to": [
+    "The Birthday Party - from the video \"Pleasure Heads Must Burn\"",
+    "Pleasure Heads Must Burn",
+    "Mushroom"
+   ],
+   "why": "artist and title glued together on the ABC page"
   }
  ]
 }
