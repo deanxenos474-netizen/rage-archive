@@ -1380,6 +1380,142 @@
     ]
    ],
    "why": "the ARIA chart that week had Livin' La Vida Loca at 14 (ABC page typed 15) and Delerium's Silence at 15, missing from the ABC page; Silence added at the owner's request, not confirmed as aired"
+  },
+  {
+   "date": "1999-09-24",
+   "from": [
+    "Christina Aguilera",
+    "3.Genie In A Bottle ",
+    "BMG"
+   ],
+   "to": [
+    [
+     "Christina Aguilera",
+     "3.Genie In A Bottle ",
+     "BMG"
+    ],
+    [
+     "Pearl Jam",
+     "2.Last Kiss",
+     "Sony"
+    ]
+   ],
+   "why": "ARIA number 2 (week of 26 Sep 1999) missing from the ABC page; added at the owner's request from the chart (song already in the archive), not confirmed as aired"
+  },
+  {
+   "date": "1999-09-24",
+   "from": [
+    "S Club 7",
+    "39.Bring It All Back ",
+    "Universal (MCA)"
+   ],
+   "to": [
+    [
+     "S Club 7",
+     "39.Bring It All Back ",
+     "Universal (MCA)"
+    ],
+    [
+     "Limp Bizkit",
+     "38.Nookie",
+     "Universal (MCA)"
+    ]
+   ],
+   "why": "ARIA number 38 (week of 26 Sep 1999) missing from the ABC page; added at the owner's request from the chart (song already in the archive), not confirmed as aired"
+  },
+  {
+   "date": "2000-02-11",
+   "from": [
+    "Eskimo Joe",
+    "No.99????Ruby Wednesday",
+    "Modular"
+   ],
+   "to": [
+    [
+     "Powderfinger",
+     "No.100????Passenger",
+     "Universal (MCA)"
+    ],
+    [
+     "Eskimo Joe",
+     "No.99????Ruby Wednesday",
+     "Modular"
+    ]
+   ],
+   "why": "Hottest 100 of 1999 number 100 missing from the ABC page; added at the owner's request from the chart (song already in the archive), not confirmed as aired"
+  },
+  {
+   "date": "1999-07-31",
+   "from": [
+    "Vanessa Amorosi Transistor",
+    "21.Have A Look",
+    ""
+   ],
+   "to": [
+    [
+     "Vanessa Amorosi",
+     "21.Have A Look",
+     "TransistoR"
+    ],
+    [
+     "The Offspring",
+     "20.Why Don't You Get A Job?",
+     "Sony"
+    ],
+    [
+     "Westlife",
+     "19.Swear It Again",
+     "BMG"
+    ],
+    [
+     "Monifah",
+     "18.Bad Girl",
+     "Universal (MCA)"
+    ]
+   ],
+   "why": "label glued to the artist; 20-18 (ARIA, week of 1 Aug 1999) missing from the ABC page; added at the owner's request from the chart (song already in the archive), not confirmed as aired"
+  },
+  {
+   "date": "1999-07-31",
+   "from": [
+    "Ricky Martin",
+    "15.Livin' La Vida Loca",
+    "Sony"
+   ],
+   "to": [
+    [
+     "Delerium",
+     "15.Silence",
+     "Festival"
+    ],
+    [
+     "Ricky Martin",
+     "14.Livin' La Vida Loca",
+     "Sony"
+    ]
+   ],
+   "why": "ARIA chart had Livin' La Vida Loca at 14 (ABC typed 15) and Silence at 15 missing from the ABC page; added at the owner's request from the chart (song already in the archive), not confirmed as aired"
+  },
+  {
+   "date": "1999-07-31",
+   "from": [
+    "Jennifer Lopez",
+    "2.If You Had My Love",
+    "Sony"
+   ],
+   "to": [
+    [
+     "Jennifer Lopez",
+     "2.If You Had My Love",
+     "Sony"
+    ],
+    [
+     "Pearl Jam",
+     "1.Last Kiss",
+     "Sony"
+    ]
+   ],
+   "why": "ARIA number 1 (week of 1 Aug 1999) missing from the ABC page; added at the owner's request from the chart (song already in the archive), not confirmed as aired"
   }
  ]
 }
