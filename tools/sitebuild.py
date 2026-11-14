@@ -133,7 +133,8 @@ def corrected(playlists):
         out.append(p)
     for k in (drop | set(move)) - used:
         print("corrections.json: no playlist matched", k)
-    # rows: single rows the ABC's page split wrongly (e.g. the label glued to the artist), matched by date + exact row
+    # rows: single rows the ABC's page got wrong (e.g. the label glued to the artist), matched by date + exact row;
+    # "to" is one row, or a list of rows to put in its place (to add songs the owner chose to add)
     fixes = {}
     for e in c.get("rows", []):
         fixes.setdefault(e["date"], {})[tuple(e["from"])] = e["to"]
@@ -145,7 +146,11 @@ def corrected(playlists):
             for r in p["rows"]:
                 k = tuple((r + ["", "", ""])[:3])
                 if k in f:
-                    hit.add((p["date"], k)); r = list(f[k])
+                    hit.add((p["date"], k))
+                    to = f[k]
+                    if to and isinstance(to[0], list):   # several rows: a fix that also adds rows next to this one
+                        rows.extend(list(x) for x in to); continue
+                    r = list(to)
                 rows.append(r)
             out[i] = dict(p, rows=rows)
     for dte, f in fixes.items():

@@ -1338,6 +1338,48 @@
     "Universal (MCA)"
    ],
    "why": "label split wrongly on the ABC page"
+  },
+  {
+   "date": "1999-07-30",
+   "from": [
+    "Jennifer Lopez",
+    "2.If You Had My Love",
+    "Sony"
+   ],
+   "to": [
+    [
+     "Jennifer Lopez",
+     "2.If You Had My Love",
+     "Sony"
+    ],
+    [
+     "Pearl Jam",
+     "1.Last Kiss",
+     "Sony"
+    ]
+   ],
+   "why": "number 1 on the ARIA chart that week (australian-charts.com, week of 1 Aug 1999) but missing from the ABC page; added at the owner's request, not confirmed as aired"
+  },
+  {
+   "date": "1999-07-30",
+   "from": [
+    "Ricky Martin",
+    "15.Livin' La Vida Loca",
+    "Sony"
+   ],
+   "to": [
+    [
+     "Delerium",
+     "15.Silence",
+     "Festival"
+    ],
+    [
+     "Ricky Martin",
+     "14.Livin' La Vida Loca",
+     "Sony"
+    ]
+   ],
+   "why": "the ARIA chart that week had Livin' La Vida Loca at 14 (ABC page typed 15) and Delerium's Silence at 15, missing from the ABC page; Silence added at the owner's request, not confirmed as aired"
   }
  ]
 }
