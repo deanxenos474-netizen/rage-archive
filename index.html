@@ -419,6 +419,7 @@ ol.steps a { color: var(--accent) }
           <option value="16:9">16:9 widescreen</option>
           <option value="4:3">4:3 (YouTube shows black bars at the sides)</option>
           <option value="4:3-in-16:9">4:3 inside a 16:9 video (bars built into the video)</option>
+          <option value="4:3-stretched">4:3 stretched to fill a 16:9 video (people look too wide)</option>
           <option value="16:9-in-4:3">16:9 inside a 4:3 video (black bars top &amp; bottom)</option>
           <option value="2.20:1">Wide film 2.20:1 or 2.35:1 (black bars top &amp; bottom)</option>
         </select>
@@ -1122,8 +1123,12 @@ ol.steps a { color: var(--accent) }
         const pad = Math.round(Math.max(90, ch * 0.22));
         Object.assign(ifr.style, { width: cw + "px", height: (ch + 2 * pad) + "px", left: ((bw - cw) / 2) + "px", top: ((bh - ch) / 2 - pad) + "px" });
       }
+      // a 4:3 picture someone stretched to fill 16:9: squeeze it back to 4:3 (not during an ad)
+      const squeeze = shape === "4:3-stretched" && !wrap.classList.contains("admode") ? "scaleX(0.75)" : "";
+      if (ifr) ifr.style.transform = squeeze;
+      v.style.transform = P.kind === "video" ? squeeze : "";
       let x = el.offsetLeft + (bw - cw) / 2, y = el.offsetTop + (bh - ch) / 2, w = cw, h = ch;
-      if (shape === "4:3-in-16:9") { w = h * 4 / 3; x += (cw - w) / 2; }
+      if (shape === "4:3-in-16:9" || shape === "4:3-stretched") { w = h * 4 / 3; x += (cw - w) / 2; }
       if (shape === "16:9-in-4:3") { h = w * 9 / 16; y += (ch - h) / 2; }
       const G = shape.startsWith("4:3") ? GEO["4:3"] : GEO[shape] || GEO["16:9"];
       Object.assign(svg.style, { left: x + "px", top: y + "px", width: w + "px", height: h + "px" });
