@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-16T13:42:26.913Z",
+ "saved": "2026-11-16T13:43:19.215Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -326,7 +326,8 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/cf/68/f9/cf68f9d4-e395-9ced-3e50-8cf7f1f9d3e0/884977307832.jpg/1500x1500bb-100.jpg",
    "aspect": "4:3",
    "logoAt": 7,
-   "verified": true
+   "verified": true,
+   "ads": true
   },
   "95477e1c9d94": {
    "artist": "Michael Jackson",
@@ -465,7 +466,8 @@
    "yt": "UIt3dx4an9c",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/dd/1e/32/dd1e3206-7f59-6744-c461-d29e723a9961/074645275826.jpg/3713x3713bb-100.jpg",
    "aspect": "4:3",
-   "logoAt": 10
+   "logoAt": 10,
+   "ads": true
   },
   "9a53ae0d9323": {
    "artist": "Weird Al Yankovic",
@@ -748,7 +750,8 @@
    "yt": "YlJvMU-5NyA",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/83/15/cc/8315ccdd-5a8d-8344-fa15-72e4cb64145e/886444533171.jpg/5000x5000bb-100.jpg",
    "logoAt": 10,
-   "verified": true
+   "verified": true,
+   "ads": true
   },
   "2232e5eb9cae": {
    "artist": "Michael Jackson and Justin Timberlake",
@@ -773,7 +776,8 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/2f/3a/ed/2f3aed36-237b-22ec-752e-2a877ad06069/196589271624.jpg/3000x3000bb-100.jpg",
    "aspect": "2.20:1",
    "logoAt": 10,
-   "verified": true
+   "verified": true,
+   "ads": true
   },
   "f4658ab2dc25": {
    "artist": "Michael Jackson featuring Akon",
