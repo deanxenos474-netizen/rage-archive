@@ -660,7 +660,7 @@ ol.steps a { color: var(--accent) }
 
   // corrected artist / title / type, keyed by song id (media.json "edits")
   // the genres an entry can have (the same basic set as the Soundmap app)
-  const GENRES = ["pop", "hip-hop", "indie", "k-pop", "rock", "r&b", "latin", "country", "metal", "electronic", "classical", "jazz"];
+  const GENRES = ["Pop", "Hip-Hop", "Indie", "K-Pop", "Rock", "R&B", "Latin", "Country", "Metal", "Electronic", "Classical", "Jazz"];
   $("f-genres").insertAdjacentHTML("beforeend", GENRES.map(g => `<label><input type="checkbox" value="${esc(g)}"> ${esc(g)}</label>`).join(""));
   function applyEdits() {
     const ed = effective("edits");
@@ -1426,7 +1426,7 @@ ol.steps a { color: var(--accent) }
     if (admin) {
       $("f-artist").value = s.a; $("f-title").value = s.t; $("f-label").value = s.l; $("f-type").value = s.kind;
       $("f-year").value = s.yr || "";
-      $("f-genres").querySelectorAll("input").forEach(c => { c.checked = (s.g || []).includes(c.value); });
+      $("f-genres").querySelectorAll("input").forEach(c => { c.checked = (s.g || []).some(g => g.toLowerCase() === c.value.toLowerCase()); });
       const changed = s.a !== s.a0 || s.t !== s.t0 || s.l !== s.l0 || s.kind !== (s.misc0 ? "clip" : "song");
       $("i-orig").textContent = changed ? `Original listing: ${s.a0} – ${s.t0}${s.l0 ? ` (${s.l0})` : " (no label)"}, ${s.misc0 ? "interview or clip" : "song"}` : "Change how this entry shows everywhere on the site.";
       $("i-reset").disabled = !changed;
