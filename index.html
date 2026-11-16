@@ -1477,7 +1477,7 @@ ol.steps a { color: var(--accent) }
   $("dlg").addEventListener("close", () => { if ($("dlg").open) return; if (songPlayer) songPlayer.pause(); songKey = ""; });   // kept (paused) for the next song
   // like RageAgain: YouTube's player code loads with the page and the song player is built straight away (never playing),
   // so pressing play on the first song only has to load that video
-  setTimeout(() => { loadYT().then(() => { if (!songPlayer) { songPlayer = makePlayer($("d-video")); songPlayer.warm(); } }).catch(() => {}); }, 1500);
+  setTimeout(() => { loadYT().then(() => { if (!songPlayer) { songPlayer = makePlayer($("d-video")); songPlayer.warm(); } tvPlayerGet().warm(); }).catch(() => {}); }, 1500);
   $("d-close").addEventListener("click", () => $("dlg").close());
   $("dlg").addEventListener("click", e => { if (e.target === $("dlg")) $("dlg").close(); });
   $("d-copy").addEventListener("click", () => {
@@ -1512,12 +1512,19 @@ ol.steps a { color: var(--accent) }
     $("tv-title").textContent = b.kind ? b.sp : (b.title || "Playlist");
     $("tv-sub").textContent = `${up ? "Upcoming · " : ""}${dow(b.date)} ${fmtDate(b.date)} · ${nv} of ${songs.length} songs have videos`;
     $("tv-queue").innerHTML = items.map((it, k) => `<li><button data-k="${k}"${!it.bumper && it.kind === "clip" ? ' class="noart"' : ""}${canPlay(it) || intros[k] ? "" : " disabled"}>${tvThumb(it)}<span class="t"><span class="a">${esc(it.a)}</span><span class="s">${esc(it.t)}${intros[k] ? " · with intro" : ""}${canPlay(it) ? "" : " · no video yet"}</span></span></button></li>`).join("");
-    if (tv) tv.player.destroy();
-    tv = { items, playable, nsongs: songs.length, nv, pos: 0, sting: false, nSting: 0, intros, inIntro: false, player: makePlayer($("tv-player"), { onEnded: afterEnd, onError: () => setTimeout(() => step(1), 1500),
-      onFs: on => { $("tv-fs").textContent = on ? "⛶ Exit fullscreen" : "⛶ Fullscreen"; } }) };
+    if (tv) tv.player.pause();
+    tv = { items, playable, nsongs: songs.length, nv, pos: 0, sting: false, nSting: 0, intros, inIntro: false, player: tvPlayerGet() };
     $("tv-fs").textContent = "⛶ Fullscreen";
     if (!$("tv").open) $("tv").showModal();
     play(0, true);
+  }
+  // one broadcast player for the whole visit, built on page load like the song player (RageAgain's way): every
+  // clip and video of every broadcast is loaded into it
+  let tvPlayer = null;
+  function tvPlayerGet() {
+    if (!tvPlayer) tvPlayer = makePlayer($("tv-player"), { onEnded: afterEnd, onError: () => setTimeout(() => { if (tv) step(1); }, 1500),
+      onFs: on => { $("tv-fs").textContent = on ? "⛶ Exit fullscreen" : "⛶ Fullscreen"; } });
+    return tvPlayer;
   }
   // when a video finishes by itself: after every 3rd music video a bumper comes first (never before the credits)
   function afterEnd() {
@@ -1586,7 +1593,7 @@ ol.steps a { color: var(--accent) }
   $("tv-song").onclick = () => { const it = tv && tv.items[tv.playable[tv.pos]]; if (it && it.i != null) { $("tv").close(); openDetail(it.i); } };
   $("tv-queue").addEventListener("click", e => { const bt = e.target.closest("button[data-k]"); if (bt && !bt.disabled) play(tv.playable.indexOf(+bt.dataset.k), true); });
   $("tv-close").onclick = () => $("tv").close();
-  $("tv").addEventListener("close", () => { if (tv) { tv.player.destroy(); tv = null; } });
+  $("tv").addEventListener("close", () => { if (tv) { tv.player.pause(); tv = null; } });   // the player is kept for the next broadcast
 
   /* ---------- edit mode: videos, covers, merges, publishing ---------- */
   const status = (msg, kind) => { $("ed-status").textContent = msg; $("ed-status").className = "status" + (kind ? " " + kind : ""); };
