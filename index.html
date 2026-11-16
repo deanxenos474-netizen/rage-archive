@@ -750,10 +750,13 @@ ol.steps a { color: var(--accent) }
 
   /* ---------- song list ---------- */
   function apply() {
-    // "genre: X" / "year: 1982" (from the song window's links) match the tag exactly, not any text
-    const tag = /^\s*(genre|year):\s*(.+?)\s*$/i.exec($("q").value);
+    // "artist: X" / "genre: X" / "year: 1982" (from the song window's links) match exactly, not any text;
+    // an artist also gets their "ft. ..." and "- Live" entries
+    const tag = /^\s*(artist|genre|year):\s*(.+?)\s*$/i.exec($("q").value);
     const tagKey = tag ? tag[1].toLowerCase() : "", tagVal = tag ? fold(tag[2]) : "";
     const terms = tag ? [] : fold($("q").value.trim()).split(/\s+/).filter(Boolean);
+    // the name first, or after a credit ("ft.", "&", "and", "x", ...): "Rhythms Del Mundo featuring Coldplay" counts, "The Fresh Prince" isn't "Prince"
+    const artistRe = tagKey === "artist" ? new RegExp("(?:^|\\s(?:ft\\.?|feat\\.?|featuring|with|and|_and_|&|x|vs\\.?)\\s+|,\\s*)" + tagVal.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?=\\s*$|\\s*[-,(&*\\[]|\\s+(?:ft|feat|featuring|with|and|_and_|x|vs|live)\\b)") : null;
     view = [];
     for (let i = 0; i < S.length; i++) {
       const s = S[i];
@@ -767,6 +770,7 @@ ol.steps a { color: var(--accent) }
       if (terms.length && !terms.every(t => s.hay.includes(t))) continue;
       if (tagKey === "genre" && !(s.g || []).some(g => fold(g) === tagVal)) continue;
       if (tagKey === "year" && String(s.yr || "") !== tagVal) continue;
+      if (tagKey === "artist" && !artistRe.test(fold(s.a))) continue;
       view.push(i);
     }
     const by = {
@@ -1398,7 +1402,7 @@ ol.steps a { color: var(--accent) }
       $("d-help").onclick = () => openFootage(`${s.a} – ${s.t}${s.l ? ` (${s.l})` : ""}`, has); }
     $("d-meta").onclick = ev => { const b = ev.target.closest("[data-genre],[data-year]"); if (!b) return;
       qTouched = true; $("q").value = b.dataset.genre ? "genre: " + b.dataset.genre : "year: " + b.dataset.year; $("dlg").close(); setType("all"); setMode("songs"); apply(); window.scrollTo({ top: 0 }); };
-    $("d-artist").onclick = () => { qTouched = true; $("q").value = s.a; $("dlg").close(); setType("all"); setMode("songs"); apply(); window.scrollTo({ top: 0 }); };
+    $("d-artist").onclick = () => { qTouched = true; $("q").value = "artist: " + s.a; $("dlg").close(); setType("all"); setMode("songs"); apply(); window.scrollTo({ top: 0 }); };
     $("d-copy").textContent = "Copy";
     status("");
     renderMedia();
