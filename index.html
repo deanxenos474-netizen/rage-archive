@@ -665,6 +665,7 @@ ol.steps a { color: var(--accent) }
   // the genres an entry can have (the same basic set as the Soundmap app)
   const GENRES = ["Pop", "Hip-Hop", "Indie", "K-Pop", "Rock", "R&B", "Latin", "Country", "Metal", "Electronic", "Classical & Jazz"];
   $("f-genres").insertAdjacentHTML("beforeend", GENRES.map(g => `<label><input type="checkbox" value="${esc(g)}"> ${esc(g)}</label>`).join(""));
+  $("f-type").addEventListener("change", () => { $("f-genres").hidden = $("f-year").closest("label").hidden = $("f-type").value === "clip"; });   // clips don't have a year or genres
   function applyEdits() {
     const ed = effective("edits");
     for (const s of S) {
@@ -768,8 +769,8 @@ ol.steps a { color: var(--accent) }
       if (type === "need" && vid) continue;
       if (type === "unconf" && !(vid && !media.get(s.id).verified)) continue;
       if (terms.length && !terms.every(t => s.hay.includes(t))) continue;
-      if (tagKey === "genre" && !(s.g || []).some(g => fold(g) === tagVal)) continue;
-      if (tagKey === "year" && String(s.yr || "") !== tagVal) continue;
+      if (tagKey === "genre" && (s.kind === "clip" || !(s.g || []).some(g => fold(g) === tagVal))) continue;
+      if (tagKey === "year" && (s.kind === "clip" || String(s.yr || "") !== tagVal)) continue;
       if (tagKey === "artist" && !artistRe.test(fold(s.a))) continue;
       view.push(i);
     }
@@ -1382,8 +1383,8 @@ ol.steps a { color: var(--accent) }
     $("d-artist").setAttribute("aria-label", `${s.a}: show everything by this artist`);
     $("d-label").textContent = s.l ? ` · ${s.l}` : "";
     { const meta = $("d-meta"), parts = [];
-      if (s.yr) parts.push(`<button type="button" class="alink" data-year="${s.yr}" aria-label="${s.yr}: show every song from this year">${s.yr}</button>`);
-      for (const g of s.g || []) parts.push(`<button type="button" class="alink" data-genre="${esc(g)}" aria-label="${esc(g)}: show every song in this genre">${esc(g)}</button>`);
+      if (s.yr && s.kind !== "clip") parts.push(`<button type="button" class="alink" data-year="${s.yr}" aria-label="${s.yr}: show every song from this year">${s.yr}</button>`);
+      for (const g of s.kind === "clip" ? [] : s.g || []) parts.push(`<button type="button" class="alink" data-genre="${esc(g)}" aria-label="${esc(g)}: show every song in this genre">${esc(g)}</button>`);
       meta.innerHTML = parts.join(" · "); meta.hidden = !parts.length; }
     $("d-n").textContent = fmt(s.n);
     $("d-first").textContent = fmtDate(s.first);
@@ -1435,6 +1436,7 @@ ol.steps a { color: var(--accent) }
       $("f-artist").value = s.a; $("f-title").value = s.t; $("f-label").value = s.l; $("f-type").value = s.kind;
       $("f-year").value = s.yr || "";
       $("f-genres").querySelectorAll("input").forEach(c => { c.checked = (s.g || []).some(g => g.toLowerCase() === c.value.toLowerCase()); });
+      $("f-genres").hidden = $("f-year").closest("label").hidden = s.kind === "clip";
       const changed = s.a !== s.a0 || s.t !== s.t0 || s.l !== s.l0 || s.kind !== (s.misc0 ? "clip" : "song");
       $("i-orig").textContent = changed ? `Original listing: ${s.a0} – ${s.t0}${s.l0 ? ` (${s.l0})` : " (no label)"}, ${s.misc0 ? "interview or clip" : "song"}` : "Change how this entry shows everywhere on the site.";
       $("i-reset").disabled = !changed;
@@ -1617,13 +1619,13 @@ ol.steps a { color: var(--accent) }
     const lab = $("f-label").value.trim().replace(/\s+/g, " ");
     if (lab !== s.l0) e.l = lab;
     if (k !== (s.misc0 ? "clip" : "song")) e.type = k;
-    const yv = $("f-year").value.trim();
+    const yv = k === "clip" ? "" : $("f-year").value.trim();
     if (yv) {
       const y = +yv;
       if (!Number.isInteger(y) || y < 1900 || y > 2100) { status("Enter the year as four digits, or leave it empty.", "err"); return; }
       e.yr = y;
     }
-    { const gs = [...$("f-genres").querySelectorAll("input:checked")].map(c => c.value);
+    { const gs = k === "clip" ? [] : [...$("f-genres").querySelectorAll("input:checked")].map(c => c.value);
       if (gs.length) e.g = gs; }
     const has = Object.keys(e).length > 0;
     if (has) drafts.edits[s.id] = e;
