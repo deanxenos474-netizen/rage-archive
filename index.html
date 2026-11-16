@@ -136,6 +136,9 @@ dialog::backdrop { background: rgb(5 6 14 / .6) }
 .d-head p { margin: 4px 0 0; color: var(--muted) }
 .alink { font: inherit; font-weight: 600; color: var(--fg); background: none; border: 0; padding: 0; cursor: pointer; text-align: left; overflow-wrap: anywhere }
 .alink:hover, .alink:focus-visible { text-decoration: underline }
+.genres { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px 14px }
+.genres legend { padding: 0; margin-bottom: 6px; font: 500 10px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted) }
+.genres label { display: inline-flex; gap: 5px; align-items: center; font-size: 14px; cursor: pointer }
 .d-meta { font-size: 13px } .d-meta .alink { font-weight: 500; color: inherit }
 .x { font: 500 20px/1 var(--body); background: var(--raise); color: var(--fg); border: 0; border-radius: 8px; width: 34px; height: 34px; cursor: pointer }
 .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 0 }
@@ -400,8 +403,7 @@ ol.steps a { color: var(--accent) }
       <label class="lbl2" for="f-title">Song title<input type="text" id="f-title" autocomplete="off"></label>
       <label class="lbl2" for="f-label">Label (the record company in brackets; leave empty for none)<input type="text" id="f-label" autocomplete="off"></label>
       <label class="lbl2" for="f-year">Year released (leave empty if unknown)<input type="number" id="f-year" min="1900" max="2100" step="1" autocomplete="off"></label>
-      <label class="lbl2" for="f-genres">Genres (separate with commas)<input type="text" id="f-genres" autocomplete="off" list="genre-list"></label>
-      <datalist id="genre-list"></datalist>
+      <fieldset class="genres" id="f-genres"><legend>Genres (tick any that fit)</legend></fieldset>
       <label class="f" for="f-type" style="flex-wrap:wrap">Type
         <select id="f-type">
           <option value="song">Song (music video)</option>
@@ -657,6 +659,9 @@ ol.steps a { color: var(--accent) }
   const mediaFor = sid => { const i = idIndex.get(sid); return media.get(i != null ? S[canon(i)].id : sid); };
 
   // corrected artist / title / type, keyed by song id (media.json "edits")
+  // the genres an entry can have (the same basic set as the Soundmap app)
+  const GENRES = ["pop", "hip-hop", "indie", "k-pop", "rock", "r&b", "latin", "country", "metal", "electronic", "classical", "jazz"];
+  $("f-genres").insertAdjacentHTML("beforeend", GENRES.map(g => `<label><input type="checkbox" value="${esc(g)}"> ${esc(g)}</label>`).join(""));
   function applyEdits() {
     const ed = effective("edits");
     for (const s of S) {
@@ -1420,9 +1425,8 @@ ol.steps a { color: var(--accent) }
     }
     if (admin) {
       $("f-artist").value = s.a; $("f-title").value = s.t; $("f-label").value = s.l; $("f-type").value = s.kind;
-      $("f-year").value = s.yr || ""; $("f-genres").value = (s.g || []).join(", ");
-      { const all = new Map(); for (const x of S) for (const g of x.g || []) all.set(g.toLowerCase(), g);
-        $("genre-list").innerHTML = [...all.values()].sort((a, b) => a.localeCompare(b)).map(g => `<option value="${esc(g)}">`).join(""); }
+      $("f-year").value = s.yr || "";
+      $("f-genres").querySelectorAll("input").forEach(c => { c.checked = (s.g || []).includes(c.value); });
       const changed = s.a !== s.a0 || s.t !== s.t0 || s.l !== s.l0 || s.kind !== (s.misc0 ? "clip" : "song");
       $("i-orig").textContent = changed ? `Original listing: ${s.a0} – ${s.t0}${s.l0 ? ` (${s.l0})` : " (no label)"}, ${s.misc0 ? "interview or clip" : "song"}` : "Change how this entry shows everywhere on the site.";
       $("i-reset").disabled = !changed;
@@ -1610,13 +1614,7 @@ ol.steps a { color: var(--accent) }
       if (!Number.isInteger(y) || y < 1900 || y > 2100) { status("Enter the year as four digits, or leave it empty.", "err"); return; }
       e.yr = y;
     }
-    { const known = new Map(); for (const x of S) for (const g of x.g || []) known.set(g.toLowerCase(), g);   // reuse the spelling already in use
-      const seen = new Set(), gs = [];
-      for (let g of $("f-genres").value.split(",")) {
-        g = g.trim().replace(/\s+/g, " "); if (!g) continue;
-        g = known.get(g.toLowerCase()) || g;
-        if (!seen.has(g.toLowerCase())) { seen.add(g.toLowerCase()); gs.push(g); }
-      }
+    { const gs = [...$("f-genres").querySelectorAll("input:checked")].map(c => c.value);
       if (gs.length) e.g = gs; }
     const has = Object.keys(e).length > 0;
     if (has) drafts.edits[s.id] = e;
