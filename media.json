@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-16T14:01:06.524Z",
+ "saved": "2026-11-16T14:05:08.504Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -720,7 +720,8 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true,
-   "lowq": true
+   "lowq": true,
+   "ads": true
   },
   "13b8dd1ae074": {
    "artist": "The Jacksons",
@@ -1359,6 +1360,24 @@
    "yr": 2009,
    "g": [
     "Electronic"
+   ]
+  },
+  "2c6b010ea372": {
+   "yr": 2009,
+   "g": [
+    "Indie"
+   ]
+  },
+  "b9b4eb69a811": {
+   "yr": 1983,
+   "g": [
+    "Pop"
+   ]
+  },
+  "c4c1974b3374": {
+   "yr": 1984,
+   "g": [
+    "Pop"
    ]
   }
  },
