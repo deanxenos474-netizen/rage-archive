@@ -663,7 +663,7 @@ ol.steps a { color: var(--accent) }
 
   // corrected artist / title / type, keyed by song id (media.json "edits")
   // the genres an entry can have (the same basic set as the Soundmap app)
-  const GENRES = ["Pop", "Hip-Hop", "Indie", "K-Pop", "Rock", "R&B", "Latin", "Country", "Metal", "Electronic", "Classical", "Jazz"];
+  const GENRES = ["Pop", "Hip-Hop", "Indie", "K-Pop", "Rock", "R&B", "Latin", "Country", "Metal", "Electronic", "Classical & Jazz"];
   $("f-genres").insertAdjacentHTML("beforeend", GENRES.map(g => `<label><input type="checkbox" value="${esc(g)}"> ${esc(g)}</label>`).join(""));
   function applyEdits() {
     const ed = effective("edits");
