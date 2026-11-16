@@ -75,7 +75,7 @@ def unthe(a):
     return f"{the} {m.group('x').strip()}{m.group('rest')}"
 
 
-NOTE = re.compile(r"\s*\*\*\*\s*(please note|abc tv)[^*]*\*\*\*\s*", re.I)
+NOTE = re.compile(r"\s*\*\*\*\s*(please note|abc tv)[^*]*\*\*\*\s*|\s*\(\s*missing label\s*\)\s*", re.I)   # also ABC's "(missing label)" note
 HY_PAREN = re.compile(r"^([^()]*?\))\s*-\s*(\S.*)$")
 HY_REST = re.compile(r"^(\S[^-]*?)\s+-\s+(\S.*)$")
 QUAL = re.compile(r"(live|in concert|from the video)\b", re.I)
