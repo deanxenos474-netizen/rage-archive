@@ -1325,7 +1325,6 @@ ol.steps a { color: var(--accent) }
       loadYT().then(YT => {
             P.ytMaking = false;
             if (P.stop || P.yt) return;
-            if (!(P.pending || cueId)) return;
             /* built the way RageAgain does it: the player starts on RageAgain's rage intro video (never played; it's gone
                from YouTube now, so YouTube just reports it unavailable, which is ignored), then each music video is
                loaded into that same player */
@@ -1382,7 +1381,18 @@ ol.steps a { color: var(--accent) }
       if (document.fullscreenElement === wrap) document.exitFullscreen().catch(() => {});
       host.innerHTML = "";
     }
-    return { load, prepare, destroy, toggleFs };
+    // stop whatever is playing (a closed song window keeps its player for the next song)
+    function pause() {
+      P.want = false; setLoading(false);
+      try { if (P.kind === "yt" && P.yt && P.ytReady) P.yt.pauseVideo(); } catch {}
+      try { if (P.kind === "vimeo" && P.vm) P.vm.pause().catch(() => {}); } catch {}
+      try { v.pause(); } catch {}
+      if (document.fullscreenElement === wrap) document.exitFullscreen().catch(() => {});
+      if (wrap.classList.contains("fakefs")) setFake(false);
+    }
+    // build the YouTube player ahead of time (on its starting video, never played) so the first song starts fast
+    function warm() { if (!P.yt && !P.stop) makeYT(); }
+    return { load, prepare, destroy, toggleFs, pause, warm };
   }
 
   /* ---------- one song ---------- */
@@ -1442,8 +1452,11 @@ ol.steps a { color: var(--accent) }
     const key = JSON.stringify([s.id, m.yt, m.video, m.aspect, m.logoAt, m.burned, s.kind, m.cover]);
     if (songKey !== key) {           // don't restart a playing video when nothing about it changed
       songKey = key;
-      if (songPlayer) { songPlayer.destroy(); songPlayer = null; }
-      if (m.yt || m.video) { songPlayer = makePlayer($("d-video")); songPlayer.load(m, s, false); }
+      // one song player for the whole visit (like RageAgain's): each song's video is loaded into it, so it starts fast
+      const hasVid = !!(m.yt || m.video);
+      $("d-video").hidden = !hasVid;
+      if (hasVid) { if (!songPlayer) songPlayer = makePlayer($("d-video")); songPlayer.load(m, s, false); }
+      else if (songPlayer) songPlayer.pause();
     }
     if (admin) {
       $("f-artist").value = s.a; $("f-title").value = s.t; $("f-label").value = s.l; $("f-type").value = s.kind;
@@ -1461,7 +1474,10 @@ ol.steps a { color: var(--accent) }
       $("f-burned").checked = !!m.burned; $("f-logo").disabled = !!m.burned; $("f-verified").checked = !!m.verified; $("f-lowq").checked = !!m.lowq; $("f-ads").checked = !!m.ads;
     }
   }
-  $("dlg").addEventListener("close", () => { if ($("dlg").open) return; if (songPlayer) { songPlayer.destroy(); songPlayer = null; } songKey = ""; });
+  $("dlg").addEventListener("close", () => { if ($("dlg").open) return; if (songPlayer) songPlayer.pause(); songKey = ""; });   // kept (paused) for the next song
+  // like RageAgain: YouTube's player code loads with the page and the song player is built straight away (never playing),
+  // so pressing play on the first song only has to load that video
+  setTimeout(() => { loadYT().then(() => { if (!songPlayer) { songPlayer = makePlayer($("d-video")); songPlayer.warm(); } }).catch(() => {}); }, 1500);
   $("d-close").addEventListener("click", () => $("dlg").close());
   $("dlg").addEventListener("click", e => { if (e.target === $("dlg")) $("dlg").close(); });
   $("d-copy").addEventListener("click", () => {
