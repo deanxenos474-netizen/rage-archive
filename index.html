@@ -1126,6 +1126,14 @@ ol.steps a { color: var(--accent) }
       P.endFired = false;
       P.yt.playVideo();
     }
+    /* start a video the way the song window does, which gets no ads where "load and play" (loadVideoById) did:
+       cue it, wait until YouTube says it's cued, then press play like the Play button. Playing straight after
+       the cue was too early (YouTube's own title and play button stayed up), hence the wait */
+    function ytCueThenPlay(v) {
+      P.playOnCue = P.loadNo; P.yt.cueVideoById(v);
+      clearTimeout(P.cueWait); const no = P.loadNo;
+      P.cueWait = setTimeout(() => { if (P.playOnCue === no && !P.stop) { P.playOnCue = null; ytPlay(); } }, 2500);   // in case "cued" never arrives
+    }
     function ytPause() { P.want = false; setLoading(false); clearTimeout(P.stall); if (P.yt && P.ytReady) P.yt.pauseVideo(); setPlaying(false); }
     shield.onclick = () => {
       if (!pmsg.hidden) problem("");
@@ -1216,7 +1224,7 @@ ol.steps a { color: var(--accent) }
       if (st === 1) {
         P.started = true; setAd(false);
         if (P.want && !wrap.classList.contains("playing")) { setPlaying(true); showPoster(false); problem(""); wrap.classList.remove("paused"); }
-      } else if (P.want && st !== 2 && st !== 0 && (moving || st === -1 && P.sawBuf || !P.started && performance.now() - (P.askAt || 0) > 1500)) setAd(true);
+      } else if (P.want && st !== 2 && st !== 0 && st !== 5 && P.playOnCue == null && (moving || st === -1 && P.sawBuf || !P.started && performance.now() - (P.askAt || 0) > 1500)) setAd(true);
       /* an ad: time moves, or YouTube goes back to "not started" after loading, or (some ads report nothing useful)
          the video still hasn't started 1.5s after play was asked for: then step aside and show whatever YouTube shows */
       if (st === 0 && P.want && !P.endFired && !P.fresh) { P.endFired = true; P.want = false; setAd(false); setPlaying(false); showPoster(true); opts.onEnded?.(); }
@@ -1260,7 +1268,7 @@ ol.steps a { color: var(--accent) }
         P.kind = "yt"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = false;
         // a clip taken from part of a longer video: start / stop times
         const rng = P.m.start || P.m.end ? { videoId: P.m.yt, ...(P.m.start ? { startSeconds: +P.m.start } : {}), ...(P.m.end ? { endSeconds: +P.m.end } : {}) } : null;
-        if (P.yt && P.ytReady) { try { if (P.mutedByUs) { P.yt.unMute(); P.mutedByUs = false; } } catch {} autoplay ? (P.cuedId === P.m.yt && !rng ? P.yt.playVideo() : P.yt.loadVideoById(rng || P.m.yt)) : P.yt.cueVideoById(rng || P.m.yt); P.cuedId = null; }
+        if (P.yt && P.ytReady) { try { if (P.mutedByUs) { P.yt.unMute(); P.mutedByUs = false; } } catch {} autoplay ? (P.cuedId === P.m.yt && !rng ? P.yt.playVideo() : ytCueThenPlay(rng || P.m.yt)) : P.yt.cueVideoById(rng || P.m.yt); P.cuedId = null; }
         else { P.pending = { id: P.m.yt, autoplay, rng }; if (!P.yt) makeYT(); }
       } else if (vm) {
         showPoster(true);
@@ -1335,11 +1343,12 @@ ol.steps a { color: var(--accent) }
                 onReady: () => {
                   P.ytReady = true; const p = P.pending; layout(); P.askAt = performance.now();   // the wait for an ad counts from here
                   P.ytAsked = true;
-                  if (p) { p.autoplay ? P.yt.loadVideoById(p.rng || p.id) : P.yt.cueVideoById(p.rng || p.id); }
+                  if (p) { p.autoplay ? ytCueThenPlay(p.rng || p.id) : P.yt.cueVideoById(p.rng || p.id); }
                   else if (cueId) { P.yt.cueVideoById(cueId); P.cuedId = cueId; }
                 },
                 onStateChange: e => {
                   if (P.kind !== "yt") return;
+                  if (e.data === 5 && P.playOnCue != null && P.playOnCue === P.loadNo) { P.playOnCue = null; clearTimeout(P.cueWait); setTimeout(() => { if (!P.stop && P.want) ytPlay(); }, 150); return; }   // cued: now press play
                   if (e.data === 1 || e.data === 3) P.fresh = false;
                   if (e.data === 3) P.sawBuf = true;
                   if (e.data === 1) { P.started = true; setAd(false); try { if (P.yt.isMuted()) P.yt.unMute(); P.mutedByUs = false; } catch {} setPlaying(true); showPoster(false); problem(""); wrap.classList.remove("paused"); }
