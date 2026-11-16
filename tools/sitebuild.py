@@ -55,12 +55,26 @@ def clean_row(r):
         return None
     artist, title = unsplit(artist, title)
     artist, title = NOTE.sub(" ", artist).strip(), NOTE.sub(" ", title).strip()   # "Shaggy   ***Please Note: ...***"
+    artist = unthe(artist)   # "POGUES, THE ft. KIRSTY MacCOLL" -> "THE POGUES ft. KIRSTY MacCOLL"
     return artist, title, (label or "").strip()
 
 
 # the old ABC pages were split at the first hyphen, so a hyphen inside a title pushed the rest into the artist:
 # "Ray Of Light (Sasha Ultra" / "Violet Mix) - Madonna", "Woo" / "Hah!! (Got You All In Check) - BUSTA RHYMES".
 # A "live" note can also come first: "Live On Recovery - The Whitlams" -> "The Whitlams - Live On Recovery".
+# old ABC listings put "The" last: "POGUES, THE ft. ...", "Chainsmokers, The ft. Halsey", "Weeknd, The, Madonna".
+# Only when "The" ends the name or is followed by a credit/separator, so "Tyler, The Creator" stays as it is.
+UNTHE = re.compile(r"^(?P<x>[^,]+?),\s*(?P<the>the)(?P<rest>(?:\s+(?:ft\.?|feat\.?|featuring|with|and|&|_and_|vs\.?|x|conducted|presents|live|-)(?=\s|$).*|\s*\(.*|\s*,.*)?)\s*$", re.I)
+
+
+def unthe(a):
+    m = UNTHE.match(a)
+    if not m:
+        return a
+    the = "THE" if m.group("the").isupper() else "The"
+    return f"{the} {m.group('x').strip()}{m.group('rest')}"
+
+
 NOTE = re.compile(r"\s*\*\*\*\s*(please note|abc tv)[^*]*\*\*\*\s*", re.I)
 HY_PAREN = re.compile(r"^([^()]*?\))\s*-\s*(\S.*)$")
 HY_REST = re.compile(r"^(\S[^-]*?)\s+-\s+(\S.*)$")
