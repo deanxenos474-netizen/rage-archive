@@ -174,6 +174,12 @@
    "url": "https://www.abc.net.au/rage/playlist/saturday-night-16-march-2022-on-abc-tv/13813232",
    "title": "Saturday night 26 March 2022 on ABC TV",
    "why": "copy of 26 Mar 2022 (Dave Faulkner); its own title says 26 March"
+  },
+  {
+   "date": "2016-11-12",
+   "url": "http://www.abc.net.au/rage/archive/s4569201.htm",
+   "title": "Saturday night 12 November 2016, ABC",
+   "why": "copy of the 5 Nov 2016 Saturday night page (same link, archived 7 Nov 2016)"
   }
  ],
  "redate": [
@@ -216,6 +222,287 @@
    "to": "2019-05-25",
    "to_title": "Saturday morning 25 May 2019 on ABC",
    "why": "ABC page posted 24 May 2019, numbered between Friday 24 May and Saturday night 25 May; 15 May 2019 was a Wednesday"
+  },
+  {
+   "date": "1998-10-09",
+   "url": "http://www.abc.net.au/rage/playlist/archive/1998/19981002.htm",
+   "title": "Friday 8th October",
+   "to": "1998-10-02",
+   "to_title": "Friday 2 October",
+   "why": "this is the 2 Oct 1998 page (its link and songs); it was filed under 9 Oct"
+  },
+  {
+   "date": "2011-10-14",
+   "url": "http://www.abc.net.au/rage/archive/s3339861.htm",
+   "title": "Saturday morning  Friday, 14 October",
+   "to": "2011-10-15",
+   "why": "the title says Saturday, which is 15 October 2011; ABC typed the wrong date number"
+  },
+  {
+   "date": "2013-06-23",
+   "url": "http://www.abc.net.au/rage/archive/s3786567.htm",
+   "title": "Saturday night  Sunday, 23 June",
+   "to": "2013-06-22",
+   "why": "the title says Saturday, which is 22 June 2013; ABC typed the wrong date number"
+  },
+  {
+   "date": "2013-09-08",
+   "url": "http://www.abc.net.au/rage/archive/s3843072.htm",
+   "title": "Saturday night  Sunday, 8 September",
+   "to": "2013-09-07",
+   "why": "the title says Saturday, which is 7 September 2013; ABC typed the wrong date number"
+  },
+  {
+   "date": "2014-09-05",
+   "url": "http://www.abc.net.au/rage/archive/s4082015.htm",
+   "title": "Saturday night 5 September 2014",
+   "to": "2014-09-06",
+   "why": "the title says Saturday, which is 6 September 2014; ABC typed the wrong date number"
+  },
+  {
+   "date": "2015-04-05",
+   "url": "http://www.abc.net.au/rage/archive/s4201831.htm",
+   "title": "Saturday night 5 April 2015",
+   "to": "2015-04-04",
+   "why": "the title says Saturday, which is 4 April 2015; ABC typed the wrong date number"
+  },
+  {
+   "date": "2015-04-05",
+   "url": "http://www.abc.net.au/rage/archive/s4210172.htm",
+   "title": "Saturday morning 5 April 2015",
+   "to": "2015-04-04",
+   "why": "the title says Saturday, which is 4 April 2015; ABC typed the wrong date number"
+  },
+  {
+   "date": "2015-06-12",
+   "url": "http://www.abc.net.au/rage/archive/s4254060.htm",
+   "title": "Saturday night 12 June 2015",
+   "to": "2015-06-13",
+   "why": "the title says Saturday, which is 13 June 2015; ABC typed the wrong date number"
+  },
+  {
+   "date": "2015-09-25",
+   "url": "http://www.abc.net.au/rage/archive/s4320884.htm",
+   "title": "Saturday morning 25 September 2015",
+   "to": "2015-09-26",
+   "why": "the title says Saturday, which is 26 September 2015; ABC typed the wrong date number"
+  },
+  {
+   "date": "2015-10-16",
+   "url": "http://www.abc.net.au/rage/archive/s4333445.htm",
+   "title": "Saturday morning 16 October 2015",
+   "to": "2015-10-17",
+   "why": "the title says Saturday, which is 17 October 2015; ABC typed the wrong date number"
+  },
+  {
+   "date": "2017-01-20",
+   "url": "http://www.abc.net.au/rage/archive/s4607248.htm",
+   "title": "Saturday night 20 January 2017, ABC",
+   "to": "2017-01-21",
+   "why": "the title says Saturday, which is 21 January 2017; ABC typed the wrong date number"
+  },
+  {
+   "date": "2018-12-14",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-morning-14-december-2018-on-abc/10621776",
+   "title": "Saturday morning 14 December 2018 on ABC",
+   "to": "2018-12-15",
+   "why": "the title says Saturday, which is 15 December 2018; ABC typed the wrong date number"
+  },
+  {
+   "date": "2019-02-08",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-night-8-february-2019-on-abc/10793928",
+   "title": "Saturday night 8 February 2019 on ABC",
+   "to": "2019-02-09",
+   "why": "the title says Saturday, which is 9 February 2019; ABC typed the wrong date number"
+  },
+  {
+   "date": "2019-03-11",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-night-11-march-2019-on-abc/10884322",
+   "title": "Sunday night 11 March 2019 on ABC",
+   "to": "2019-03-10",
+   "why": "the title says Sunday, which is 10 March 2019; ABC typed the wrong date number"
+  },
+  {
+   "date": "2019-03-11",
+   "url": "https://www.abc.net.au/rage/playlist/sunday-night-11-march-2019-on-abc-me/10884354",
+   "title": "Sunday night 11 March 2019 on ABC ME",
+   "to": "2019-03-10",
+   "why": "the title says Sunday, which is 10 March 2019; ABC typed the wrong date number"
+  },
+  {
+   "date": "2019-04-18",
+   "url": "https://www.abc.net.au/rage/playlist/friday-night-18-april-2019-on-abc/11030904",
+   "title": "Friday night 18 April 2019 on ABC",
+   "to": "2019-04-19",
+   "why": "the title says Friday, which is 19 April 2019; ABC typed the wrong date number"
+  },
+  {
+   "date": "2019-06-28",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-night-28-june-2019-on-abc/11261666",
+   "title": "Saturday night 28 June 2019 on ABC",
+   "to": "2019-06-29",
+   "why": "the title says Saturday, which is 29 June 2019; ABC typed the wrong date number"
+  },
+  {
+   "date": "2019-11-08",
+   "url": "https://www.abc.net.au/rage/playlist/sunday-night-8-november-2019on-abc/11688382",
+   "title": "Sunday Night 8 November 2019 on ABC",
+   "to": "2019-11-10",
+   "why": "the title says Sunday, which is 10 November 2019; ABC typed the wrong date number"
+  },
+  {
+   "date": "2020-08-29",
+   "url": "https://www.abc.net.au/rage/playlist/friday-night-29-august-2020-on-abc-1/12607144",
+   "title": "Friday night 29 August 2020 on ABC 1",
+   "to": "2020-08-28",
+   "why": "the title says Friday, which is 28 August 2020; ABC typed the wrong date number"
+  },
+  {
+   "date": "2021-04-01",
+   "url": "https://www.abc.net.au/rage/playlist/friday-night-1-april-2021-on-abc-1/13286486",
+   "title": "Friday night 1 April 2021 on ABC 1",
+   "to": "2021-04-02",
+   "why": "the title says Friday, which is 2 April 2021; ABC typed the wrong date number"
+  },
+  {
+   "date": "2021-04-02",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-morning-2-april-2021-on-abc-1/13286530",
+   "title": "Saturday morning 2 April 2021 on ABC 1",
+   "to": "2021-04-03",
+   "why": "the title says Saturday, which is 3 April 2021; ABC typed the wrong date number"
+  },
+  {
+   "date": "2021-06-01",
+   "url": "https://www.abc.net.au/rage/playlist/monday-night-1-june-2021-on-abc-tv/13364168",
+   "title": "Monday Night 1 June 2021 on ABC TV",
+   "to": "2021-05-31",
+   "why": "the title says Monday, which is 31 May 2021; ABC typed the wrong date number"
+  },
+  {
+   "date": "2021-07-04",
+   "url": "https://www.abc.net.au/rage/playlist/monday-night-july-4-2021-on-abc1/13431738",
+   "title": "Monday night July 4 2021 on ABC1",
+   "to": "2021-07-05",
+   "why": "the title says Monday, which is 5 July 2021; ABC typed the wrong date number"
+  },
+  {
+   "date": "2022-05-05",
+   "url": "https://www.abc.net.au/rage/playlist/monday-night-5-may-2022-on-abc-tv/13863220",
+   "title": "Monday night 5 May 2022 on ABC TV",
+   "to": "2022-05-02",
+   "why": "the title says Monday, which is 2 May 2022; ABC typed the wrong date number"
+  },
+  {
+   "date": "2022-08-05",
+   "url": "https://www.abc.net.au/rage/playlist/sunday-night-7-august-2021-on-abc-tv/101306012",
+   "title": "Sunday night 7 August 2021 on ABC TV",
+   "to": "2022-08-07",
+   "why": "the title says Sunday, which is 7 August 2022; ABC typed the wrong date number"
+  },
+  {
+   "date": "2023-06-23",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-morning-23-june-2023-on-abc-tvplate/102517932",
+   "title": "Saturday morning 23 June 2023 on ABC TV",
+   "to": "2023-06-24",
+   "why": "the title says Saturday, which is 24 June 2023; ABC typed the wrong date number"
+  },
+  {
+   "date": "2023-08-27",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-night-27-august-2023-on-abc-tv/102778570",
+   "title": "Saturday night 27 August 2023 on ABC TV",
+   "to": "2023-08-26",
+   "why": "the title says Saturday, which is 26 August 2023; ABC typed the wrong date number"
+  },
+  {
+   "date": "2024-02-04",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-night-4-february-2024-on-abc-tv/103421886",
+   "title": "Saturday night 4 February 2024 on ABC TV",
+   "to": "2024-02-03",
+   "why": "the title says Saturday, which is 3 February 2024; ABC typed the wrong date number"
+  },
+  {
+   "date": "2024-02-05",
+   "url": "https://www.abc.net.au/rage/playlist/sunday-night-5-february-2024-on-abc-tv/103421888",
+   "title": "Sunday night 5 February 2024 on ABC TV",
+   "to": "2024-02-04",
+   "why": "the title says Sunday, which is 4 February 2024; ABC typed the wrong date number"
+  },
+  {
+   "date": "2024-02-06",
+   "url": "https://www.abc.net.au/rage/playlist/monday-night-6-february-2024-on-abc-tv/103421890",
+   "title": "Monday night 6 February 2024 on ABC TV",
+   "to": "2024-02-05",
+   "why": "the title says Monday, which is 5 February 2024; ABC typed the wrong date number"
+  },
+  {
+   "date": "2024-03-24",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-night-24-march-2024-on-abc-tv-tasmania/103622256",
+   "title": "Saturday night 24 March 2024 on ABC TV (TASMANIA)",
+   "to": "2024-03-23",
+   "why": "the title says Saturday, which is 23 March 2024; ABC typed the wrong date number"
+  },
+  {
+   "date": "2024-03-24",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-night-24-march-2024-on-abc-tv/103622254",
+   "title": "Saturday night 24 March 2024 on ABC TV",
+   "to": "2024-03-23",
+   "why": "the title says Saturday, which is 23 March 2024; ABC typed the wrong date number"
+  },
+  {
+   "date": "2024-03-25",
+   "url": "https://www.abc.net.au/rage/playlist/sunday-night-25-march-2024-on-abc-tv/103622258",
+   "title": "Sunday night 25 March 2024 on ABC TV",
+   "to": "2024-03-24",
+   "why": "the title says Sunday, which is 24 March 2024; ABC typed the wrong date number"
+  },
+  {
+   "date": "2024-03-26",
+   "url": "https://www.abc.net.au/rage/playlist/monday-night-26-march-2024-on-abc-tv/103622260",
+   "title": "Monday night 26 March 2024 on ABC TV",
+   "to": "2024-03-25",
+   "why": "the title says Monday, which is 25 March 2024; ABC typed the wrong date number"
+  },
+  {
+   "date": "2024-07-21",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-night-21-july-2024-on-abc-tv/104122474",
+   "title": "Saturday night 21 July 2024 on ABC TV",
+   "to": "2024-07-20",
+   "why": "the title says Saturday, which is 20 July 2024; ABC typed the wrong date number"
+  },
+  {
+   "date": "2024-07-22",
+   "url": "https://www.abc.net.au/rage/playlist/sunday-night-22-july-2024-on-abc-tv/104122476",
+   "title": "Sunday night 22 July 2024 on ABC TV",
+   "to": "2024-07-21",
+   "why": "the title says Sunday, which is 21 July 2024; ABC typed the wrong date number"
+  },
+  {
+   "date": "2024-07-23",
+   "url": "https://www.abc.net.au/rage/playlist/monday-night-23-july-2024-on-abc-tv/104122478",
+   "title": "Monday night 23 July 2024 on ABC TV",
+   "to": "2024-07-22",
+   "why": "the title says Monday, which is 22 July 2024; ABC typed the wrong date number"
+  },
+  {
+   "date": "2024-07-28",
+   "url": "https://www.abc.net.au/rage/playlist/saturday-night-28-july-2024-on-abc-tv/104148492",
+   "title": "Saturday night 28 July 2024 on ABC TV",
+   "to": "2024-07-27",
+   "why": "the title says Saturday, which is 27 July 2024; ABC typed the wrong date number"
+  },
+  {
+   "date": "2024-07-29",
+   "url": "https://www.abc.net.au/rage/playlist/sunday-night-29-july-2024-on-abc-tv/104148496",
+   "title": "Sunday night 29 July 2024 on ABC TV",
+   "to": "2024-07-28",
+   "why": "the title says Sunday, which is 28 July 2024; ABC typed the wrong date number"
+  },
+  {
+   "date": "2024-07-30",
+   "url": "https://www.abc.net.au/rage/playlist/monday-night-30-july-2024-on-abc-tv/104148500",
+   "title": "Monday night 30 July 2024 on ABC TV",
+   "to": "2024-07-29",
+   "why": "the title says Monday, which is 29 July 2024; ABC typed the wrong date number"
   }
  ],
  "add": [
@@ -1140,6 +1427,672 @@
     ]
    ],
    "why": "full Friday night missing from the site (RageAgain archive)"
+  },
+  {
+   "date": "1998-10-09",
+   "title": "Friday 9 October",
+   "url": "http://www.abc.net.au/rage/playlist/archive/1998/19981009.htm",
+   "src": "ra",
+   "abc_id": null,
+   "sp": null,
+   "rows": [
+    [
+     "U2",
+     "Sweetest Thing",
+     "Mercury"
+    ],
+    [
+     "Fastball",
+     "Fire Escape",
+     "Polydor"
+    ],
+    [
+     "Mojave 3",
+     "Some Kinda Angel",
+     "Shock"
+    ],
+    [
+     "Killjoys",
+     "I've Been Good",
+     "Warner"
+    ],
+    [
+     "Towa Tei featuring Kylie Minogue",
+     "GBI",
+     "Warner"
+    ],
+    [
+     "Fatboy Slim",
+     "Gangster Trippin'",
+     "Sony"
+    ],
+    [
+     "Pras",
+     "Blue Angels",
+     "Sony"
+    ],
+    [
+     "Madonna",
+     "The Power Of Goodbye",
+     "Warner"
+    ],
+    [
+     "Dario G",
+     "Sunmachine",
+     "Warner"
+    ],
+    [
+     "Depeche Mode",
+     "Only When I Lose Myself",
+     "Mushroom"
+    ],
+    [
+     "Grinspoon",
+     "Black Friday",
+     "Universal (MCA)"
+    ],
+    [
+     "Skulker",
+     "Bittersweet",
+     "Independent"
+    ],
+    [
+     "The Living End",
+     "Save The Day",
+     "EMI"
+    ],
+    [
+     "Local H",
+     "All The Kids Are Right",
+     "Mercury"
+    ],
+    [
+     "They Might Be Giants",
+     "Dr. Worm",
+     "Festival"
+    ],
+    [
+     "Spider Clan",
+     "Instruments Of War",
+     "Independent"
+    ],
+    [
+     "F.O.C.",
+     "Don't Blame The Beam",
+     "Polydor"
+    ],
+    [
+     "Antenna",
+     "Come On Spring",
+     "Mushroom"
+    ],
+    [
+     "Ratcat & John Paul Young",
+     "I Hate The Music",
+     "Murmur"
+    ],
+    [
+     "Ash",
+     "Jesus Says",
+     "Mushroom"
+    ],
+    [
+     "Stardust",
+     "Music Sounds Better With You",
+     "Virgin"
+    ],
+    [
+     "The Crystal Method",
+     "Comin' Back",
+     "Universal (MCA)"
+    ],
+    [
+     "Esthero",
+     "Heaven Sent",
+     "Sony"
+    ],
+    [
+     "Saint Etienne",
+     "The Bad Photographer",
+     "Festival"
+    ],
+    [
+     "Custard",
+     "Girls Like That",
+     "BMG"
+    ],
+    [
+     "Gomez",
+     "Whippin' Picadilly",
+     "Virgin"
+    ],
+    [
+     "Ben Lee",
+     "Cigarettes Will Kill You",
+     "Modular"
+    ],
+    [
+     "Sloan",
+     "Money City Maniacs",
+     "Independent"
+    ],
+    [
+     "Hole",
+     "Celebrity Skin",
+     "Universal (MCA)"
+    ],
+    [
+     "Dr. Dre featuring LL Cool J",
+     "Zoom",
+     "Universal (MCA)"
+    ],
+    [
+     "Lauryn Hill",
+     "Doo Wop (That Thing)",
+     "Sony"
+    ],
+    [
+     "Junior Delgado",
+     "Hypocrites",
+     "V2"
+    ],
+    [
+     "Urban Species",
+     "Woman",
+     "Mercury"
+    ],
+    [
+     "Barry Adamson",
+     "What It Means",
+     "MDS"
+    ],
+    [
+     "The Cruel Sea",
+     "You'll Do",
+     "Polydor"
+    ],
+    [
+     "You Am I",
+     "Heavy Heart",
+     "BMG"
+    ],
+    [
+     "The Dandy Warhols",
+     "Every Day Should Be A Holiday",
+     "EMI"
+    ],
+    [
+     "Icecream Hands",
+     "Dodgy",
+     "BMG"
+    ],
+    [
+     "Violetine",
+     "Birmingham",
+     "Mushroom"
+    ],
+    [
+     "Fini Scad",
+     "Sonic Boy",
+     "Mushroom"
+    ],
+    [
+     "Screamfeeder",
+     "Triple Hook",
+     "Shock"
+    ],
+    [
+     "Loki",
+     "Get Up",
+     "Festival"
+    ],
+    [
+     "Tantra",
+     "Scream",
+     "Independent"
+    ],
+    [
+     "Cold Chisel",
+     "The Things I Love In You",
+     "Mushroom"
+    ],
+    [
+     "Marilyn Manson",
+     "The Dope Show",
+     "Universal (MCA)"
+    ],
+    [
+     "Korn",
+     "Got The Life",
+     "Sony"
+    ],
+    [
+     "G'rimace",
+     "Peppercorn",
+     "Independent"
+    ],
+    [
+     "Regurgitator",
+     "(!) The Song Formerly Known As",
+     "Warner"
+    ],
+    [
+     "Not From There",
+     "Sich Offnen",
+     "MDS"
+    ],
+    [
+     "Live In Concert",
+     "Rammstein - Rammstein",
+     "Polydor"
+    ],
+    [
+     "Pearl Jam",
+     "Do The Evolution",
+     "Sony"
+    ],
+    [
+     "The Giants",
+     "Six Second Man",
+     "Independent"
+    ],
+    [
+     "Blacksmith Hopkins",
+     "Taking Care Of Business",
+     "Independent"
+    ],
+    [
+     "Live on Recovery",
+     "Shoot Out - Chris Wilson",
+     "Mushroom"
+    ],
+    [
+     "Spider Monkey",
+     "Empty Thinking",
+     "Independent"
+    ],
+    [
+     "Purplene",
+     "Paris Falling In",
+     "Independent"
+    ],
+    [
+     "Monte",
+     "Logic",
+     "Independent"
+    ],
+    [
+     "Wendy Rule",
+     "Full Moon In Scorpio",
+     "Independent"
+    ],
+    [
+     "PJ Harvey",
+     "A Perfect Day Elise",
+     "Mercury"
+    ],
+    [
+     "Alexia",
+     "Gimme Love (Club Mix)",
+     "Sony"
+    ],
+    [
+     "Jeux Floraux",
+     "Body Work",
+     "Central Station"
+    ],
+    [
+     "Deep Dish with Everything But The Girl",
+     "Future Of The Future",
+     "BMG"
+    ],
+    [
+     "The Wise Guys",
+     "Start The Commotion",
+     "MDS"
+    ],
+    [
+     "Faithless",
+     "God Is A DJ",
+     "Festival"
+    ],
+    [
+     "Luke Slater",
+     "Love",
+     "MDS"
+    ],
+    [
+     "Lovestation",
+     "Teardrops",
+     "MDS"
+    ],
+    [
+     "Trickster",
+     "Move On Up",
+     "Central Station"
+    ],
+    [
+     "Chris Isaak",
+     "Please",
+     "Warner"
+    ],
+    [
+     "Luka Bloom",
+     "Ciara",
+     "Sony"
+    ],
+    [
+     "Symposium",
+     "Blue",
+     "Mushroom"
+    ],
+    [
+     "Stony Sleep",
+     "Mid May",
+     "V2"
+    ],
+    [
+     "Smashing Pumpkins",
+     "Perfect",
+     "Virgin"
+    ],
+    [
+     "Semisonic",
+     "Closing Time",
+     "Universal (MCA)"
+    ],
+    [
+     "Babybird",
+     "If You'll Be Mine",
+     "Mushroom"
+    ],
+    [
+     "Marcy Playground",
+     "Saint Joe On The School Bus",
+     "EMI"
+    ],
+    [
+     "Everclear",
+     "Father Of Mine",
+     "EMI"
+    ],
+    [
+     "They Might Be Giants",
+     "Dr. Worm",
+     "Festival"
+    ],
+    [
+     "Kylie Minogue",
+     "Cowboy Style",
+     "Mushroom"
+    ],
+    [
+     "Monique Brumby",
+     "Wrecking Ball",
+     "Sony"
+    ],
+    [
+     "The Tragically Hip",
+     "Poets",
+     "Warner"
+    ],
+    [
+     "The Fauves",
+     "The Charles Atlas Way",
+     "Polydor"
+    ],
+    [
+     "Fastball",
+     "Fire Escape",
+     "Polydor"
+    ],
+    [
+     "U2",
+     "Sweetest Thing",
+     "Mercury"
+    ],
+    [
+     "Monica",
+     "The First Night",
+     "BMG"
+    ],
+    [
+     "Smash Mouth",
+     "Can't Get Enough Of You Baby",
+     "Warner"
+    ],
+    [
+     "Powderfinger",
+     "The Day You Come",
+     "Polydor"
+    ],
+    [
+     "Cold Chisel",
+     "The Things I Love In You",
+     "Mushroom"
+    ],
+    [
+     "Puff Daddy featuring Jimmy Page",
+     "Come With Me",
+     "Sony"
+    ],
+    [
+     "Next",
+     "I Still Love You",
+     "BMG"
+    ],
+    [
+     "S.O.A.P.",
+     "This Is How We Party",
+     "Sony"
+    ],
+    [
+     "Ricky Martin",
+     "La Bomba",
+     "Sony"
+    ],
+    [
+     "The Tamperer featuring Maya",
+     "Feel It",
+     "Mushroom"
+    ],
+    [
+     "Steps",
+     "One For Sorrow",
+     "Mushroom"
+    ],
+    [
+     "The Living End",
+     "Second Solution",
+     "MDS"
+    ],
+    [
+     "Lauryn Hill",
+     "Doo Wop (That Thing)",
+     "Sony"
+    ],
+    [
+     "Korn",
+     "Got The Life",
+     "Sony"
+    ],
+    [
+     "Pras Michel featuring Ol' Dirty & Mya",
+     "Ghetto Supastar",
+     "Universal (MCA)"
+    ],
+    [
+     "Happyland",
+     "Don't You Know Who I Am?",
+     "Polydor"
+    ],
+    [
+     "Aqua",
+     "Turn Back Time",
+     "Universal (MCA)"
+    ],
+    [
+     "Marie Wilson",
+     "Won't Keep A Good Girl Down",
+     "Warner"
+    ],
+    [
+     "Barenaked Ladies",
+     "One Week",
+     "Warner"
+    ],
+    [
+     "Fastball",
+     "The Way",
+     "Polydor"
+    ],
+    [
+     "Ultimate Kaos",
+     "Casanova",
+     "Mercury"
+    ],
+    [
+     "Hole",
+     "Celebrity Skin",
+     "Universal (MCA)"
+    ],
+    [
+     "The Living End",
+     "Save The Day",
+     "EMI"
+    ],
+    [
+     "Mousse T",
+     "Horny '98",
+     "Central Station"
+    ],
+    [
+     "Brandy & Monica",
+     "The Boy Is Mine",
+     "Warner"
+    ],
+    [
+     "B*Witched",
+     "Rollercoaster",
+     "Sony"
+    ],
+    [
+     "S.O.A.P.",
+     "Ladidi Ladida",
+     "Sony"
+    ],
+    [
+     "Bus Stop featuring Carl Douglas",
+     "Kung Fu Fighting",
+     "Festival"
+    ],
+    [
+     "Bic Runga",
+     "Sway",
+     "Sony"
+    ],
+    [
+     "B*Witched",
+     "C'est La Vie",
+     "Sony"
+    ],
+    [
+     "Next",
+     "Too Close",
+     "BMG"
+    ],
+    [
+     "Billie",
+     "Because We Want To",
+     "Virgin"
+    ],
+    [
+     "Bachelor Girl",
+     "Buses & Trains",
+     "BMG"
+    ],
+    [
+     "Stardust",
+     "Music Sounds Better With You",
+     "Virgin"
+    ],
+    [
+     "Human Nature",
+     "Cruel",
+     "Sony"
+    ],
+    [
+     "Steps",
+     "Last Thing On My Mind",
+     "Mushroom"
+    ],
+    [
+     "Five",
+     "Everybody Get Up",
+     "BMG"
+    ],
+    [
+     "Jennifer Paige",
+     "Crush",
+     "Shock"
+    ],
+    [
+     "Backstreet Boys",
+     "I'll Never Break Your Heart",
+     "Mushroom"
+    ],
+    [
+     "Pauline Pantsdown",
+     "I Don't Like It!",
+     "TWA"
+    ],
+    [
+     "Five",
+     "When The Lights Go Out",
+     "BMG"
+    ],
+    [
+     "Des'ree",
+     "Life",
+     "Sony"
+    ],
+    [
+     "Goo Goo Dolls",
+     "Iris",
+     "Warner"
+    ],
+    [
+     "All Saints",
+     "Lady Marmalade",
+     "Polydor"
+    ],
+    [
+     "Lighthouse Family",
+     "High",
+     "Polydor"
+    ],
+    [
+     "Spice Girls",
+     "Viva Forever",
+     "Virgin"
+    ],
+    [
+     "Shania Twain",
+     "From This Moment On",
+     "Mercury"
+    ],
+    [
+     "Green Day",
+     "Time Of Your Life (Good Riddance)",
+     "Warner"
+    ],
+    [
+     "Aerosmith",
+     "I Don't Want To Miss A Thing",
+     "Sony"
+    ]
+   ],
+   "why": "missing night; ABC page from the Wayback Machine (web.archive.org/web/20010123222400/http://www.abc.net.au/rage/playlist/archive/1998/19981009.htm)"
   }
  ],
  "rows": [
