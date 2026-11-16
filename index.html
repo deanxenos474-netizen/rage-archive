@@ -428,6 +428,7 @@ ol.steps a { color: var(--accent) }
           <option value="4:3">4:3 (YouTube shows black bars at the sides)</option>
           <option value="4:3-in-16:9">4:3 inside a 16:9 video (bars built into the video)</option>
           <option value="4:3-stretched">4:3 stretched to fill a 16:9 video (people look too wide)</option>
+          <option value="4:3-blur">4:3 inside a 16:9 video with blurry copies at the sides</option>
           <option value="16:9-in-4:3">16:9 inside a 4:3 video (black bars top &amp; bottom)</option>
           <option value="2.20:1">Wide film 2.20:1 or 2.35:1 (black bars top &amp; bottom)</option>
         </select>
@@ -1152,8 +1153,13 @@ ol.steps a { color: var(--accent) }
       const squeeze = shape === "4:3-stretched" && !wrap.classList.contains("admode") ? "scaleX(0.75)" : "";
       if (ifr) ifr.style.transform = squeeze;
       v.style.transform = P.kind === "video" ? squeeze : "";
+      // a 4:3 picture with blurred copies filling the sides of a 16:9 video: black out the sides (the picture itself isn't cut)
+      const blur = shape === "4:3-blur" && !wrap.classList.contains("admode");
+      const side = (cw - ch * 4 / 3) / 2;   // width of each blurred strip
+      if (ifr) ifr.style.clipPath = blur ? `inset(0 ${side}px 0 ${side}px)` : "";
+      v.style.clipPath = P.kind === "video" && blur ? `inset(0 ${(bw - cw) / 2 + side}px 0 ${(bw - cw) / 2 + side}px)` : "";
       let x = el.offsetLeft + (bw - cw) / 2, y = el.offsetTop + (bh - ch) / 2, w = cw, h = ch;
-      if (shape === "4:3-in-16:9" || shape === "4:3-stretched") { w = h * 4 / 3; x += (cw - w) / 2; }
+      if (shape === "4:3-in-16:9" || shape === "4:3-stretched" || shape === "4:3-blur") { w = h * 4 / 3; x += (cw - w) / 2; }
       if (shape === "16:9-in-4:3") { h = w * 9 / 16; y += (ch - h) / 2; }
       const G = shape.startsWith("4:3") ? GEO["4:3"] : GEO[shape] || GEO["16:9"];
       Object.assign(svg.style, { left: x + "px", top: y + "px", width: w + "px", height: h + "px" });
