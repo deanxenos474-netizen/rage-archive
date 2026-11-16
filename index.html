@@ -1193,8 +1193,9 @@ ol.steps a { color: var(--accent) }
       svg.querySelector(`#${fid}L`).innerHTML = f;
     }
     /* YouTube says "playing" a moment before the first real frame shows, and until then its own thumbnail
-       (often with "4K" written on it) is on screen: keep the cover up until the video has run a quarter second */
-    function revealSoon() { if (poster.hidden || P.reveal != null) return; P.reveal = now() + 0.25; P.revealBy = performance.now() + 1500; }
+       (often with "4K" written on it) is on screen: keep the cover up only until the video's time starts moving,
+       which is when the first real frame replaces it (so a fade-in at the start, like Beat It's, is still seen) */
+    function revealSoon() { if (poster.hidden || P.reveal != null) return; P.reveal = now() + 0.03; P.revealBy = performance.now() + 1000; }
     function frame() {
       if (P.reveal != null && (now() >= P.reveal || performance.now() > P.revealBy)) { P.reveal = null; showPoster(false); }
       const t = now(), L = P.L;
@@ -1354,7 +1355,7 @@ ol.steps a { color: var(--accent) }
                 },
                 onStateChange: e => {
                   if (P.kind !== "yt") return;
-                  if (e.data === 5 && P.playOnCue != null && P.playOnCue === P.loadNo) { P.playOnCue = null; clearTimeout(P.cueWait); setTimeout(() => { if (!P.stop && P.want) ytPlay(); }, 150); return; }   // cued: now press play
+                  if (e.data === 5 && P.playOnCue != null && P.playOnCue === P.loadNo) { P.playOnCue = null; clearTimeout(P.cueWait); if (!P.stop && P.want) ytPlay(); return; }   // cued: now press play
                   if (e.data === 1 || e.data === 3) P.fresh = false;
                   if (e.data === 3) P.sawBuf = true;
                   if (e.data === 1) { P.started = true; setAd(false); try { if (P.yt.isMuted()) P.yt.unMute(); P.mutedByUs = false; } catch {} setPlaying(true); revealSoon(); problem(""); wrap.classList.remove("paused"); }
