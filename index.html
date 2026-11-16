@@ -1324,17 +1324,17 @@ ol.steps a { color: var(--accent) }
       loadYT().then(YT => {
             P.ytMaking = false;
             if (P.stop || P.yt) return;
-            const first = P.pending || { id: cueId, autoplay: false };
-            if (!first.id) return;
-            if (!P.pending) P.cuedId = first.id;
+            if (!(P.pending || cueId)) return;
+            /* the player is built empty (no video), then each video is loaded into it, the way RageAgain does it:
+               its player starts on an intro video and every music video is swapped in afterwards */
             P.yt = new YT.Player(wrap.querySelector(".ytel"), {
-              videoId: first.id, width: "100%", height: "100%",
-              playerVars: { controls: 0, disablekb: 1, fs: 0, rel: 0, playsinline: 1, modestbranding: 1, iv_load_policy: 3, cc_load_policy: 0, autoplay: first.autoplay ? 1 : 0 },
+              width: "100%", height: "100%",
+              playerVars: { controls: 0, disablekb: 1, fs: 0, rel: 0, playsinline: 1, modestbranding: 1, iv_load_policy: 3, cc_load_policy: 0 },
               events: {
                 onReady: () => {
                   P.ytReady = true; const p = P.pending; layout(); P.askAt = performance.now();   // the wait for an ad counts from here
-                  if (p && (p.id !== first.id || p.rng)) { p.autoplay ? P.yt.loadVideoById(p.rng || p.id) : P.yt.cueVideoById(p.rng || p.id); }
-                  else if (p && p.autoplay) P.yt.playVideo();
+                  if (p) { p.autoplay ? P.yt.loadVideoById(p.rng || p.id) : P.yt.cueVideoById(p.rng || p.id); }
+                  else if (cueId) { P.yt.cueVideoById(cueId); P.cuedId = cueId; }
                 },
                 onStateChange: e => {
                   if (P.kind !== "yt") return;
