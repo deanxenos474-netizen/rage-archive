@@ -134,6 +134,8 @@ dialog::backdrop { background: rgb(5 6 14 / .6) }
 .d-cover img { width: 100%; height: 100%; object-fit: cover; display: block }
 .d-head h2 { font: 800 24px/1.1 var(--display); margin: 0; text-wrap: balance; overflow-wrap: anywhere }
 .d-head p { margin: 4px 0 0; color: var(--muted) }
+.alink { font: inherit; font-weight: 600; color: var(--fg); background: none; border: 0; padding: 0; cursor: pointer; text-align: left; overflow-wrap: anywhere }
+.alink:hover, .alink:focus-visible { text-decoration: underline }
 .x { font: 500 20px/1 var(--body); background: var(--raise); color: var(--fg); border: 0; border-radius: 8px; width: 34px; height: 34px; cursor: pointer }
 .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 0 }
 .facts div { background: var(--raise); border-radius: 10px; padding: 10px 12px; min-width: 0 }
@@ -376,7 +378,7 @@ ol.steps a { color: var(--accent) }
   <div class="d-in">
     <div class="d-head">
       <div class="d-cover" id="d-cover" aria-hidden="true"></div>
-      <div><h2 id="d-title"></h2><p id="d-sub"></p></div>
+      <div><h2 id="d-title"></h2><p id="d-sub"><button type="button" class="alink" id="d-artist" title="All by this artist"></button><span id="d-label"></span></p></div>
       <button class="x" id="d-close" aria-label="Close">×</button>
     </div>
     <div id="d-video"></div>
@@ -391,9 +393,6 @@ ol.steps a { color: var(--accent) }
     <div class="d-chart"><p class="lbl">Plays by year</p><svg id="d-chart" viewBox="0 0 500 120" role="img" aria-label="Plays by year"></svg></div>
     <div><p class="lbl">Broadcasts it was played on · pink = special</p><div class="dates" id="d-dates"><span class="count">Loading…</span></div></div>
     <div class="line"><code id="d-line"></code><button class="btn" id="d-copy">Copy</button></div>
-    <div class="actions">
-      <button class="btn" id="d-artist">All by this artist</button>
-    </div>
     <section class="edit" id="d-info" hidden aria-label="Song details">
       <h3>Song details</h3>
       <label class="lbl2" for="f-artist">Artist<input type="text" id="f-artist" autocomplete="off"></label>
@@ -1350,7 +1349,9 @@ ol.steps a { color: var(--accent) }
     cur = i;
     const s = S[i];
     $("d-title").textContent = s.t;
-    $("d-sub").textContent = s.a + (s.l ? ` · ${s.l}` : "");
+    $("d-artist").textContent = s.a;
+    $("d-artist").setAttribute("aria-label", `${s.a}: show everything by this artist`);
+    $("d-label").textContent = s.l ? ` · ${s.l}` : "";
     $("d-n").textContent = fmt(s.n);
     $("d-first").textContent = fmtDate(s.first);
     $("d-last").textContent = fmtDate(s.last);
