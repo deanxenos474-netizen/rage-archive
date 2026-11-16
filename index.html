@@ -1117,6 +1117,9 @@ ol.steps a { color: var(--accent) }
       const st = P.yt && P.ytReady ? P.yt.getPlayerState() : -1;
       if (st !== 1 && st !== 3 && st !== 2) problem("YouTube hasn't started this video. It may be blocked in your country or need you to sign in on YouTube.");
     }, 9000); };
+    /* start a video by cueing it and then pressing play, never loadVideoById ("load and play"): the song window
+       (cue, then the viewer presses play) shows no ads on the same videos where the broadcast's load-and-play did */
+    function ytCuePlay(v) { P.yt.cueVideoById(v); P.yt.playVideo(); }
     // play/pause follows what the viewer asked for (P.want), not YouTube's in-between states,
     // so a second press while it's still starting doesn't pause it
     function ytPlay() {
@@ -1260,7 +1263,7 @@ ol.steps a { color: var(--accent) }
         P.kind = "yt"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = false;
         // a clip taken from part of a longer video: start / stop times
         const rng = P.m.start || P.m.end ? { videoId: P.m.yt, ...(P.m.start ? { startSeconds: +P.m.start } : {}), ...(P.m.end ? { endSeconds: +P.m.end } : {}) } : null;
-        if (P.yt && P.ytReady) { try { if (P.mutedByUs) { P.yt.unMute(); P.mutedByUs = false; } } catch {} autoplay ? (P.cuedId === P.m.yt && !rng ? P.yt.playVideo() : P.yt.loadVideoById(rng || P.m.yt)) : P.yt.cueVideoById(rng || P.m.yt); P.cuedId = null; }
+        if (P.yt && P.ytReady) { try { if (P.mutedByUs) { P.yt.unMute(); P.mutedByUs = false; } } catch {} autoplay ? (P.cuedId === P.m.yt && !rng ? P.yt.playVideo() : ytCuePlay(rng || P.m.yt)) : P.yt.cueVideoById(rng || P.m.yt); P.cuedId = null; }
         else { P.pending = { id: P.m.yt, autoplay, rng }; if (!P.yt) makeYT(); }
       } else if (vm) {
         showPoster(true);
@@ -1335,7 +1338,7 @@ ol.steps a { color: var(--accent) }
                 onReady: () => {
                   P.ytReady = true; const p = P.pending; layout(); P.askAt = performance.now();   // the wait for an ad counts from here
                   P.ytAsked = true;
-                  if (p) { p.autoplay ? P.yt.loadVideoById(p.rng || p.id) : P.yt.cueVideoById(p.rng || p.id); }
+                  if (p) { p.autoplay ? ytCuePlay(p.rng || p.id) : P.yt.cueVideoById(p.rng || p.id); }
                   else if (cueId) { P.yt.cueVideoById(cueId); P.cuedId = cueId; }
                 },
                 onStateChange: e => {
