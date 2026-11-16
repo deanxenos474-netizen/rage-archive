@@ -1092,7 +1092,9 @@ ol.steps a { color: var(--accent) }
     function setPlaying(on) { wrap.classList.toggle("playing", on); if (on) wrap.classList.remove("loading"); shield.setAttribute("aria-label", on ? "Pause" : "Play"); }
     const setLoading = on => wrap.classList.toggle("loading", on);   // pressed play, video not moving yet: show a spinner
     // covers YouTube's own title/thumbnail screen before it starts and its suggestions screen after it ends
-    function showPoster(on) { const src = on && coverSrc(P.m, P.noArt); poster.hidden = !src; if (src) poster.style.backgroundImage = `url("${src.replace(/"/g, "%22")}")`; }
+    function showPoster(on, black) {
+      if (on && black) { poster.hidden = false; poster.style.backgroundImage = "none"; return; }   // just black over YouTube's own loading screen
+      const src = on && coverSrc(P.m, P.noArt); poster.hidden = !src; if (src) poster.style.backgroundImage = `url("${src.replace(/"/g, "%22")}")`; }
     // a plain message over the picture when a video can't play, with a way to watch it elsewhere
     const pmsg = wrap.querySelector(".pmsg");
     function problem(text) {
@@ -1190,7 +1192,11 @@ ol.steps a { color: var(--accent) }
          + `<feMerge><feMergeNode in="sh"/><feMergeNode in="SourceGraphic"/></feMerge>`;
       svg.querySelector(`#${fid}L`).innerHTML = f;
     }
+    /* YouTube says "playing" a moment before the first real frame shows, and until then its own thumbnail
+       (often with "4K" written on it) is on screen: keep the cover up until the video has run a quarter second */
+    function revealSoon() { if (poster.hidden || P.reveal != null) return; P.reveal = now() + 0.25; P.revealBy = performance.now() + 1500; }
     function frame() {
+      if (P.reveal != null && (now() >= P.reveal || performance.now() > P.revealBy)) { P.reveal = null; showPoster(false); }
       const t = now(), L = P.L;
       const lo = t < L ? 0 : t < L + .55 ? (t - L) / .55 : t < L + 3.75 ? 1 : t < L + 4.25 ? 1 - (t - L - 3.75) / .5 : 0;
       img.setAttribute("opacity", lo.toFixed(3));
@@ -1223,7 +1229,7 @@ ol.steps a { color: var(--accent) }
       if (st === 3) P.sawBuf = true;
       if (st === 1) {
         P.started = true; setAd(false);
-        if (P.want && !wrap.classList.contains("playing")) { setPlaying(true); showPoster(false); problem(""); wrap.classList.remove("paused"); }
+        if (P.want && !wrap.classList.contains("playing")) { setPlaying(true); revealSoon(); problem(""); wrap.classList.remove("paused"); }
       } else if (P.want && st !== 2 && st !== 0 && st !== 5 && P.playOnCue == null && (moving || st === -1 && P.sawBuf || !P.started && performance.now() - (P.askAt || 0) > 1500)) setAd(true);
       /* an ad: time moves, or YouTube goes back to "not started" after loading, or (some ads report nothing useful)
          the video still hasn't started 1.5s after play was asked for: then step aside and show whatever YouTube shows */
@@ -1259,12 +1265,12 @@ ol.steps a { color: var(--accent) }
       P.m = m || {}; P.L = P.m.bare || P.m.burned ? Infinity : Number.isFinite(+P.m.logoAt) ? +P.m.logoAt : 8.2;   // bare: titles/credits; burned: logo already in the video
       l1.textContent = (song.a || "").toUpperCase(); l2.textContent = song.t || ""; P.noArt = song.kind === "clip";
       img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0");
-      setPlaying(false); setLoading(!!autoplay); showPoster(false); problem(""); wrap.classList.remove("paused"); wrap.classList.toggle("yt", !!P.m.yt);
+      P.reveal = null; setPlaying(false); setLoading(!!autoplay); showPoster(false); problem(""); wrap.classList.remove("paused"); wrap.classList.toggle("yt", !!P.m.yt);
       P.want = !!autoplay; P.endFired = false; P.lastT = null; P.fresh = true; P.sawBuf = false; P.started = false; P.askAt = performance.now(); P.loadNo = (P.loadNo || 0) + 1; setAd(false);   // fresh: ignore "ended" until this video has started loading
       const vm = !P.m.yt && vmId(P.m.video);
       if (!vm) vmStop();
       if (P.m.yt) {
-        showPoster(true);
+        showPoster(true, !!autoplay);   // playing straight on (a broadcast): plain black while it loads, not a flash of the cover
         P.kind = "yt"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = false;
         // a clip taken from part of a longer video: start / stop times
         const rng = P.m.start || P.m.end ? { videoId: P.m.yt, ...(P.m.start ? { startSeconds: +P.m.start } : {}), ...(P.m.end ? { endSeconds: +P.m.end } : {}) } : null;
@@ -1351,7 +1357,7 @@ ol.steps a { color: var(--accent) }
                   if (e.data === 5 && P.playOnCue != null && P.playOnCue === P.loadNo) { P.playOnCue = null; clearTimeout(P.cueWait); setTimeout(() => { if (!P.stop && P.want) ytPlay(); }, 150); return; }   // cued: now press play
                   if (e.data === 1 || e.data === 3) P.fresh = false;
                   if (e.data === 3) P.sawBuf = true;
-                  if (e.data === 1) { P.started = true; setAd(false); try { if (P.yt.isMuted()) P.yt.unMute(); P.mutedByUs = false; } catch {} setPlaying(true); showPoster(false); problem(""); wrap.classList.remove("paused"); }
+                  if (e.data === 1) { P.started = true; setAd(false); try { if (P.yt.isMuted()) P.yt.unMute(); P.mutedByUs = false; } catch {} setPlaying(true); revealSoon(); problem(""); wrap.classList.remove("paused"); }
                   /* paused by YouTube itself. Loading the next video sends a stray "paused" for the old one: that isn't the
                      viewer pausing, and taking it as one stopped ads being spotted (they ran hidden under the cover picture) */
                   else if (e.data === 2) { if (P.fresh) return; const id = P.loadNo; setTimeout(() => {
