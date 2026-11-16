@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-16T13:48:58.538Z",
+ "saved": "2026-11-16T13:51:01.234Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -868,7 +868,11 @@
    "a": "The Jackson 5"
   },
   "1e6706454f7a": {
-   "a": "Michael Jackson"
+   "a": "Michael Jackson",
+   "yr": 1972,
+   "g": [
+    "Pop"
+   ]
   },
   "66169ed7e9f0": {
    "a": "The Jackson 5",
