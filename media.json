@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-17T09:15:26.798Z",
+ "saved": "2026-11-17T09:18:39.046Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1154,6 +1154,15 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/a4/bd/dd/a4bddd6d-a28c-036c-64d1-90dedab7680b/193436488617_imagehigh.jpg/3000x3000bb-100.jpg",
    "logoAt": 12,
    "verified": true
+  },
+  "771897930f19": {
+   "artist": "Xiao Xiao",
+   "title": "Virtual Lover",
+   "yt": "DCMy1aRPLgY",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/14/95/de/1495de97-05cb-4140-0a42-7aa633706b78/885288405002.jpg/3000x3000bb-100.jpg",
+   "aspect": "4:3-in-16:9",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -2041,6 +2050,12 @@
    "yr": 2026,
    "g": [
     "Indie"
+   ]
+  },
+  "771897930f19": {
+   "yr": 2026,
+   "g": [
+    "Rock"
    ]
   }
  },
