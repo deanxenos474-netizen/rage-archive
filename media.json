@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-17T06:58:07.462Z",
+ "saved": "2026-11-17T07:45:51.632Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1922,6 +1922,10 @@
  "intros": {
   "b-20261108-2/0": {
    "sid": "3ce6ce67259e",
+   "video": "https://github.com/deanxenos474-netizen/rage-archive/raw/refs/heads/main/clips/Rage%20Vault%20Intro.mp4"
+  },
+  "b-20261111-1/0": {
+   "sid": "4468cb0878c4",
    "video": "https://github.com/deanxenos474-netizen/rage-archive/raw/refs/heads/main/clips/Rage%20Vault%20Intro.mp4"
   }
  }
