@@ -1144,7 +1144,13 @@ ol.steps a { color: var(--accent) }
     v.addEventListener("error", () => { if (P.kind === "video" && v.getAttribute("src")) problem("This video file couldn't be played."); });
 
     const frameEl = () => P.kind === "yt" ? ytbox : P.kind === "vimeo" ? vmbox : v;
-    const now = () => P.kind === "yt" ? (P.yt && P.ytReady && P.yt.getCurrentTime ? P.yt.getCurrentTime() || 0 : 0)
+    /* the YouTube player is kept between songs, so until the new video has started it still reports the last one's
+       time: count that as 0, or the logo / caption from where the last song was closed flash up on the next one */
+    const ytNow = () => {
+      if (!P.yt || !P.ytReady || !P.yt.getCurrentTime || P.fresh) return 0;
+      try { const d = P.yt.getVideoData?.(); if (d && d.video_id && d.video_id !== P.m.yt) return 0; return P.yt.getCurrentTime() || 0; } catch { return 0; }
+    };
+    const now = () => P.kind === "yt" ? ytNow()
       : P.kind === "vimeo" ? (P.vt || 0) + (P.vPlaying ? (performance.now() - P.vtAt) / 1000 : 0) : v.currentTime;
     function layout() {
       const el = frameEl(); if (!el) return;
