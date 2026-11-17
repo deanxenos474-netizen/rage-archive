@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-17T13:35:59.217Z",
+ "saved": "2026-11-17T13:37:53.798Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1341,6 +1341,15 @@
    "aspect": "4:3-in-16:9",
    "logoAt": 7,
    "verified": true
+  },
+  "9784f353f72f": {
+   "artist": "Pat Benatar",
+   "title": "Love Is A Battlefield",
+   "yt": "IGVZOLV9SPo",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/53/18/8b/53188bda-a5fd-865c-25c7-3dfc1763c639/14ULAIM00646.rgb.jpg/3000x3000bb-100.jpg",
+   "aspect": "4:3-in-16:9",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -2364,6 +2373,12 @@
    "yr": 1984,
    "g": [
     "Rock"
+   ]
+  },
+  "9784f353f72f": {
+   "yr": 1983,
+   "g": [
+    "Pop"
    ]
   }
  },
