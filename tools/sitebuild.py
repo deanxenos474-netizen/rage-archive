@@ -247,6 +247,8 @@ def build(d, out_dir=ROOT):
             lw = w.lower()
             if lw in ("ft.", "ft", "feat.", "featuring", "and", "vs", "vs.", "x", "with"):
                 out.append(lw)
+            elif out and lw in ("jr", "jr.", "sr", "sr."):   # "GARY CLARK JR" -> Gary Clark Jr. (not a first word: SR 71 is a band)
+                out.append(lw[:1].upper() + lw[1:2] + ".")
             elif re.search(r"[0-9/.$!]", w) or not re.search(r"[AEIOUY]", w) or len(w) <= 2 and w not in (
                     "OF", "IN", "ON", "TO", "MY", "ME", "WE", "BY", "AT", "IS", "IT", "OR", "NO", "SO", "DO", "GO",
                     "UP", "US", "OH", "AN", "AS", "BE", "HE", "DJ"):
