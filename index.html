@@ -659,12 +659,9 @@ ol.steps a { color: var(--accent) }
     return m ? m[1] : (/^[A-Za-z0-9_-]{11}$/.test(u || "") ? u : null);
   }
   // noArt: entries typed as a clip (interviews etc.) never show album art, only a frame from their video
-  /* Apple Music covers are saved at full size (1500x1500, about 2.5 MB each), which made the little squares in
-     the lists take up to 30s to appear. Apple makes any size from the same link, so ask for what's needed:
-     px = 160 for list squares (about 13 KB), 600 for the song window and the cover over the player */
-  function coverSrc(m, noArt, px = 600) {
+  function coverSrc(m, noArt) {
     if (!m) return null;
-    if (!noArt && m.cover && safeLink(m.cover)) return m.cover.replace(/^(https:\/\/[a-z0-9-]+\.mzstatic\.com\/image\/thumb\/.+?)\/\d+x\d+[a-z]*(?:-\d+)?\.(?:jpg|jpeg|png|webp)$/i, `$1/${px}x${px}bb.jpg`);
+    if (!noArt && m.cover && safeLink(m.cover)) return m.cover;
     if (m.yt) return `https://i.ytimg.com/vi/${m.yt}/hqdefault.jpg`;
     return null;
   }
@@ -755,7 +752,7 @@ ol.steps a { color: var(--accent) }
     if (isClipId(sid)) return "";     // clips have no square
     const m = mediaFor(sid);
     const play = m && (m.yt || m.video) ? '<span class="play" aria-label="Has video"></span>' : "";
-    const src = coverSrc(m, isClipId(sid), 160);
+    const src = coverSrc(m, isClipId(sid));
     if (src) return `<span class="thumb"><img src="${esc(src)}" alt="" loading="lazy" onerror="this.remove()">${play}</span>`;
     return `<span class="thumb" aria-hidden="true">${esc((sortKey(artist)[0] || "#").toUpperCase())}${play}</span>`;
   }
