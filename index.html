@@ -1329,7 +1329,7 @@ ol.steps a { color: var(--accent) }
       const n = err && err.name;
       problem(n === "PrivacyError" ? "The video's owner doesn't let it play on other websites." : n === "NotAllowedError" ? "" : "Vimeo couldn't play this video.");
       if (n === "NotAllowedError") showPoster(true);
-      else if (P.vm && n && n !== "TypeError" && P.m.video) reportBroken(P.song, P.m.video, `Vimeo: ${n}${err.message ? " – " + err.message : ""}`);
+      else if (P.vm && n && n !== "TypeError" && P.m.video) reportBroken(P.song, P.m.video, `Vimeo: ${n}${err.message ? " - " + err.message : ""}`);
     }
     function vmPlay() { P.want = true; setLoading(true); if (P.vm) P.vm.play().catch(vmFail); }
     function vmPause() { P.want = false; setLoading(false); if (P.vm) P.vm.pause().catch(() => {}); setPlaying(false); }
@@ -2034,7 +2034,7 @@ ol.steps a { color: var(--accent) }
     let sent = []; try { sent = JSON.parse(localStorage.getItem(BROKEN_KEY) || "[]"); } catch {}
     if (sent.includes(link)) return;
     try { localStorage.setItem(BROKEN_KEY, JSON.stringify([...sent, link].slice(-200))); } catch {}
-    const name = song && (song.a || song.t) ? `${song.a || ""} – ${song.t || ""}` : "an intro or bumper clip";
+    const name = song && (song.a || song.t) ? `${song.a || ""} - ${song.t || ""}` : "an intro or bumper clip";
     let tz = ""; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch {}
     const fd = new FormData();
     fd.append("_subject", "This is a broken link.");
