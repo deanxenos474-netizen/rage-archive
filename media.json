@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-17T09:44:13.213Z",
+ "saved": "2026-11-17T09:46:48.050Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1188,6 +1188,15 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/46/69/b9/4669b9ed-c174-604f-50fd-9e464d093acc/644110053909.png/3000x3000bb-100.jpg",
    "logoAt": 15,
    "verified": true
+  },
+  "80f4415ed32e": {
+   "artist": "Jo From School",
+   "title": "Living Room",
+   "yt": "zZ5znIGjK18",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ce/63/ae/ce63ae57-7011-52ec-330b-393a31146b2a/823375445036_Cover.jpg/1400x1400bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -2102,7 +2111,11 @@
    ]
   },
   "80f4415ed32e": {
-   "a": "Jo From School"
+   "a": "Jo From School",
+   "yr": 2026,
+   "g": [
+    "Indie"
+   ]
   }
  },
  "includes": {
