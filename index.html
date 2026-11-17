@@ -327,7 +327,7 @@ ol.steps a { color: var(--accent) }
         <label class="f" for="jump">Go to date <input type="date" id="jump" min="1998-01-01" autocomplete="off"></label>
         <label class="search" for="bq">
           <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>
-          <input id="bq" type="search" placeholder="Filter this year, e.g. Bowie, Hottest 100, Christmas" autocomplete="off" aria-label="Filter broadcasts by title or special">
+          <input id="bq" type="search" placeholder="Search every broadcast, e.g. Michael Jackson, Hottest 100, Christmas" autocomplete="off" aria-label="Filter broadcasts by title or special">
         </label>
         <div class="chips" role="group" aria-label="Show broadcasts">
           <button class="chip" id="k-all" aria-pressed="true">All</button>
@@ -843,7 +843,7 @@ ol.steps a { color: var(--accent) }
       $("s-lists").textContent = fmt(B.length);
       $("up-n").hidden = !U.length; $("up-n").textContent = U.length;
       const years = [...new Set(B.map(b => Math.floor(b.date / 1e4)))].sort((a, b) => b - a);
-      $("year").innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join("");
+      $("year").innerHTML = `<option value="all">All years</option>` + years.map(y => `<option value="${y}">${y}</option>`).join("");
       const last = B[B.length - 1].date;
       $("jump").max = `${String(last).slice(0,4)}-${String(last).slice(4,6)}-${String(last).slice(6)}`;
       return B;
@@ -909,19 +909,23 @@ ol.steps a { color: var(--accent) }
     document.querySelectorAll("details.bc[data-filled]").forEach(el => { while (el.children.length > 1) el.lastElementChild.remove(); delete el.dataset.filled; if (el.open) fillBroadcast(el); });
   }
 
+  // the Year menu: a year, or null for "All years" (the default, so a search finds broadcasts from any year)
+  const selYear = () => $("year").value === "all" ? null : +$("year").value;
+  function yearUI() { $("bq").placeholder = selYear() == null ? "Search every broadcast, e.g. Michael Jackson, Hottest 100, Christmas" : `Search ${selYear()}, e.g. Bowie, Hottest 100, Christmas`; }
   function renderYear(year, openIdx) {
-    const q = fold($("bq").value.trim());
-    const items = B.filter(b => Math.floor(b.date / 1e4) === year && (!q || b.hay.includes(q))
+    yearUI();
+    const q = fold($("bq").value.trim()), inY = year == null ? "all years" : year;
+    const items = B.filter(b => (year == null || Math.floor(b.date / 1e4) === year) && (!q || b.hay.includes(q))
       && (bkind === "all" || (bkind === "sp" && b.kind) || (bkind === "guest" && b.kind === 2)));
     const nsp = items.filter(b => b.kind).length;
-    $("bcount").textContent = `${fmt(items.length)} broadcast${items.length === 1 ? "" : "s"} in ${year} · ${fmt(nsp)} special${nsp === 1 ? "" : "s"} · ${fmt(items.reduce((t, b) => t + b.tr.length, 0))} plays`;
-    if (!items.length) { bEl.innerHTML = `<div class="empty">No ${bkind === "guest" ? "guest programmer nights" : bkind === "sp" ? "specials" : "broadcasts"} in ${year}${q ? ` match “${esc($("bq").value)}”` : ""}.</div>`; return; }
+    $("bcount").textContent = `${fmt(items.length)} broadcast${items.length === 1 ? "" : "s"} in ${inY} · ${fmt(nsp)} special${nsp === 1 ? "" : "s"} · ${fmt(items.reduce((t, b) => t + b.tr.length, 0))} plays`;
+    if (!items.length) { bEl.innerHTML = `<div class="empty">No ${bkind === "guest" ? "guest programmer nights" : bkind === "sp" ? "specials" : "broadcasts"} in ${inY}${q ? ` match “${esc($("bq").value)}”` : ""}.</div>`; return; }
     let html = "", curM = 0;
-    const perMonth = {};
-    items.forEach(b => { const m = ymd(b.date)[1]; perMonth[m] = (perMonth[m] || 0) + 1; });
+    const perMonth = {}, ym = b => Math.floor(b.date / 100);   // month headings carry their own year (All years lists every year)
+    items.forEach(b => { perMonth[ym(b)] = (perMonth[ym(b)] || 0) + 1; });
     for (const b of items) {
-      const m = ymd(b.date)[1];
-      if (m !== curM) { curM = m; html += `<h2 class="month">${MONTHS_L[m-1]} ${year} <small>${perMonth[m]} broadcast${perMonth[m] === 1 ? "" : "s"}</small></h2>`; }
+      const m = ym(b);
+      if (m !== curM) { curM = m; html += `<h2 class="month">${MONTHS_L[m % 100 - 1]} ${Math.floor(m / 100)} <small>${perMonth[m]} broadcast${perMonth[m] === 1 ? "" : "s"}</small></h2>`; }
       html += summaryHTML(b, "b-" + b.i, false);
     }
     bEl.innerHTML = html;
@@ -961,13 +965,13 @@ ol.steps a { color: var(--accent) }
       const b = e.target.closest("button[data-s]"); if (b) openDetail(+b.dataset.s);
     });
   }
-  $("year").addEventListener("change", () => { renderYear(+$("year").value); window.scrollTo({ top: 0 }); });
+  $("year").addEventListener("change", () => { renderYear(selYear()); window.scrollTo({ top: 0 }); });
   for (const [id, v] of [["k-all", "all"], ["k-sp", "sp"], ["k-guest", "guest"]]) $(id).onclick = () => {
     bkind = v;
     for (const [id2, v2] of [["k-all", "all"], ["k-sp", "sp"], ["k-guest", "guest"]]) $(id2).setAttribute("aria-pressed", String(v2 === v));
-    renderYear(+$("year").value); window.scrollTo({ top: 0 });
+    renderYear(selYear()); window.scrollTo({ top: 0 });
   };
-  let bdeb; $("bq").addEventListener("input", () => { clearTimeout(bdeb); bdeb = setTimeout(() => renderYear(+$("year").value), 140); });
+  let bdeb; $("bq").addEventListener("input", () => { clearTimeout(bdeb); bdeb = setTimeout(() => renderYear(selYear()), 140); });
   $("jump").addEventListener("change", () => {
     if (!$("jump").value || !B) return;
     const target = +$("jump").value.replace(/-/g, "");
@@ -981,10 +985,10 @@ ol.steps a { color: var(--accent) }
     if ($("tv").open) $("tv").close();
     setMode("broadcasts", true);
     const b = B[i];
-    $("year").value = String(Math.floor(b.date / 1e4));
+    if ($("year").value !== "all") $("year").value = String(Math.floor(b.date / 1e4));
     $("bq").value = "";
     if (bkind !== "all") $("k-all").click();
-    renderYear(Math.floor(b.date / 1e4), i);
+    renderYear(selYear(), i);
     setHash(linkOf(b, false));
   }
   async function goUpcoming(i) {
@@ -1021,7 +1025,7 @@ ol.steps a { color: var(--accent) }
     else if (m === "upcoming") { if (!quiet) setHash("upcoming"); loadBroadcasts().then(renderUpcoming).catch(() => { uEl.innerHTML = `<div class="empty">The playlists didn't load. Reload the page to try again.</div>`; }); }
     else if (!quiet) {
       setHash("broadcasts");
-      loadBroadcasts().then(() => { if (!bEl.querySelector("details")) { const last = B[B.length - 1]; $("year").value = String(Math.floor(last.date / 1e4)); renderYear(Math.floor(last.date / 1e4), last.i); } })
+      loadBroadcasts().then(() => { if (!bEl.querySelector("details")) { const last = B[B.length - 1]; $("year").value = "all"; renderYear(null, last.i); } })
         .catch(err => { bEl.innerHTML = `<div class="empty">The broadcast list didn't load (${esc(err.message || err)}). Reload the page to try again.</div>`; });
     }
   }
