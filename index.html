@@ -154,15 +154,17 @@ dialog::backdrop { background: rgb(5 6 14 / .6) }
 
 /* player + rage overlay */
 @font-face { font-family: "Eurostile Demi"; src: url("eurostile-demi.otf") format("opentype"); font-display: swap }
-.player { position: relative; background: #000; border-radius: 10px; overflow: hidden }
+.player { position: relative; background: #000; border-radius: 10px; overflow: hidden; isolation: isolate }
 .player video { width: 100%; max-height: 62vh; display: block; background: #000; object-fit: contain }
-.player .ytbox { width: 100%; aspect-ratio: 16 / 9; max-height: 62vh; background: #000; position: relative; overflow: hidden }
+.player .ytbox { width: 100%; aspect-ratio: 16 / 9; max-height: 62vh; background: #000; position: relative; overflow: hidden; z-index: 0 }   /* z-index: its two players stack inside it, under the logo and cover */
 /* YouTube's frame is made taller than the box (layout()), so its title bar and share / "More videos" / logo
    row land in strips above and below that are cut off; the picture itself is shown whole */
-.ytbox .yslot { position: absolute; inset: 0 }
-.player .ytbox.behind { position: absolute; inset: 0; z-index: 0; opacity: 0; pointer-events: none; aspect-ratio: auto; max-height: none }
+.ytbox .yslot { position: absolute; inset: 0; z-index: 1; background: #000 }
+/* covered, not invisible: browsers freeze invisible YouTube frames, which left YouTube's own pause icon
+   stuck on the picture for a moment after the swap */
+.player .ytbox.behind { position: absolute; inset: 0; z-index: -1; pointer-events: none; aspect-ratio: auto; max-height: none }
 /* a second YouTube player that gets the next video of a broadcast ready out of sight, so it starts with no wait */
-.ytbox .yslot.spare { opacity: 0; pointer-events: none }
+.ytbox .yslot.spare { z-index: 0; pointer-events: none }
 .ytbox iframe { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; border: 0; background: #000 }
 .player:fullscreen, .player.fakefs { border-radius: 0; display: grid; place-items: center; width: 100vw; height: 100vh }
 .player.fakefs { position: fixed; inset: 0; z-index: 1000; height: 100dvh }   /* phones without real fullscreen (iPhone) */
@@ -1456,7 +1458,8 @@ ol.steps a { color: var(--accent) }
       } else if (e.data === 1 && sp.st === "buf") {
         clearTimeout(sp.t);
         try { P.spare.pauseVideo(); P.spare.seekTo(+sp.start || 0, true); } catch { return spareDrop(); }
-        sp.st = "ready";
+        sp.st = "pausing";   // ready once YouTube's pause icon has faded out, so it can't show after the swap
+        setTimeout(() => { if (P.sp === sp && sp.st === "pausing") sp.st = "ready"; }, 700);
       } else if (sp.st === "buf" && e.data !== 3 && e.data !== -1) { P.noSpare.add(sp.id); spareDrop(); }
     }
     function spareDrop() {
