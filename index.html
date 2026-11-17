@@ -1258,7 +1258,7 @@ ol.steps a { color: var(--accent) }
          the video still hasn't started 1.5s after play was asked for: then step aside and show whatever YouTube shows */
       if (st === 0 && P.want && !P.endFired && !P.fresh) { P.endFired = true; P.want = false; setAd(false); setPlaying(false); showPoster(true); opts.onEnded?.(); }
     }
-    v.addEventListener("loadedmetadata", () => { if (v.videoWidth && v.videoHeight) v.style.aspectRatio = `${v.videoWidth} / ${v.videoHeight}`; layout(); });
+    v.addEventListener("loadedmetadata", layout);
     v.addEventListener("ended", () => { if (P.kind === "video") { setPlaying(false); if (!opts.onEnded) showPoster(true); opts.onEnded?.(); } });
     v.addEventListener("playing", () => { if (P.kind === "video") { setPlaying(true); showPoster(false); } });
     v.addEventListener("waiting", () => { if (P.kind === "video" && !v.paused) setLoading(true); });
@@ -1313,8 +1313,9 @@ ol.steps a { color: var(--accent) }
         vmLoad(vm, autoplay);
       } else if (P.m.video) {
         P.kind = "video"; ytBehind(); try { P.yt && P.ytReady && P.yt.pauseVideo(); } catch {}
-        // the right shape before the file has loaded (until then the browser uses a small default, so the cover jumped in size)
-        const sh = P.m.aspect || "16:9"; v.style.aspectRatio = sh === "4:3" || sh === "16:9-in-4:3" ? "4 / 3" : "16 / 9";
+        // always a 16:9 box, like YouTube's: a 4:3 file sits in the middle with black at the sides (and the box is the
+        // right size before the file has loaded, so the cover doesn't jump)
+        v.style.aspectRatio = "16 / 9";
         v.hidden = false; v.src = P.m.video; if (autoplay) v.play().catch(() => {}); else showPoster(true);   // the album cover until play is pressed, like YouTube videos
         if (P.m.start) v.addEventListener("loadedmetadata", () => { if (P.kind === "video") v.currentTime = +P.m.start; }, { once: true });
       }
