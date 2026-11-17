@@ -1471,7 +1471,7 @@ ol.steps a { color: var(--accent) }
       clearTimeout(P.sp.t); P.sp = null; P.cuedId = null;
       try { old.pauseVideo(); old.mute(); } catch {}
       layout();
-      ytPlay(); setLoading(false);   // it's ready: no spinner unless it somehow doesn't start
+      ytPlay(); setLoading(false); wrap.classList.add("playing");   // it's ready: no spinner or play button in between, unless it somehow doesn't start
       const no = P.loadNo; clearTimeout(P.swapSpin);
       P.swapSpin = setTimeout(() => { if (P.loadNo === no && P.want && !P.started) setLoading(true); }, 800);
     }
