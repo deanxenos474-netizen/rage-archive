@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-17T06:16:46.251Z",
+ "saved": "2026-11-17T06:24:19.993Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1050,6 +1050,14 @@
    "aspect": "4:3-in-16:9",
    "logoAt": 7,
    "verified": true
+  },
+  "c89c02f766be": {
+   "artist": "Santigold",
+   "title": "L.E.S. Artistes",
+   "yt": "ciJDA0tcQfs",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Features114/v4/00/89/ab/0089ab23-4061-0b81-eb19-0ae5a01cd5b9/dj.lfccekgv.jpg/1425x1425bb-100.jpg",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -1865,6 +1873,12 @@
    "yr": 1996,
    "g": [
     "Rock"
+   ]
+  },
+  "c89c02f766be": {
+   "yr": 2008,
+   "g": [
+    "Indie"
    ]
   }
  },
