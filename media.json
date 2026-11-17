@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-17T09:12:34.324Z",
+ "saved": "2026-11-17T09:15:26.798Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1146,6 +1146,14 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/a7/2e/d3/a72ed310-f56f-6959-a623-66acc987bbd6/artwork.jpg/3000x3000bb-100.jpg",
    "logoAt": 21,
    "verified": true
+  },
+  "52dfc1eed337": {
+   "artist": "Current Joys",
+   "title": "Skinamarink On The TV",
+   "yt": "-sXKpDmk4ls",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/a4/bd/dd/a4bddd6d-a28c-036c-64d1-90dedab7680b/193436488617_imagehigh.jpg/3000x3000bb-100.jpg",
+   "logoAt": 12,
+   "verified": true
   }
  },
  "merges": {
@@ -2024,6 +2032,12 @@
    ]
   },
   "778bfc81f43b": {
+   "yr": 2026,
+   "g": [
+    "Indie"
+   ]
+  },
+  "52dfc1eed337": {
    "yr": 2026,
    "g": [
     "Indie"
