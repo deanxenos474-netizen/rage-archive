@@ -159,6 +159,9 @@ dialog::backdrop { background: rgb(5 6 14 / .6) }
 .player .ytbox { width: 100%; aspect-ratio: 16 / 9; max-height: 62vh; background: #000; position: relative; overflow: hidden }
 /* YouTube's frame is made taller than the box (layout()), so its title bar and share / "More videos" / logo
    row land in strips above and below that are cut off; the picture itself is shown whole */
+.ytbox .yslot { position: absolute; inset: 0 }
+/* a second YouTube player that gets the next video of a broadcast ready out of sight, so it starts with no wait */
+.ytbox .yslot.spare { opacity: 0; pointer-events: none }
 .ytbox iframe { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; border: 0; background: #000 }
 .player:fullscreen, .player.fakefs { border-radius: 0; display: grid; place-items: center; width: 100vw; height: 100vh }
 .player.fakefs { position: fixed; inset: 0; z-index: 1000; height: 100dvh }   /* phones without real fullscreen (iPhone) */
@@ -1069,15 +1072,16 @@ ol.steps a { color: var(--accent) }
     const fid = "capsh" + (++fsCounter);
     // caption shadow as rage drew it: a hard black block extruded down and to the right, with a thin dark rim
     // (measured from an off-air frame, AC/DC "It's A Long Way To The Top")
-    host.innerHTML = `<div class="player"><div class="ytbox" hidden><div class="ytel"></div></div><div class="ytbox vmbox" hidden></div><video playsinline preload="auto" disablepictureinpicture hidden></video><div class="poster" hidden></div>
+    host.innerHTML = `<div class="player"><div class="ytbox" hidden><div class="yslot"><div class="ytel"></div></div><div class="yslot spare"><div class="ytel2"></div></div></div><div class="ytbox vmbox" hidden></div><video playsinline preload="auto" disablepictureinpicture hidden></video><div class="poster" hidden></div>
       <svg class="ov" aria-hidden="true"><defs><filter id="${fid}" x="-5%" y="-20%" width="120%" height="175%"><feMorphology in="SourceAlpha" operator="dilate" radius="0.7" result="o"/><feOffset in="o" dx="0.65" dy="1.02" result="s1"/><feOffset in="o" dx="1.30" dy="2.05" result="s2"/><feOffset in="o" dx="1.95" dy="3.07" result="s3"/><feOffset in="o" dx="2.60" dy="4.10" result="s4"/><feOffset in="o" dx="3.25" dy="5.12" result="s5"/><feOffset in="o" dx="3.90" dy="6.15" result="s6"/><feOffset in="o" dx="4.55" dy="7.17" result="s7"/><feOffset in="o" dx="5.20" dy="8.20" result="s8"/><feMerge result="m"><feMergeNode in="o"/><feMergeNode in="s1"/><feMergeNode in="s2"/><feMergeNode in="s3"/><feMergeNode in="s4"/><feMergeNode in="s5"/><feMergeNode in="s6"/><feMergeNode in="s7"/><feMergeNode in="s8"/></feMerge><feFlood flood-color="#000"/><feComposite in2="m" operator="in" result="sh"/><feMerge><feMergeNode in="sh"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
         <filter id="${fid}L" x="-5%" y="-5%" width="115%" height="125%"></filter><image href="rage-logo.png" opacity="0" preserveAspectRatio="none" filter="url(#${fid}L)"/><g class="capg" opacity="0" filter="url(#${fid})"><text class="l1"></text><text class="l2"></text></g></svg>
       <button class="shield" type="button" aria-label="Play"><span class="bigplay"></span></button>
       <button class="fsb" type="button">Fullscreen</button><div class="pmsg" hidden></div></div>`;
     const wrap = host.querySelector(".player"), svg = wrap.querySelector("svg"), ytbox = wrap.querySelector(".ytbox:not(.vmbox)"), vmbox = wrap.querySelector(".vmbox"), v = wrap.querySelector("video");
     const img = svg.querySelector("image"), capg = svg.querySelector(".capg"), l1 = svg.querySelector(".l1"), l2 = svg.querySelector(".l2");
-    const P = { stop: false, raf: 0, iv: 0, yt: null, ytReady: false, kind: null, m: {}, L: 8.2, pending: null };
+    const P = { stop: false, raf: 0, iv: 0, yt: null, ytReady: false, kind: null, m: {}, L: 8.2, pending: null, noSpare: new Set() };
     const shield = wrap.querySelector(".shield"), poster = wrap.querySelector(".poster");
+    if (DEBUG) wrap._P = P;   // ?debug: the player's state, for the browser console
     /* ?debug on the address: a status box over the video, to see what YouTube reports (e.g. in browsers we can't test) */
     let dbg = null; const dbgLog = [];
     function debugShow() {
@@ -1160,7 +1164,7 @@ ol.steps a { color: var(--accent) }
       const shape = P.m.aspect || "16:9";
       const fileAR = shape === "2.20:1" ? 16 / 9 : P.kind === "yt" || P.kind === "vimeo" ? (shape === "4:3" || shape === "16:9-in-4:3" ? 4 / 3 : 16 / 9) : (v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : 16 / 9);
       const cw = Math.min(bw, bh * fileAR), ch = cw / fileAR;
-      const ifr = P.kind === "yt" ? ytbox.querySelector("iframe") : P.kind === "vimeo" && vmbox.querySelector("iframe");
+      const ifr = P.kind === "yt" ? ytbox.querySelector(".yslot:not(.spare) iframe") : P.kind === "vimeo" && vmbox.querySelector("iframe");
       if (ifr && wrap.classList.contains("admode")) Object.assign(ifr.style, { width: bw + "px", height: bh + "px", left: "0px", top: "0px" });   // an ad: shown whole
       else if (ifr) {   // exactly the picture's width, with an extra strip above and below for YouTube's overlays to fall into
         const pad = Math.round(Math.max(90, ch * 0.22));
@@ -1275,8 +1279,12 @@ ol.steps a { color: var(--accent) }
       P.reveal = null; setPlaying(false); setLoading(!!autoplay); showPoster(false); problem(""); wrap.classList.remove("paused"); wrap.classList.toggle("yt", !!P.m.yt);
       P.want = !!autoplay; P.endFired = false; P.lastT = null; P.fresh = true; P.sawBuf = false; P.started = false; P.askAt = performance.now(); P.loadNo = (P.loadNo || 0) + 1; setAd(false);   // fresh: ignore "ended" until this video has started loading
       const vm = !P.m.yt && vmId(P.m.video);
+      if (P.sp && !spareSame(P.sp, P.m) && P.m.yt) spareDrop();
       if (!vm) vmStop();
-      if (P.m.yt) {
+      if (P.m.yt && autoplay && P.sp && P.sp.st === "ready" && spareSame(P.sp, P.m)) {
+        P.kind = "yt"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = false; vmStop();
+        spareSwap();   // the next video is already loaded and waiting: no cover, no spinner
+      } else if (P.m.yt) {
         showPoster(true, !!autoplay);   // playing straight on (a broadcast): plain black while it loads, not a flash of the cover
         P.kind = "yt"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = false;
         // a clip taken from part of a longer video: start / stop times
@@ -1339,6 +1347,7 @@ ol.steps a { color: var(--accent) }
       });
       P.vmWait.then(go, e => { if (!P.vm) P.vmCued = null, vmbox.innerHTML = `<div class="vload">Vimeo didn't load. Check your connection and try again.</div>`; fail(e); });
     }
+    const YT_VARS = { autoplay: 0, controls: 0, disablekb: 1, fs: 0, rel: 0, playsinline: 1, modestbranding: 1, iv_load_policy: 3, cc_load_policy: 0 };
     /* builds the YouTube player. Called as soon as a video is needed, or early by prepare() so the player is already
        built (with the next video cued, never playing) while a titles clip runs; that removes a few seconds of waiting. */
     function makeYT(cueId) {
@@ -1349,9 +1358,9 @@ ol.steps a { color: var(--accent) }
             /* built the way RageAgain does it: the player starts on RageAgain's rage intro video (never played; it's gone
                from YouTube now, so YouTube just reports it unavailable, which is ignored), then each music video is
                loaded into that same player */
+            P.ySlot = wrap.querySelector(".yslot:not(.spare)"); P.sSlot = wrap.querySelector(".yslot.spare");
             P.yt = new YT.Player(wrap.querySelector(".ytel"), {
-              videoId: YT_BOOT, width: "100%", height: "100%",
-              playerVars: { autoplay: 0, controls: 0, disablekb: 1, fs: 0, rel: 0, playsinline: 1, modestbranding: 1, iv_load_policy: 3, cc_load_policy: 0 },
+              videoId: YT_BOOT, width: "100%", height: "100%", playerVars: YT_VARS,
               events: {
                 onReady: () => {
                   P.ytReady = true; const p = P.pending; layout(); P.askAt = performance.now();   // the wait for an ad counts from here
@@ -1359,30 +1368,99 @@ ol.steps a { color: var(--accent) }
                   if (p) { p.autoplay ? ytCueThenPlay(p.rng || p.id) : P.yt.cueVideoById(p.rng || p.id); }
                   else if (cueId) { P.yt.cueVideoById(cueId); P.cuedId = cueId; }
                 },
-                onStateChange: e => {
-                  if (P.kind !== "yt") return;
-                  if (e.data === 5 && P.playOnCue != null && P.playOnCue === P.loadNo) { P.playOnCue = null; clearTimeout(P.cueWait); if (!P.stop && P.want) ytPlay(); return; }   // cued: now press play
-                  if (e.data === 1 || e.data === 3) P.fresh = false;
-                  if (e.data === 3) P.sawBuf = true;
-                  if (e.data === 1) { P.started = true; setAd(false); try { if (P.yt.isMuted()) P.yt.unMute(); P.mutedByUs = false; } catch {} setPlaying(true); revealSoon(); problem(""); wrap.classList.remove("paused"); }
-                  /* paused by YouTube itself. Loading the next video sends a stray "paused" for the old one: that isn't the
-                     viewer pausing, and taking it as one stopped ads being spotted (they ran hidden under the cover picture) */
-                  else if (e.data === 2) { if (P.fresh) return; const id = P.loadNo; setTimeout(() => {
-                    if (P.stop || P.kind !== "yt" || id !== P.loadNo) return;
-                    try { if (P.yt.getPlayerState() !== 2) return; } catch { return; }
-                    if (P.want) { P.want = false; setLoading(false); } setPlaying(false); if (!poster.hidden) return; wrap.classList.add("paused");
-                  }, 300); }
-                  else if (e.data === 0) { if (P.endFired || P.fresh) return; P.endFired = true; P.want = false; setPlaying(false); showPoster(true); opts.onEnded?.(); }
-                  else if ((e.data === 5 || e.data === -1) && !P.want) { setPlaying(false); showPoster(true); }
-                },
-                onError: e => { if (P.kind !== "yt") return;
-                  // an error about the starting video (or before a real one was asked for) isn't the viewer's video
-                  if (!P.ytAsked) return;
-                  try { const vid = (P.yt.getVideoData && P.yt.getVideoData() || {}).video_id || ""; if (vid === YT_BOOT || (!vid && e.data === 2)) return; } catch {}
-                  P.want = false; setAd(false); setLoading(false); problem(YT_ERR[e.data] || `YouTube couldn't play this video (error ${e.data}).`); opts.onError?.(); },
+                onStateChange: ytState, onError: ytErr,
               },
             });
       }).catch(() => { P.ytMaking = false; ytbox.innerHTML = `<div class="vload">YouTube didn't load. Check your connection and try again.</div>`; });
+    }
+    // events from both YouTube players (the one on screen, P.yt, and the spare getting the next video ready)
+    function ytState(e) {
+      if (e.target !== P.yt) return spareState(e);
+      if (P.kind !== "yt") return;
+      if (e.data === 5 && P.playOnCue != null && P.playOnCue === P.loadNo) { P.playOnCue = null; clearTimeout(P.cueWait); if (!P.stop && P.want) ytPlay(); return; }   // cued: now press play
+      if (e.data === 1 || e.data === 3) P.fresh = false;
+      if (e.data === 3) P.sawBuf = true;
+      if (e.data === 1) { P.started = true; clearTimeout(P.swapSpin); setAd(false); try { if (P.yt.isMuted()) P.yt.unMute(); P.mutedByUs = false; } catch {} setPlaying(true); revealSoon(); problem(""); wrap.classList.remove("paused"); }
+      /* paused by YouTube itself. Loading the next video sends a stray "paused" for the old one: that isn't the
+         viewer pausing, and taking it as one stopped ads being spotted (they ran hidden under the cover picture) */
+      else if (e.data === 2) { if (P.fresh) return; const id = P.loadNo; setTimeout(() => {
+        if (P.stop || P.kind !== "yt" || id !== P.loadNo) return;
+        try { if (P.yt.getPlayerState() !== 2) return; } catch { return; }
+        if (P.want) { P.want = false; setLoading(false); } setPlaying(false); if (!poster.hidden) return; wrap.classList.add("paused");
+      }, 300); }
+      else if (e.data === 0) { if (P.endFired || P.fresh) return; P.endFired = true; P.want = false; setPlaying(false); showPoster(true); opts.onEnded?.(); }
+      else if ((e.data === 5 || e.data === -1) && !P.want) { setPlaying(false); showPoster(true); }
+    }
+    function ytErr(e) {
+      if (e.target !== P.yt) {   // the spare can't play the next video: it loads the normal way when it's due (its start video's error is ignored)
+        let vid = ""; try { vid = (P.spare.getVideoData() || {}).video_id || ""; } catch {}
+        if (P.sp && P.sp.st !== "wait" && vid === P.sp.id) { P.noSpare.add(P.sp.id); spareDrop(); }
+        return;
+      }
+      if (P.kind !== "yt") return;
+      // an error about the starting video (or before a real one was asked for) isn't the viewer's video
+      if (!P.ytAsked) return;
+      try { const vid = (P.yt.getVideoData && P.yt.getVideoData() || {}).video_id || ""; if (vid === YT_BOOT || (!vid && e.data === 2)) return; } catch {}
+      P.want = false; setAd(false); setLoading(false); problem(YT_ERR[e.data] || `YouTube couldn't play this video (error ${e.data}).`); opts.onError?.();
+    }
+    /* Broadcasts: the next YouTube video is made ready in a second, invisible player while the current one plays, so
+       when the current one ends it's swapped in and starts at once, like a real broadcast (no spinner between songs).
+       The spare is built and started exactly like the main player (RageAgain's way: start video, cue, wait for "cued",
+       then play), muted, and paused again the moment the real video is running, which loads its first seconds.
+       Ads: if anything but the real video starts in the spare (an ad, or nothing within 2s), the spare is stopped
+       straight away and that video loads the normal way when it's due, so any ad is shown as usual, never hidden. */
+    function spareSame(sp, m) { return sp && sp.id === m.yt && (+sp.start || 0) === (+m.start || 0) && (+sp.end || 0) === (+m.end || 0); }
+    function spareWant(m) {
+      if (spareSame(P.sp, m) || P.noSpare.has(m.yt)) return;
+      spareDrop();
+      P.sp = { id: m.yt, start: m.start, end: m.end, st: "wait" };
+      if (!P.spare) {
+        const el = P.sSlot.querySelector(".ytel2");
+        P.spare = new YT.Player(el, { videoId: YT_BOOT, width: "100%", height: "100%", playerVars: YT_VARS,
+          events: { onReady: () => { P.spareApi = true; spareCue(); }, onStateChange: ytState, onError: ytErr } });
+      } else spareCue();
+    }
+    function spareCue() {
+      const sp = P.sp; if (!sp || !P.spareApi || sp.st !== "wait" || P.stop) return;
+      // same size as the picture on screen, so YouTube picks the same quality for it
+      const a = P.ySlot.querySelector("iframe"), b = P.sSlot.querySelector("iframe"); if (a && b) b.style.cssText = a.style.cssText;
+      sp.st = "cue";
+      try { P.spare.mute(); P.spare.cueVideoById(sp.start || sp.end ? { videoId: sp.id, ...(sp.start ? { startSeconds: +sp.start } : {}), ...(sp.end ? { endSeconds: +sp.end } : {}) } : sp.id); } catch { spareDrop(); }
+    }
+    function spareState(e) {
+      const sp = P.sp; if (!sp || e.target !== P.spare) return;
+      let vid = ""; try { vid = (P.spare.getVideoData() || {}).video_id || ""; } catch {}
+      if (vid && vid !== sp.id) return;   // still about the video it had before
+      if (e.data === 5 && sp.st === "cue") {
+        // a few seconds into the current video (so its own start isn't slowed), load the first seconds of the next
+        sp.st = "cued";
+        setTimeout(() => {
+          if (P.sp !== sp || sp.st !== "cued" || P.stop) return;
+          sp.st = "buf";
+          try { P.spare.mute(); P.spare.playVideo(); } catch { return spareDrop(); }
+          sp.t = setTimeout(() => { if (P.sp === sp && sp.st === "buf") { P.noSpare.add(sp.id); spareDrop(); } }, 2000);   // not the real video playing within 2s: maybe an ad, stop
+        }, 3000);
+      } else if (e.data === 1 && sp.st === "buf") {
+        clearTimeout(sp.t);
+        try { P.spare.pauseVideo(); P.spare.seekTo(+sp.start || 0, true); } catch { return spareDrop(); }
+        sp.st = "ready";
+      } else if (sp.st === "buf" && e.data !== 3 && e.data !== -1) { P.noSpare.add(sp.id); spareDrop(); }
+    }
+    function spareDrop() {
+      const sp = P.sp; if (!sp) return; clearTimeout(sp.t); P.sp = null;
+      try { P.spare && P.spareApi && P.spare.pauseVideo(); } catch {}
+    }
+    // the current video ended (or Next): put the ready spare on screen and start it
+    function spareSwap() {
+      const old = P.yt; P.yt = P.spare; P.spare = old;
+      [P.ySlot, P.sSlot] = [P.sSlot, P.ySlot];
+      P.ySlot.classList.remove("spare"); P.sSlot.classList.add("spare");
+      clearTimeout(P.sp.t); P.sp = null; P.cuedId = null;
+      try { old.pauseVideo(); old.mute(); } catch {}
+      layout();
+      ytPlay(); setLoading(false);   // it's ready: no spinner unless it somehow doesn't start
+      const no = P.loadNo; clearTimeout(P.swapSpin);
+      P.swapSpin = setTimeout(() => { if (P.loadNo === no && P.want && !P.started) setLoading(true); }, 800);
     }
     // get YouTube ready for a video that's coming up next, without playing it
     function prepare(m) {
@@ -1391,7 +1469,8 @@ ol.steps a { color: var(--accent) }
       if (vm) { if (P.kind !== "vimeo") vmLoad(vm, false, true); return; }   // Vimeo has no ads, so it can wait ready and paused
       if (!m.yt) return;
       if (!P.yt) return makeYT(m.yt);
-      if (P.ytReady && P.kind !== "yt") { try { P.yt.cueVideoById(m.yt); P.cuedId = m.yt; } catch {} }   // already cued: play() then starts it straight away
+      if (P.ytReady && P.kind === "yt") return spareWant(m);   // a YouTube video is on: the next one gets ready in the spare
+      if (P.ytReady) { try { P.yt.cueVideoById(m.yt); P.cuedId = m.yt; } catch {} }   // already cued: play() then starts it straight away
     }
     function destroy() {
       P.stop = true; cancelAnimationFrame(P.raf); clearInterval(P.iv); ro.disconnect();
@@ -1399,13 +1478,14 @@ ol.steps a { color: var(--accent) }
       document.removeEventListener("keydown", onKey, true);
       if (wrap.classList.contains("fakefs")) document.documentElement.classList.remove("nofsscroll");
       try { P.yt && P.yt.destroy(); } catch {}
+      try { P.spare && P.spare.destroy(); } catch {}
       try { P.vm && P.vm.destroy(); } catch {}
       if (document.fullscreenElement === wrap) document.exitFullscreen().catch(() => {});
       host.innerHTML = "";
     }
     // stop whatever is playing (a closed song window keeps its player for the next song)
     function pause() {
-      P.want = false; setLoading(false);
+      P.want = false; setLoading(false); spareDrop();
       try { if (P.kind === "yt" && P.yt && P.ytReady) P.yt.pauseVideo(); } catch {}
       try { if (P.kind === "vimeo" && P.vm) P.vm.pause().catch(() => {}); } catch {}
       try { v.pause(); } catch {}
@@ -1585,8 +1665,8 @@ ol.steps a { color: var(--accent) }
     const m = it.bumper ? it.m : mediaFor(it.sid);
     tv.player.load(m, it.bumper ? { a: "", t: "" } : it, autoplay);
     { const nk = tv.playable[tv.pos + 1], nx = nk != null && tv.items[nk], nm = nx && !nx.bumper && mediaFor(nx.sid);
-      // the next YouTube video is cued while something else plays; a Vimeo one can always wait ready (no ads)
-      if (nm && (!(m && m.yt) || (!nm.yt && nm.video))) tv.player.prepare(nm); }
+      // the next video gets ready while this one plays (YouTube: in the spare player, see prepare()); Vimeo can always wait ready (no ads)
+      if (nm) tv.player.prepare(nm); }
     const vidNo = tv.playable.slice(0, tv.pos + 1).filter(j => !tv.items[j].bumper).length;
     $("tv-now").innerHTML = it.bumper ? `rage – ${esc(it.t)}<small>${it.bumper === "intro" ? `Then ${tv.nv} music video${tv.nv === 1 ? "" : "s"}` : "End of the broadcast"}</small>`
       : `${esc(it.a)} – ${esc(it.t)}<small>Video ${vidNo} of ${tv.nv} · song ${k} in the running order</small>`;
