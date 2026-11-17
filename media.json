@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-17T10:49:23.934Z",
+ "saved": "2026-11-17T10:52:39.165Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1261,6 +1261,15 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/1c/a2/f1/1ca2f153-8339-fa32-8157-a80f54e4b6c7/190295274597.jpg/3683x3683bb-100.jpg",
    "aspect": "2.20:1",
    "logoAt": 15
+  },
+  "6e626fbe32e4": {
+   "artist": "Corey Hart",
+   "title": "Sunglasses At Night",
+   "yt": "X2LTL8KgKv8",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/fc/63/63/fc636333-9781-6772-9f2a-41ee9e3d9fdd/00602547865243.rgb.jpg/3000x3000bb-100.jpg",
+   "aspect": "4:3-in-16:9",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -2227,6 +2236,12 @@
    "yr": 1988,
    "g": [
     "Rock"
+   ]
+  },
+  "6e626fbe32e4": {
+   "yr": 1983,
+   "g": [
+    "Pop"
    ]
   }
  },
