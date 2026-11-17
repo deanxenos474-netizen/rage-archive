@@ -1159,7 +1159,7 @@ ol.steps a { color: var(--accent) }
       else if (P.kind === "vimeo") P.want ? vmPause() : vmPlay();
       else if (P.kind === "video") v.paused || v.ended ? (setLoading(true), v.play().catch(() => setLoading(false))) : v.pause();
     };
-    v.addEventListener("error", () => { if (P.kind === "video" && v.getAttribute("src")) problem("This video file couldn't be played."); });
+    v.addEventListener("error", () => { if (P.kind === "video" && v.getAttribute("src")) { problem("This video file couldn't be played."); reportBroken(P.song, P.m.video, `Video file: couldn't be played (error ${v.error && v.error.code})`); } });
 
     const frameEl = () => P.kind === "yt" ? ytbox : P.kind === "vimeo" ? vmbox : v;
     /* the YouTube player is kept between songs, so until the new video has started it still reports the last one's
@@ -1286,6 +1286,7 @@ ol.steps a { color: var(--accent) }
 
     function load(m, song, autoplay) {
       if (P.prep && m && P.prep.yt === m.yt) P.prep = null;   // it was waiting to be got ready, but it's on now
+      P.song = song || {};
       P.m = m || {}; P.L = P.m.bare || P.m.burned ? Infinity : Number.isFinite(+P.m.logoAt) ? +P.m.logoAt : 8.2;   // bare: titles/credits; burned: logo already in the video
       l1.textContent = (song.a || "").toUpperCase(); l2.textContent = song.t || ""; P.noArt = song.kind === "clip";
       img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0");
@@ -1328,6 +1329,7 @@ ol.steps a { color: var(--accent) }
       const n = err && err.name;
       problem(n === "PrivacyError" ? "The video's owner doesn't let it play on other websites." : n === "NotAllowedError" ? "" : "Vimeo couldn't play this video.");
       if (n === "NotAllowedError") showPoster(true);
+      else if (P.vm && n && n !== "TypeError" && P.m.video) reportBroken(P.song, P.m.video, `Vimeo: ${n}${err.message ? " – " + err.message : ""}`);
     }
     function vmPlay() { P.want = true; setLoading(true); if (P.vm) P.vm.play().catch(vmFail); }
     function vmPause() { P.want = false; setLoading(false); if (P.vm) P.vm.pause().catch(() => {}); setPlaying(false); }
@@ -1421,6 +1423,7 @@ ol.steps a { color: var(--accent) }
       if (!P.ytAsked) return;
       try { const vid = (P.yt.getVideoData && P.yt.getVideoData() || {}).video_id || ""; if (vid === YT_BOOT || (!vid && e.data === 2)) return; } catch {}
       P.want = false; setAd(false); setLoading(false); problem(YT_ERR[e.data] || `YouTube couldn't play this video (error ${e.data}).`); opts.onError?.();
+      if ([2, 100, 101, 150].includes(e.data)) reportBroken(P.song, "https://www.youtube.com/watch?v=" + P.m.yt, `YouTube: ${YT_ERR[e.data]} (error ${e.data})`);
     }
     /* Broadcasts: the next YouTube video is made ready in a second, invisible player while the current one plays, so
        when the current one ends it's swapped in and starts at once, like a real broadcast (no spinner between songs).
@@ -2022,6 +2025,22 @@ ol.steps a { color: var(--accent) }
   /* ---------- "Got footage?": the wanted list and the contact form ----------
      The form posts to a form service (e.g. Formspree) whose link the owner pastes in as admin; it's stored in
      media.json "settings", so the owner's email address never appears on the site. */
+  /* a video that won't play (taken down, made private, blocked in the viewer's country, not allowed on other sites):
+     email the owner through the site's form, "This is a broken link.", with the song and the link. Once per link per
+     browser, so one viewer can't send it twice (the form has a monthly limit). The player sends it by itself */
+  const BROKEN_KEY = "rage-broken-sent";
+  function reportBroken(song, link, what) {
+    const url = formUrl(); if (!url || !link) return;
+    let sent = []; try { sent = JSON.parse(localStorage.getItem(BROKEN_KEY) || "[]"); } catch {}
+    if (sent.includes(link)) return;
+    try { localStorage.setItem(BROKEN_KEY, JSON.stringify([...sent, link].slice(-200))); } catch {}
+    const name = song && (song.a || song.t) ? `${song.a || ""} – ${song.t || ""}` : "an intro or bumper clip";
+    let tz = ""; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch {}
+    const fd = new FormData();
+    fd.append("_subject", "This is a broken link.");
+    fd.append("message", `This is a broken link.\n\nSong: ${name}\nLink: ${link}\nWhat happened: ${what}\nPage: ${location.href}\nViewer's time zone: ${tz || "unknown"} (a country block only affects some countries)`);
+    fetch(url, { method: "POST", body: fd, headers: { Accept: "application/json" } }).catch(() => {});
+  }
   const formUrl = () => { const u = effective("settings").formUrl; return u && safeLink(u) && u.startsWith("https://") ? u : null; };
   function showWanted() {
     const un = type === "unconf";
