@@ -190,6 +190,8 @@ ol.tracks .tr.noart { grid-template-columns: 34px minmax(0, 1fr) auto }
 .introdates { display: grid; gap: 4px; max-height: 240px; overflow: auto; border: 1px solid var(--line); border-radius: 8px; padding: 8px }
 .introdates label { display: flex; gap: 8px; align-items: center; font: 13px/1.3 var(--body); color: var(--fg) }
 .introdates small { color: var(--muted) }
+.bchart { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; margin: 8px 0; font: 13px/1.3 var(--body); color: var(--fg) }
+.bchart input { width: 64px } .bchart small { flex-basis: 100%; color: var(--muted) }
 .introdates .nrow { display: flex; gap: 8px; align-items: center; justify-content: space-between }
 .introdates .nrow .btn, #n-new { padding: 2px 10px; font-size: 12px }
 .thumb.bumper img { object-fit: contain; padding: 6px; background: #000 }
@@ -623,16 +625,16 @@ ol.steps a { color: var(--accent) }
 
   /* ---------- covers, videos and merges (media.json + edits) ---------- */
   const DRAFT_KEY = "rage-media-drafts", TOKEN_KEY = "rage-gh-token";
-  const emptyDrafts = () => ({ media: {}, merges: {}, edits: {}, includes: {}, settings: {}, intros: {} });
+  const emptyDrafts = () => ({ media: {}, merges: {}, edits: {}, includes: {}, settings: {}, intros: {}, charts: {} });
   let published = emptyDrafts();
   let drafts = emptyDrafts();
   try {
     const raw = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
-    if (raw && (raw.media || raw.merges || raw.edits || raw.includes || raw.settings || raw.intros)) drafts = { media: raw.media || {}, merges: raw.merges || {}, edits: raw.edits || {}, includes: raw.includes || {}, settings: raw.settings || {}, intros: raw.intros || {} };
+    if (raw && (raw.media || raw.merges || raw.edits || raw.includes || raw.settings || raw.intros || raw.charts)) drafts = { media: raw.media || {}, merges: raw.merges || {}, edits: raw.edits || {}, includes: raw.includes || {}, settings: raw.settings || {}, intros: raw.intros || {}, charts: raw.charts || {} };
     else if (raw) drafts.media = raw;           // older format: just media
   } catch {}
   const saveDrafts = () => { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(drafts)); } catch {} };
-  const nDrafts = () => Object.keys(drafts.media).length + Object.keys(drafts.merges).length + Object.keys(drafts.edits).length + Object.keys(drafts.includes).length + Object.keys(drafts.settings).length + Object.keys(drafts.intros).length;
+  const nDrafts = () => Object.keys(drafts.media).length + Object.keys(drafts.merges).length + Object.keys(drafts.edits).length + Object.keys(drafts.includes).length + Object.keys(drafts.settings).length + Object.keys(drafts.intros).length + Object.keys(drafts.charts).length;
   // published data, plus this browser's unpublished changes when logged in as admin
   const effective = kind => { const out = {}; for (const [k, v] of Object.entries({ ...published[kind], ...(admin ? drafts[kind] : {}) })) if (v) out[k] = v; return out; };
 
@@ -866,7 +868,12 @@ ol.steps a { color: var(--accent) }
   function itemsOf(b, upcoming) {
     const item = c => { const s = S[c]; return { i: c, sid: s.id, a: s.a, t: s.t, l: s.l, n: s.n, kind: s.kind }; };
     const withIncluded = (i, rank) => [{ ...item(canon(i)), rank }, ...(includesOf.get(i) || []).map(item)];
-    if (!upcoming) return b.tr.flatMap((i, p) => withIncluded(i, b.rk && b.rk.get(p)));
+    if (!upcoming) {
+      const list = b.tr.flatMap((i, p) => withIncluded(i, b.rk && b.rk.get(p)));
+      // "charts" (media.json): the owner marks where a night's Top 50 countdown runs, e.g. songs 96-145 with No. 1 last
+      const ch = effective("charts")[linkOf(b, false)];
+      return ch ? list.map((it, p) => p + 1 >= ch.from && p + 1 <= ch.to ? { ...it, rank: ch.to - p } : it) : list;
+    }
     return b.rows.flatMap(([a, t, l, sid, rank]) => {
       const i = idIndex.get(sid);
       return i != null ? withIncluded(i, rank) : [{ i: null, sid, a, t, l, n: 0, kind: "song", rank }];
@@ -886,13 +893,15 @@ ol.steps a { color: var(--accent) }
     const items = itemsOf(b, up);
     const isDebut = debutTest(b, up);
     const nv = items.filter(hasVideo).length;
+    const ch = !up && admin ? effective("charts")[linkOf(b, false)] : null;
+    const chartUI = !up && admin ? `<div class="bchart" data-chart="${linkOf(b, false)}"><span>Top 50 countdown: songs</span><input type="number" min="1" max="${items.length}" data-cf value="${ch ? ch.from : ""}" aria-label="First song of the countdown"><span>to</span><input type="number" min="1" max="${items.length}" data-ct value="${ch ? ch.to : ""}" aria-label="Last song of the countdown (No. 1)"><button class="btn" data-chart-save>Save</button>${ch ? '<button class="btn" data-chart-clear>Remove</button>' : ""}<small>The last song is No. 1. These songs get the "rage top fifty" logo and their number in the caption.</small></div>` : "";
     const watch = `<div class="bwatch"><button class="btn primary" data-watch="${key}"${nv ? "" : " disabled"}>▶ Watch this broadcast</button><button class="btn" data-copy="${linkOf(b, up)}">Copy link</button><span>${nv ? `${nv} of ${items.length} have music videos` : "No music videos added for these songs yet"}</span></div>`;
     const lis = items.map(it => {
       const inner = `${thumbHTML(it.sid, it.a)}<span class="t"><span class="a">${it.rank ? `<span class="rank">${it.rank}.</span>` : ""}${esc(it.a)}${tagHTML(it.kind)}${it.i == null ? "" : vidTag(it.sid)}${isDebut(it) ? '<span class="tag debut">debut</span>' : ""}</span><span class="s">${esc(it.t)}${it.l ? ` <i>${esc(it.l)}</i>` : ""}</span></span><span class="n">${it.i == null ? "" : fmt(it.n) + "×"}</span>`;
       const cls = "tr" + (it.kind === "clip" ? " noart" : "");
       return it.i == null ? `<li><div class="${cls}">${inner}</div></li>` : `<li><button class="${cls}" data-s="${it.i}">${inner}</button></li>`;
     }).join("");
-    el.insertAdjacentHTML("beforeend", `${watch}<ol class="tracks">${lis}</ol>${b.url ? `<p class="src">Original playlist: <a href="${esc(b.url)}" target="_blank" rel="noopener">${esc(b.url.replace(/^https?:\/\//, ""))}</a></p>` : ""}`);
+    el.insertAdjacentHTML("beforeend", `${watch}${chartUI}<ol class="tracks">${lis}</ol>${b.url ? `<p class="src">Original playlist: <a href="${esc(b.url)}" target="_blank" rel="noopener">${esc(b.url.replace(/^https?:\/\//, ""))}</a></p>` : ""}`);
   }
   /* "debut": the song's first day on rage. Aired: the first date it's in any playlist (every playlist that day gets the tag,
      as the same night airs on ABC TV and ABC Entertains). Upcoming: not aired yet, and this is its first upcoming day.
@@ -959,6 +968,18 @@ ol.steps a { color: var(--accent) }
     }, true);
     host.addEventListener("click", e => {
       const w = e.target.closest("button[data-watch]"); if (w) { watchBroadcast(w.dataset.watch); return; }
+      const cs = e.target.closest("[data-chart-save], [data-chart-clear]");
+      if (cs) {
+        const box = cs.closest(".bchart"), key = box.dataset.chart;
+        if (cs.hasAttribute("data-chart-clear")) { if (published.charts[key]) drafts.charts[key] = null; else delete drafts.charts[key]; }
+        else {
+          const from = +box.querySelector("[data-cf]").value, to = +box.querySelector("[data-ct]").value;
+          if (!(from >= 1 && to >= from)) { box.querySelector("small").textContent = "Enter the first and last song numbers of the countdown (the last one is No. 1)."; return; }
+          drafts.charts[key] = { from, to };
+        }
+        saveDrafts(); refreshAll(); refreshOpenBroadcasts();
+        return;
+      }
       const c = e.target.closest("button[data-copy]");
       if (c) {
         const url = fullLink(c.dataset.copy); setHash(c.dataset.copy);
@@ -1086,11 +1107,11 @@ ol.steps a { color: var(--accent) }
     // (measured from an off-air frame, AC/DC "It's A Long Way To The Top")
     host.innerHTML = `<div class="player"><div class="ytbox" hidden><div class="yslot"><div class="ytel"></div></div><div class="yslot spare"><div class="ytel2"></div></div></div><div class="ytbox vmbox" hidden></div><video playsinline preload="auto" disablepictureinpicture hidden></video><div class="poster" hidden></div>
       <svg class="ov" aria-hidden="true"><defs><filter id="${fid}" x="-5%" y="-20%" width="120%" height="175%"><feMorphology in="SourceAlpha" operator="dilate" radius="0.7" result="o"/><feOffset in="o" dx="0.65" dy="1.02" result="s1"/><feOffset in="o" dx="1.30" dy="2.05" result="s2"/><feOffset in="o" dx="1.95" dy="3.07" result="s3"/><feOffset in="o" dx="2.60" dy="4.10" result="s4"/><feOffset in="o" dx="3.25" dy="5.12" result="s5"/><feOffset in="o" dx="3.90" dy="6.15" result="s6"/><feOffset in="o" dx="4.55" dy="7.17" result="s7"/><feOffset in="o" dx="5.20" dy="8.20" result="s8"/><feMerge result="m"><feMergeNode in="o"/><feMergeNode in="s1"/><feMergeNode in="s2"/><feMergeNode in="s3"/><feMergeNode in="s4"/><feMergeNode in="s5"/><feMergeNode in="s6"/><feMergeNode in="s7"/><feMergeNode in="s8"/></feMerge><feFlood flood-color="#000"/><feComposite in2="m" operator="in" result="sh"/><feMerge><feMergeNode in="sh"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-        <filter id="${fid}L" x="-5%" y="-5%" width="115%" height="125%"></filter><image href="rage-logo.png" opacity="0" preserveAspectRatio="none" filter="url(#${fid}L)"/><g class="capg" opacity="0" filter="url(#${fid})"><text class="l1"></text><text class="l2"></text></g></svg>
+        <filter id="${fid}L" x="-5%" y="-5%" width="115%" height="125%"></filter><image href="rage-logo.png" opacity="0" preserveAspectRatio="none" filter="url(#${fid}L)"/><svg class="tf" viewBox="69 21 1533 408" preserveAspectRatio="none" opacity="0" overflow="visible"><path d="M 140 68 L 108 292 Q 104 304 122 302 Q 175 292 222 222 M 72 132 L 222 110 M 382 114 C 425 116 440 160 428 205 C 414 262 360 300 312 302 C 270 303 255 268 264 228 C 275 170 330 112 382 114 Z M 502 124 L 458 428 M 494 196 C 515 155 560 120 600 122 C 632 124 642 160 630 200 C 615 250 565 292 520 296 C 505 297 497 292 492 286 M 896 300 L 926 92 C 934 50 955 28 985 26 C 1003 25 1015 34 1020 46 M 873 152 L 1008 126 M 1024 298 L 1046 168 M 1072 58 L 1064 82 M 1128 298 L 1158 92 C 1166 50 1187 28 1217 26 C 1235 25 1247 34 1252 46 M 1105 152 L 1240 128 M 1326 68 L 1300 285 Q 1298 300 1316 298 Q 1365 290 1410 228 M 1255 136 L 1398 112 M 1444 124 L 1500 300 M 1604 124 C 1578 196 1545 288 1508 338 C 1484 370 1458 386 1432 385 C 1414 384 1403 375 1401 362" fill="none" stroke="#000" stroke-opacity=".6" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" transform="translate(5 6)"/><path d="M 140 68 L 108 292 Q 104 304 122 302 Q 175 292 222 222 M 72 132 L 222 110 M 382 114 C 425 116 440 160 428 205 C 414 262 360 300 312 302 C 270 303 255 268 264 228 C 275 170 330 112 382 114 Z M 502 124 L 458 428 M 494 196 C 515 155 560 120 600 122 C 632 124 642 160 630 200 C 615 250 565 292 520 296 C 505 297 497 292 492 286 M 896 300 L 926 92 C 934 50 955 28 985 26 C 1003 25 1015 34 1020 46 M 873 152 L 1008 126 M 1024 298 L 1046 168 M 1072 58 L 1064 82 M 1128 298 L 1158 92 C 1166 50 1187 28 1217 26 C 1235 25 1247 34 1252 46 M 1105 152 L 1240 128 M 1326 68 L 1300 285 Q 1298 300 1316 298 Q 1365 290 1410 228 M 1255 136 L 1398 112 M 1444 124 L 1500 300 M 1604 124 C 1578 196 1545 288 1508 338 C 1484 370 1458 386 1432 385 C 1414 384 1403 375 1401 362" fill="none" stroke="#ebebeb" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/></svg><g class="capg" opacity="0" filter="url(#${fid})"><text class="l0"></text><text class="l1"></text><text class="l2"></text></g></svg>
       <button class="shield" type="button" aria-label="Play"><span class="bigplay"></span></button>
       <button class="fsb" type="button">Fullscreen</button><div class="pmsg" hidden></div></div>`;
     const wrap = host.querySelector(".player"), svg = wrap.querySelector("svg"), ytbox = wrap.querySelector(".ytbox:not(.vmbox)"), vmbox = wrap.querySelector(".vmbox"), v = wrap.querySelector("video");
-    const img = svg.querySelector("image"), capg = svg.querySelector(".capg"), l1 = svg.querySelector(".l1"), l2 = svg.querySelector(".l2");
+    const img = svg.querySelector("image"), capg = svg.querySelector(".capg"), l1 = svg.querySelector(".l1"), l2 = svg.querySelector(".l2"), l0 = svg.querySelector(".l0"), tfa = svg.querySelector(".tf");
     const P = { stop: false, raf: 0, iv: 0, yt: null, ytReady: false, kind: null, m: {}, L: 8.2, pending: null, noSpare: new Set() };
     const shield = wrap.querySelector(".shield"), poster = wrap.querySelector(".poster");
     if (DEBUG) wrap._P = P;   // ?debug: the player's state, for the browser console
@@ -1200,8 +1221,15 @@ ol.steps a { color: var(--accent) }
       svg.setAttribute("preserveAspectRatio", "none");
       Object.entries(G.logo).forEach(([a, val]) => img.setAttribute(a, val));
       logoShadow(G.logo.height);
-      l1.setAttribute("transform", `translate(${G.l1.x} ${G.l1.y}) scale(${G.l1.sx} 1)`); l1.setAttribute("font-size", G.l1.size);
-      l2.setAttribute("transform", `translate(${G.l2.x} ${G.l2.y}) scale(${G.l2.sx} 1)`); l2.setAttribute("font-size", G.l2.size);
+      /* Top 50 (1998, measured off air): "top fifty" sits right of the logo, and the caption's artist and title move
+         right to make room for "NO.6", which takes the artist's usual place */
+      const sh = P.chart ? 3.15 * G.l1.size : 0;
+      // the number is narrower than the artist's letters on air
+      l0.setAttribute("transform", `translate(${G.l1.x} ${G.l1.y}) scale(${G.l1.sx * 0.77} 1)`); l0.setAttribute("font-size", G.l1.size);
+      l1.setAttribute("transform", `translate(${G.l1.x + sh} ${G.l1.y}) scale(${G.l1.sx} 1)`); l1.setAttribute("font-size", G.l1.size);
+      l2.setAttribute("transform", `translate(${G.l2.x + sh} ${G.l2.y}) scale(${G.l2.sx} 1)`); l2.setAttribute("font-size", G.l2.size);
+      { const L = G.logo, vx = L.x + L.width * 17 / 552, vw = L.width * 526 / 552, vy = L.y + L.height * 10 / 203, k = vw / 371;
+        Object.entries({ x: vx + vw + 93 * k, y: vy - 13 * k, width: 511 * k, height: 136 * k }).forEach(([a, v]) => tfa.setAttribute(a, v.toFixed(1))); }
     }
     /* the logo's black outline and the shadow below-right of it, measured from an off-air frame: with the logo box
        202 high, the shadow reaches about 8 right and 12 down, the outline is about 2 wide (scaled to the logo's size here) */
@@ -1222,7 +1250,7 @@ ol.steps a { color: var(--accent) }
       if (P.reveal != null && (now() >= P.reveal || performance.now() > P.revealBy)) { P.reveal = null; showPoster(false); }
       const t = now(), L = P.L;
       const lo = t < L ? 0 : t < L + .55 ? (t - L) / .55 : t < L + 3.75 ? 1 : t < L + 4.25 ? 1 - (t - L - 3.75) / .5 : 0;
-      img.setAttribute("opacity", lo.toFixed(3));
+      img.setAttribute("opacity", lo.toFixed(3)); tfa.setAttribute("opacity", P.chart ? lo.toFixed(3) : "0");
       // caption: fades in over 0.55s from 7.35s after the logo, fades out over 0.5s ending 16.75s after it (like the logo)
       const c0 = L + 7.35, c1 = L + 16.75;
       const co = t < c0 ? 0 : t < c0 + .55 ? (t - c0) / .55 : t < c1 - .5 ? 1 : t < c1 ? (c1 - t) / .5 : 0;
@@ -1289,7 +1317,8 @@ ol.steps a { color: var(--accent) }
       P.song = song || {};
       P.m = m || {}; P.L = P.m.bare || P.m.burned ? Infinity : Number.isFinite(+P.m.logoAt) ? +P.m.logoAt : 8.2;   // bare: titles/credits; burned: logo already in the video
       l1.textContent = (song.a || "").toUpperCase(); l2.textContent = song.t || ""; P.noArt = song.kind === "clip";
-      img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0");
+      P.chart = song.rank && !(m && (m.bare || m.burned)) ? +song.rank : 0; l0.textContent = P.chart ? `NO.${P.chart}` : "";
+      img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0"); tfa.setAttribute("opacity", "0");
       P.reveal = null; setPlaying(false); setLoading(!!autoplay); showPoster(false); problem(""); wrap.classList.remove("paused"); wrap.classList.toggle("yt", !!P.m.yt);
       P.want = !!autoplay; P.endFired = false; P.lastT = null; P.fresh = true; P.sawBuf = false; P.started = false; P.askAt = performance.now(); P.loadNo = (P.loadNo || 0) + 1; setAd(false);   // fresh: ignore "ended" until this video has started loading
       const vm = !P.m.yt && vmId(P.m.video);
@@ -1957,7 +1986,7 @@ ol.steps a { color: var(--accent) }
     $("edbar-n").textContent = n ? `${n} change${n === 1 ? "" : "s"} not published yet` : "Edit mode: open any song to fix its name, add a video or merge a duplicate";
     $("edbar-pub").disabled = !n; $("edbar-dl").disabled = !n; $("edbar-x").disabled = !n;
   }
-  const fileJSON = () => JSON.stringify({ saved: new Date().toISOString(), media: effective("media"), merges: effective("merges"), edits: effective("edits"), includes: effective("includes"), settings: effective("settings"), intros: effective("intros") }, null, 1);
+  const fileJSON = () => JSON.stringify({ saved: new Date().toISOString(), media: effective("media"), merges: effective("merges"), edits: effective("edits"), includes: effective("includes"), settings: effective("settings"), intros: effective("intros"), charts: effective("charts") }, null, 1);
   $("edbar-dl").onclick = () => {
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([fileJSON()], { type: "application/json" }));
@@ -1997,7 +2026,7 @@ ol.steps a { color: var(--accent) }
     $("edbar-pub").disabled = true; $("edbar-n").textContent = "Publishing…";
     try {
       await publish(token);
-      published = { media: effective("media"), merges: effective("merges"), edits: effective("edits"), includes: effective("includes"), settings: effective("settings"), intros: effective("intros") };
+      published = { media: effective("media"), merges: effective("merges"), edits: effective("edits"), includes: effective("includes"), settings: effective("settings"), intros: effective("intros"), charts: effective("charts") };
       drafts = emptyDrafts(); saveDrafts(); refreshAll();
       $("edbar-n").textContent = "Published. Saved to GitHub; everyone sees it within a few minutes.";
       return true;
@@ -2207,7 +2236,7 @@ ol.steps a { color: var(--accent) }
     const ok = all.filter(d => d && typeof d === "object" && d.media);
     if (!ok.length) { $("media-note").textContent = "Videos didn't load. Reload the page to try again."; return; }
     const d = ok.reduce((best, x) => (x.saved || "") > (best.saved || "") ? x : best);   // newest publish (copies without a stamp count as oldest)
-    published = { media: d.media || {}, merges: d.merges || {}, edits: d.edits || {}, includes: d.includes || {}, settings: d.settings || {}, intros: d.intros || {} };
+    published = { media: d.media || {}, merges: d.merges || {}, edits: d.edits || {}, includes: d.includes || {}, settings: d.settings || {}, intros: d.intros || {}, charts: d.charts || {} };
   });
   const songsP = fetch("songs.json", { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
     const A = d.artists, L = d.labels;
