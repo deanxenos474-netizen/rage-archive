@@ -160,6 +160,7 @@ dialog::backdrop { background: rgb(5 6 14 / .6) }
 /* YouTube's frame is made taller than the box (layout()), so its title bar and share / "More videos" / logo
    row land in strips above and below that are cut off; the picture itself is shown whole */
 .ytbox .yslot { position: absolute; inset: 0 }
+.player .ytbox.behind { position: absolute; inset: 0; z-index: 0; opacity: 0; pointer-events: none; aspect-ratio: auto; max-height: none }
 /* a second YouTube player that gets the next video of a broadcast ready out of sight, so it starts with no wait */
 .ytbox .yslot.spare { opacity: 0; pointer-events: none }
 .ytbox iframe { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; border: 0; background: #000 }
@@ -1277,6 +1278,7 @@ ol.steps a { color: var(--accent) }
     document.addEventListener("keydown", onKey, true);
 
     function load(m, song, autoplay) {
+      if (P.prep && m && P.prep.yt === m.yt) P.prep = null;   // it was waiting to be got ready, but it's on now
       P.m = m || {}; P.L = P.m.bare || P.m.burned ? Infinity : Number.isFinite(+P.m.logoAt) ? +P.m.logoAt : 8.2;   // bare: titles/credits; burned: logo already in the video
       l1.textContent = (song.a || "").toUpperCase(); l2.textContent = song.t || ""; P.noArt = song.kind === "clip";
       img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0");
@@ -1286,29 +1288,33 @@ ol.steps a { color: var(--accent) }
       if (P.sp && !spareSame(P.sp, P.m) && P.m.yt) spareDrop();
       if (!vm) vmStop();
       if (P.m.yt && autoplay && P.sp && P.sp.st === "ready" && spareSame(P.sp, P.m)) {
-        P.kind = "yt"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = false; vmStop();
+        P.kind = "yt"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = false; ytbox.classList.remove("behind"); vmStop();
         spareSwap();   // the next video is already loaded and waiting: no cover, no spinner
       } else if (P.m.yt) {
         showPoster(true, !!autoplay);   // playing straight on (a broadcast): plain black while it loads, not a flash of the cover
-        P.kind = "yt"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = false;
+        P.kind = "yt"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = false; ytbox.classList.remove("behind");
         // a clip taken from part of a longer video: start / stop times
         const rng = P.m.start || P.m.end ? { videoId: P.m.yt, ...(P.m.start ? { startSeconds: +P.m.start } : {}), ...(P.m.end ? { endSeconds: +P.m.end } : {}) } : null;
         if (P.yt && P.ytReady) { try { if (P.mutedByUs) { P.yt.unMute(); P.mutedByUs = false; } } catch {} autoplay ? (P.cuedId === P.m.yt && !rng ? P.yt.playVideo() : ytCueThenPlay(rng || P.m.yt)) : P.yt.cueVideoById(rng || P.m.yt); P.cuedId = null; }
         else { P.pending = { id: P.m.yt, autoplay, rng }; if (!P.yt) makeYT(); }
       } else if (vm) {
         showPoster(true);
-        P.kind = "vimeo"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytbox.hidden = true; vmbox.hidden = false;
+        P.kind = "vimeo"; v.pause(); v.hidden = true; v.removeAttribute("src"); ytBehind(); vmbox.hidden = false;
         try { P.yt && P.ytReady && P.yt.pauseVideo(); } catch {}
         P.vt = 0; P.vPlaying = false;
         vmLoad(vm, autoplay);
       } else if (P.m.video) {
-        P.kind = "video"; ytbox.hidden = true; try { P.yt && P.ytReady && P.yt.pauseVideo(); } catch {}
+        P.kind = "video"; ytBehind(); try { P.yt && P.ytReady && P.yt.pauseVideo(); } catch {}
         v.hidden = false; v.src = P.m.video; if (autoplay) v.play().catch(() => {});
         if (P.m.start) v.addEventListener("loadedmetadata", () => { if (P.kind === "video") v.currentTime = +P.m.start; }, { once: true });
       }
       requestAnimationFrame(layout);
     }
     /* Vimeo: its own player in a frame, cropped and covered the same way as YouTube's; no ads on Vimeo */
+    /* while a clip that isn't on YouTube plays (the titles, a bumper, an intro), the YouTube box stays laid out but
+       invisible behind it instead of hidden: YouTube won't load a video in a hidden box, and the spare player is
+       getting the next song ready in it */
+    function ytBehind() { if (P.yt) { ytbox.hidden = false; ytbox.classList.add("behind"); } else ytbox.hidden = true; }
     function vmStop() { vmbox.hidden = true; P.vPlaying = false; if (P.vm) P.vm.pause().catch(() => {}); }
     function vmFail(err) {
       P.want = false; P.vPlaying = false; setLoading(false); setPlaying(false);
@@ -1371,6 +1377,7 @@ ol.steps a { color: var(--accent) }
                   P.ytAsked = true;
                   if (p) { p.autoplay ? ytCueThenPlay(p.rng || p.id) : P.yt.cueVideoById(p.rng || p.id); }
                   else if (cueId) { P.yt.cueVideoById(cueId); P.cuedId = cueId; }
+                  if (P.prep) { const m = P.prep; P.prep = null; spareWant(m); }
                 },
                 onStateChange: ytState, onError: ytErr,
               },
@@ -1398,7 +1405,8 @@ ol.steps a { color: var(--accent) }
     function ytErr(e) {
       if (e.target !== P.yt) {   // the spare can't play the next video: it loads the normal way when it's due (its start video's error is ignored)
         let vid = ""; try { vid = (P.spare.getVideoData() || {}).video_id || ""; } catch {}
-        if (P.sp && P.sp.st !== "wait" && vid === P.sp.id) { P.noSpare.add(P.sp.id); spareDrop(); }
+        if (P.sp && P.sp.st !== "wait" && P.sp.st !== "cue" && vid === P.sp.id) {   // (the start video's late error can arrive while cueing)
+        P.noSpare.add(P.sp.id); spareDrop(); }
         return;
       }
       if (P.kind !== "yt") return;
@@ -1417,6 +1425,7 @@ ol.steps a { color: var(--accent) }
     function spareWant(m) {
       if (spareSame(P.sp, m) || P.noSpare.has(m.yt)) return;
       spareDrop();
+      if (P.kind && P.kind !== "yt") ytBehind();   // YouTube was built after this clip started: lay its box out now
       P.sp = { id: m.yt, start: m.start, end: m.end, st: "wait" };
       if (!P.spare) {
         const el = P.sSlot.querySelector(".ytel2");
@@ -1472,9 +1481,8 @@ ol.steps a { color: var(--accent) }
       const vm = !m.yt && vmId(m.video);
       if (vm) { if (P.kind !== "vimeo") vmLoad(vm, false, true); return; }   // Vimeo has no ads, so it can wait ready and paused
       if (!m.yt) return;
-      if (!P.yt) return makeYT(m.yt);
-      if (P.ytReady && P.kind === "yt") return spareWant(m);   // a YouTube video is on: the next one gets ready in the spare
-      if (P.ytReady) { try { P.yt.cueVideoById(m.yt); P.cuedId = m.yt; } catch {} }   // already cued: play() then starts it straight away
+      if (!P.ytReady) { P.prep = m; if (!P.yt) makeYT(); return; }   // YouTube still starting up: get it ready as soon as it is
+      spareWant(m);   // the next one gets ready in the spare, whatever is on now (a YouTube video, the titles, a bumper)
     }
     function destroy() {
       P.stop = true; cancelAnimationFrame(P.raf); clearInterval(P.iv); ro.disconnect();
