@@ -3113,6 +3113,20 @@
     "Mushroom"
    ],
    "why": "artist and title glued together on the ABC page"
+  },
+  {
+   "date": "2002-04-06",
+   "from": [
+    "Go - WHAM",
+    "Wake Me Up Before You Go",
+    "Sony"
+   ],
+   "to": [
+    "Wham",
+    "Wake Me Up Before You Go-Go",
+    "Sony"
+   ],
+   "why": "title cut at the hyphen in Go-Go on the ABC page"
   }
  ]
 }
