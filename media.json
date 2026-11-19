@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-18T08:25:14.951Z",
+ "saved": "2026-11-19T06:41:22.163Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1386,6 +1386,15 @@
    "aspect": "4:3-in-16:9",
    "logoAt": 7,
    "verified": true
+  },
+  "33edc2bde376": {
+   "artist": "REO Speedwagon",
+   "title": "I Can't Fight This Feeling Anymore",
+   "yt": "zpOULjyy-n8",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Features115/v4/2a/b6/87/2ab68707-f83a-ea2d-a33e-53bff1d4b0ee/dj.kopycabz.jpg/1500x1500bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -2476,7 +2485,11 @@
    "a": "Wham!"
   },
   "33edc2bde376": {
-   "a": "REO Speedwagon"
+   "a": "REO Speedwagon",
+   "yr": 1984,
+   "g": [
+    "Rock"
+   ]
   },
   "3d48ff125709": {
    "a": "REO Speedwagon"
