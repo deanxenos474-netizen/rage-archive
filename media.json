@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-19T06:45:42.063Z",
+ "saved": "2026-11-19T06:47:29.902Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1404,6 +1404,15 @@
    "aspect": "4:3-in-16:9",
    "logoAt": 7,
    "verified": true
+  },
+  "b17db82d7771": {
+   "artist": "Madonna",
+   "title": "Material Girl",
+   "yt": "6p-lDYPR2P8",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/8e/80/32/8e803264-c925-14dd-3412-2d7652c3df7b/mzi.wxptosaa.jpg/1447x1435bb-100.jpg",
+   "aspect": "4:3-in-16:9",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -2507,6 +2516,12 @@
    "yr": 1986,
    "g": [
     "Rock"
+   ]
+  },
+  "b17db82d7771": {
+   "yr": 1984,
+   "g": [
+    "Pop"
    ]
   }
  },
