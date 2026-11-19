@@ -7,6 +7,7 @@ import collections, datetime, gzip, hashlib, json, os, re, unicodedata
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, "data", "playlists.json.gz")
+CHART_NUMBERS = os.path.join(ROOT, "data", "chart_numbers.json")
 
 FEAT = re.compile(r"\s+(?:ft\.?|feat\.?|featuring|with)\s+", re.I)
 CONN = re.compile(r"\b(ft\.?|feat\.?|featuring|and|vs\.?|x|with|presents|pres\.?)\b")
@@ -217,19 +218,49 @@ def corrected(playlists):
     return out
 
 
+def chart_numbers(pls):
+    """data/chart_numbers.json: chart numbers read from the ABC's own archived playlist pages (Wayback copies), for
+    countdowns whose stored rows lost their numbers. Each entry names a playlist (date + page link) and its numbered
+    rows as stored ([artist, title, number]); they are matched in running order. "top50": true marks an ARIA Top 50,
+    which gets the on-screen Top 50 look; Hottest 100s and end-of-year charts only get the numbers.
+    Returns {playlist index: {row index: (number, top50)}}."""
+    try:
+        with open(CHART_NUMBERS, encoding="utf-8") as fh:
+            c = json.load(fh)
+    except FileNotFoundError:
+        return {}
+    where = {(p["date"], p.get("url") or ""): i for i, p in enumerate(pls)}
+    out = {}
+    for e in c.get("lists", []):
+        pi = where.get((e["date"], e.get("url") or ""))
+        if pi is None:
+            print("chart_numbers.json: no playlist matched", e["date"], e.get("url")); continue
+        rows, want, j, got = pls[pi]["rows"], e["rows"], 0, {}
+        for ri, r in enumerate(rows):
+            if j < len(want) and (r + ["", ""])[:2] == want[j][:2]:
+                got[ri] = (want[j][2], bool(e.get("top50"))); j += 1
+        if j < len(want):
+            print("chart_numbers.json:", e["date"], "matched", j, "of", len(want), "rows")
+        out[pi] = got
+    return out
+
+
 def build(d, out_dir=ROOT):
     today = today_au()
     pls = sorted([p for p in corrected(d["playlists"]) if p["date"] <= today], key=lambda p: (p["date"], p.get("url") or ""))
     plays, play_page, play_rank = [], [], []
+    numbers = chart_numbers(pls)
     for pi, p in enumerate(pls):
-        for r in p["rows"]:
+        for ri, r in enumerate(p["rows"]):
             c = clean_row(r)
             if c:
                 rank, a = split_rank(c[0])
                 trank, title = split_title_rank(c[1])
                 plays.append((a, title, c[2], p["date"]))
                 play_page.append(pi)
-                play_rank.append(rank or trank)
+                n, top50 = numbers.get(pi, {}).get(ri, (0, False))
+                rank = n or rank or trank
+                play_rank.append([rank, 1] if rank and top50 else rank)
 
     mixed = collections.defaultdict(collections.Counter)
     for a, t, l, dt in plays:
@@ -298,8 +329,8 @@ def build(d, out_dir=ROOT):
     ridx = {r[7]: i for i, r in enumerate(rows)}
     tracks, ranks = collections.defaultdict(list), collections.defaultdict(list)
     for k, pi, rank in zip(play_key, play_page, play_rank):
-        if rank:
-            ranks[pi].append([len(tracks[pi]), rank])   # [position in the running order, chart number]
+        if rank:   # [position in the running order, chart number] (+ 1 when it's an ARIA Top 50: the on-screen Top 50 look)
+            ranks[pi].append([len(tracks[pi])] + (rank if isinstance(rank, list) else [rank]))
         tracks[pi].append(ridx[k])
     lists = []
     for pi, p in enumerate(pls):

@@ -840,8 +840,8 @@ ol.steps a { color: var(--accent) }
   /* ---------- broadcasts ---------- */
   function loadBroadcasts() {
     if (!bLoading) bLoading = fetch("broadcasts.json", { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
-      // rk: chart numbers in countdown playlists, [[position in the running order, number], ...]
-      B = d.lists.map(([date, title, url, tr, sp, kind, rk], i) => ({ i, date, title, url, tr, sp: sp || "", kind: kind || 0, rk: rk ? new Map(rk) : null, hay: fold(`${title} ${sp || ""}`) }));
+      // rk: chart numbers in countdown playlists, [[position in the running order, number(, 1 = ARIA Top 50: gets the Top 50 look)], ...]
+      B = d.lists.map(([date, title, url, tr, sp, kind, rk], i) => ({ i, date, title, url, tr, sp: sp || "", kind: kind || 0, rk: rk ? new Map(rk.map(([p, n]) => [p, n])) : null, rg: rk ? new Set(rk.filter(r => r[2]).map(r => r[0])) : null, hay: fold(`${title} ${sp || ""}`) }));
       U = (d.upcoming || []).map(([date, title, url, rows, sp, kind], i) => ({ i, date, title, url, rows, sp: sp || "", kind: kind || 0 }));
       for (const list of [B, U]) { const n = {}; for (const b of list) b.ord = n[b.date] = (n[b.date] || 0) + 1; }   // 1st, 2nd... broadcast that day
       plays = new Map();
@@ -867,12 +867,12 @@ ol.steps a { color: var(--accent) }
   // a broadcast's running order as display items (aired: song indexes; upcoming: rows with their own text)
   function itemsOf(b, upcoming) {
     const item = c => { const s = S[c]; return { i: c, sid: s.id, a: s.a, t: s.t, l: s.l, n: s.n, kind: s.kind }; };
-    const withIncluded = (i, rank) => [{ ...item(canon(i)), rank }, ...(includesOf.get(i) || []).map(item)];
+    const withIncluded = (i, rank, chart) => [{ ...item(canon(i)), rank, chart: !!(rank && chart) }, ...(includesOf.get(i) || []).map(item)];
     if (!upcoming) {
-      const list = b.tr.flatMap((i, p) => withIncluded(i, b.rk && b.rk.get(p)));
+      const list = b.tr.flatMap((i, p) => withIncluded(i, b.rk && b.rk.get(p), b.rg && b.rg.has(p)));
       // "charts" (media.json): the owner marks where a night's Top 50 countdown runs, e.g. songs 96-145 with No. 1 last
       const ch = effective("charts")[linkOf(b, false)];
-      return ch ? list.map((it, p) => p + 1 >= ch.from && p + 1 <= ch.to ? { ...it, rank: ch.to - p } : it) : list;
+      return ch ? list.map((it, p) => p + 1 >= ch.from && p + 1 <= ch.to ? { ...it, rank: it.rank || ch.to - p, chart: true } : it) : list;   // numbers from the ABC page win
     }
     return b.rows.flatMap(([a, t, l, sid, rank]) => {
       const i = idIndex.get(sid);
@@ -1316,7 +1316,7 @@ ol.steps a { color: var(--accent) }
       P.song = song || {};
       P.m = m || {}; P.L = P.m.bare || P.m.burned ? Infinity : Number.isFinite(+P.m.logoAt) ? +P.m.logoAt : 8.2;   // bare: titles/credits; burned: logo already in the video
       l1.textContent = (song.a || "").toUpperCase(); l2.textContent = song.t || ""; P.noArt = song.kind === "clip";
-      P.chart = song.rank && !(m && (m.bare || m.burned)) ? +song.rank : 0; l0.textContent = P.chart ? `NO.${P.chart}` : "";
+      P.chart = song.rank && song.chart && !(m && (m.bare || m.burned)) ? +song.rank : 0; l0.textContent = P.chart ? `NO.${P.chart}` : "";
       img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0"); tfg.setAttribute("opacity", "0");
       P.reveal = null; setPlaying(false); setLoading(!!autoplay); showPoster(false); problem(""); wrap.classList.remove("paused"); wrap.classList.toggle("yt", !!P.m.yt);
       P.want = !!autoplay; P.endFired = false; P.lastT = null; P.fresh = true; P.sawBuf = false; P.started = false; P.askAt = performance.now(); P.loadNo = (P.loadNo || 0) + 1; setAd(false);   // fresh: ignore "ended" until this video has started loading
