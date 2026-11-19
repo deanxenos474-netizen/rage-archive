@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-19T06:51:56.131Z",
+ "saved": "2026-11-19T06:57:07.218Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1423,6 +1423,15 @@
    "logoAt": 7,
    "burned": true,
    "verified": true
+  },
+  "e18df1d089e5": {
+   "artist": "Howard Jones",
+   "title": "Things Can Only Get Better",
+   "yt": "62e8tamgfzI",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/ba/25/a8/ba25a829-401a-e241-b236-0fc8a31af328/190296449581.jpg/2000x2000bb-100.jpg",
+   "aspect": "4:3-in-16:9",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -2505,6 +2514,12 @@
    ]
   },
   "aa0e0983b524": {
+   "yr": 1985,
+   "g": [
+    "Pop"
+   ]
+  },
+  "e18df1d089e5": {
    "yr": 1985,
    "g": [
     "Pop"
