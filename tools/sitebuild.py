@@ -215,7 +215,18 @@ def corrected(playlists):
         p = {f: e.get(f) for f in ("date", "title", "url", "src", "abc_id", "sp", "rows")}
         if key(p) not in have:
             out.append(p)
-    return out
+    return [undoubled(p) for p in out]
+
+
+def undoubled(p):
+    """Some ABC pages list the whole night two or three times over (the same block pasted again, same times):
+    keep one copy. Only when every copy is identical and at least 6 rows long."""
+    rows = p["rows"]
+    n = len(rows)
+    for k in (3, 2):
+        if n % k == 0 and n // k >= 6 and all(rows[i * n // k:(i + 1) * n // k] == rows[:n // k] for i in range(1, k)):
+            return dict(p, rows=rows[:n // k])
+    return p
 
 
 def chart_numbers(pls):
