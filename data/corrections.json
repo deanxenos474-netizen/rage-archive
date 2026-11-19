@@ -3127,6 +3127,69 @@
     "Sony"
    ],
    "why": "title cut at the hyphen in Go-Go on the ABC page"
+  },
+  {
+   "date": "2000-01-22",
+   "from": [
+    "Vengaboys",
+    "We're Going To Ibiza",
+    "Central Station"
+   ],
+   "to": [
+    [
+     "Ilanda",
+     "Tasty",
+     "Shock"
+    ],
+    [
+     "Vengaboys",
+     "We're Going To Ibiza",
+     "Central Station"
+    ]
+   ],
+   "why": "No. 50 of the chart is on the ABC's own page (Wayback copy) but was dropped when the page was first read"
+  },
+  {
+   "date": "2000-01-08",
+   "from": [
+    "Will Smith",
+    "Wild Wild West",
+    "Sony"
+   ],
+   "to": [
+    [
+     "Mariah Carey",
+     "Heartbreaker",
+     "Sony"
+    ],
+    [
+     "Will Smith",
+     "Wild Wild West",
+     "Sony"
+    ]
+   ],
+   "why": "No. 50 of the chart is on the ABC's own page (Wayback copy) but was dropped when the page was first read"
+  },
+  {
+   "date": "2002-03-30",
+   "from": [
+    "MARY J. BLIGE",
+    "Family Affair",
+    "Universal"
+   ],
+   "to": [
+    [
+     "KYLIE MINOGUE",
+     "In Your Eyes",
+     "Fest/Mush"
+    ],
+    [
+     "MARY J. BLIGE",
+     "Family Affair",
+     "Universal"
+    ]
+   ],
+   "why": "No. 50 of the chart is on the ABC's own page (Wayback copy) but was dropped when the page was first read"
   }
  ]
 }

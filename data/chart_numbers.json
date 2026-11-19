@@ -9108,6 +9108,7 @@
    ["Lou Bega", "Mambo #5", 1]
   ]},
   {"date": "2000-01-08", "url": "http://www.abc.net.au/rage/playlist/archive/2000/20000108.htm", "chart": "ARIA Top 50 of 1999", "top50": false, "rows": [
+   ["Mariah Carey", "Heartbreaker", 50],
    ["Will Smith", "Wild Wild West", 49],
    ["Billie", "Honey To The Bee", 48],
    ["Brandy", "Have You Ever?", 47],
@@ -9298,6 +9299,7 @@
    ["Macy Gray", "I Try", 1]
   ]},
   {"date": "2000-01-22", "url": "http://www.abc.net.au/rage/playlist/archive/2000/20000122.htm", "chart": "ARIA Top 50", "top50": true, "rows": [
+   ["Ilanda", "Tasty", 50],
    ["Vengaboys", "We're Going To Ibiza", 49],
    ["DJ Visage", "Formula", 48],
    ["Europe", "The Final Countdown 2000", 47],
@@ -20114,6 +20116,7 @@
    ["KASEY CHAMBERS", "Not Pretty Enough", 1]
   ]},
   {"date": "2002-03-30", "url": "http://www.abc.net.au/rage/playlist/archive/2002/20020330.htm", "chart": "ARIA Top 50", "top50": true, "rows": [
+   ["KYLIE MINOGUE", "In Your Eyes", 50],
    ["MARY J. BLIGE", "Family Affair", 49],
    ["SILVERCHAIR", "The Greatest View", 48],
    ["IIO", "Rapture", 47],
@@ -30654,12 +30657,20 @@
   ]},
   {"date": "2004-09-25", "url": "http://www.abc.net.au/rage/playlist/archive/2004/20040925.htm", "chart": "ARIA Top 50", "top50": true, "rows": [
    ["GAVIN DEGRAW", "I Don't Want To Be", 19],
+   ["STARSAILOR", "Four To The Floor", 16],
    ["TWISTA featuring ANTHONY HAMILTON", "Sunshine", 18],
+   ["PAULINI", "Angel Eyes", 11],
+   ["HOUSTON featuring CHINGY, NATE DOGG & I-20", "I Like That", 14],
    ["HILARY & HAYLIE DUFF", "Our Lips Are Sealed", 15],
+   ["AVRIL LAVIGNE", "My Happy Ending", 9],
    ["DARREN HAYES", "Popular", 13],
+   ["ANASTACIA", "Sick And Tired", 10],
    ["SIMPLE PLAN", "Addicted", 12],
+   ["SLINKEE MINX", "Summer Rain", 7],
    ["ASHLEE SIMPSON", "Pieces Of Me", 8],
+   ["COSIMA", "When The War Is Over", 5],
    ["MISSY HIGGINS", "Scar", 6],
+   ["SEETHER featuring AMY LEE", "Broken", 3],
    ["NELLY", "Flap Your Wings", 4],
    ["JO JO", "Leave (Get Out)", 2],
    ["MAROON 5", "She Will Be Loved", 1]
