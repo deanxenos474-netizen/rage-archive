@@ -2033,7 +2033,17 @@ ol.steps a { color: var(--accent) }
     return { owner: "deanxenos474-netizen", repo: "rage-archive" };
   }
   const b64 = str => { const bytes = new TextEncoder().encode(str); let bin = ""; for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); return btoa(bin); };
-  const publish = token => putFile(token, "media.json", fileJSON() + "\n", `Update videos, merges and song details (${nDrafts()} change${nDrafts() === 1 ? "" : "s"})`);
+  const PUB_KINDS = ["media", "merges", "edits", "includes", "settings", "intros", "charts"];
+  /* publish = the newest media.json on GitHub with this browser's drafts on top, so changes published since this page
+     was opened (from another browser, or made straight in the repository) are kept instead of being written over */
+  let publishedNow = null;
+  const mergedFile = remote => {
+    const base = remote && typeof remote === "object" && remote.media ? remote : published, out = { saved: new Date().toISOString() };
+    for (const k of PUB_KINDS) { const o = {}; for (const [id, v] of Object.entries({ ...(base[k] || {}), ...drafts[k] })) if (v) o[id] = v; out[k] = o; }
+    publishedNow = out;
+    return JSON.stringify(out, null, 1) + "\n";
+  };
+  const publish = token => putFile(token, "media.json", mergedFile, `Update videos, merges and song details (${nDrafts()} change${nDrafts() === 1 ? "" : "s"})`);
   async function putFile(token, path, text, message) {
     const { owner, repo } = repoInfo();
     const api = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
@@ -2041,8 +2051,10 @@ ol.steps a { color: var(--accent) }
     for (let attempt = 0; attempt < 2; attempt++) {
       const g = await fetch(api, { headers, cache: "no-store" });
       if (g.status === 401 || g.status === 403) throw Object.assign(new Error("token"), { code: "token" });
-      const sha = g.ok ? (await g.json()).sha : undefined;
-      const body = { message, content: b64(text), sha };
+      const cur = g.ok ? await g.json() : null, sha = cur ? cur.sha : undefined;
+      let remote = null;
+      if (typeof text === "function") try { if (cur && cur.content) remote = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(cur.content.replace(/\s/g, "")), c => c.charCodeAt(0)))); } catch {}
+      const body = { message, content: b64(typeof text === "function" ? text(remote) : text), sha };
       const p = await fetch(api, { method: "PUT", headers, body: JSON.stringify(body) });
       if (p.ok) return;
       if (p.status === 401 || p.status === 403) throw Object.assign(new Error("token"), { code: "token" });
@@ -2054,7 +2066,7 @@ ol.steps a { color: var(--accent) }
     $("edbar-pub").disabled = true; $("edbar-n").textContent = "Publishing…";
     try {
       await publish(token);
-      published = { media: effective("media"), merges: effective("merges"), edits: effective("edits"), includes: effective("includes"), settings: effective("settings"), intros: effective("intros"), charts: effective("charts") };
+      published = Object.fromEntries(PUB_KINDS.map(k => [k, publishedNow[k]]));
       drafts = emptyDrafts(); saveDrafts(); refreshAll();
       $("edbar-n").textContent = "Published. Saved to GitHub; everyone sees it within a few minutes.";
       return true;
