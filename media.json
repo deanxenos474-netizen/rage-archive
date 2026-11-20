@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-20T16:45:52.602Z",
+ "saved": "2026-11-20T16:51:31.973Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1702,6 +1702,15 @@
    "aspect": "4:3-in-16:9",
    "burned": true,
    "verified": true
+  },
+  "3b998e452ded": {
+   "artist": "Metallica",
+   "title": "Master Of Puppets",
+   "yt": "eOUDnIAZDO8",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/69/f9/05/69f905ed-ff04-58a2-8de2-1b5338745f19/858978005226.png/1425x1425bb-100.jpg",
+   "aspect": "4:3-in-16:9",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -2988,6 +2997,12 @@
    "yr": 1967,
    "g": [
     "Rock"
+   ]
+  },
+  "3b998e452ded": {
+   "yr": 1986,
+   "g": [
+    "Metal"
    ]
   }
  },
