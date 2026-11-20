@@ -430,6 +430,8 @@ ol.steps a { color: var(--accent) }
     <section class="edit" id="d-edit" hidden aria-label="Video and cover">
       <h3>Video &amp; cover</h3>
       <div class="line"><input type="url" id="f-link" autocomplete="off" placeholder="YouTube or Vimeo link (or a direct .mp4 link)" aria-label="Video link"></div>
+      <label class="f" for="f-start">Start at <input type="number" id="f-start" autocomplete="off" min="0" step="any" placeholder="0"> seconds</label>
+      <label class="f" for="f-end">Stop at <input type="number" id="f-end" autocomplete="off" min="0" step="any" placeholder="end"> seconds (decimals like 52.35 are fine; leave both empty to play the whole video)</label>
       <div class="line"><input type="url" id="f-cover" autocomplete="off" placeholder="Cover image link (leave empty to use the YouTube thumbnail)" aria-label="Cover image link"></div>
       <label class="f" for="f-aspect" style="flex-wrap:wrap">Picture shape
         <select id="f-aspect">
@@ -443,7 +445,7 @@ ol.steps a { color: var(--accent) }
           <option value="2.76:1">Very wide film 2.76:1 (thick black bars top &amp; bottom)</option>
         </select>
       </label>
-      <label class="f" for="f-logo" id="f-logo-l">rage logo appears at <input type="number" id="f-logo" autocomplete="off" min="0" max="600" step="0.1" value="8.2"> seconds</label>
+      <label class="f" for="f-logo" id="f-logo-l">rage logo appears <input type="number" id="f-logo" autocomplete="off" min="0" max="600" step="0.1" value="8.2"> seconds into the clip</label>
       <label class="f" for="f-burned" style="text-transform:none;letter-spacing:0;font:13px/1.35 var(--body);align-items:flex-start"><input type="checkbox" id="f-burned" style="margin-top:2px"> The rage logo and caption are already in this video (recorded off air), so don't add them</label>
       <label class="f" for="f-verified" style="text-transform:none;letter-spacing:0;font:13px/1.35 var(--body);align-items:flex-start"><input type="checkbox" id="f-verified" style="margin-top:2px"> Confirmed: this is the exact clip rage showed (shows "✓ Verified" in the song window and hides the "Wrong video?" button)</label>
       <label class="f" for="f-lowq" style="text-transform:none;letter-spacing:0;font:13px/1.35 var(--body);align-items:flex-start"><input type="checkbox" id="f-lowq" style="margin-top:2px"> Low quality: shows a note in the song window asking for a better copy</label>
@@ -1314,7 +1316,7 @@ ol.steps a { color: var(--accent) }
     function load(m, song, autoplay) {
       if (P.prep && m && P.prep.yt === m.yt) P.prep = null;   // it was waiting to be got ready, but it's on now
       P.song = song || {};
-      P.m = m || {}; P.L = P.m.bare || P.m.burned ? Infinity : Number.isFinite(+P.m.logoAt) ? +P.m.logoAt : 8.2;   // bare: titles/credits; burned: logo already in the video
+      P.m = m || {}; P.L = P.m.bare || P.m.burned ? Infinity : (+P.m.start || 0) + (Number.isFinite(+P.m.logoAt) ? +P.m.logoAt : 8.2);   // bare: titles/credits; burned: logo already in the video
       l1.textContent = (song.a || "").toUpperCase(); l2.textContent = song.t || ""; P.noArt = song.kind === "clip";
       P.chart = song.rank && song.chart && !(m && (m.bare || m.burned)) ? +song.rank : 0; l0.textContent = P.chart ? `NO.${P.chart}` : "";
       img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0"); tfg.setAttribute("opacity", "0");
@@ -1604,7 +1606,7 @@ ol.steps a { color: var(--accent) }
     const cov = $("d-cover"), src = coverSrc(m, s.kind === "clip");
     $("d-cover").closest(".d-head").classList.toggle("noart", s.kind === "clip");
     cov.innerHTML = src ? `<img src="${esc(src)}" alt="" onerror="this.remove()">` : esc((sortKey(s.a)[0] || "#").toUpperCase());
-    const key = JSON.stringify([s.id, m.yt, m.video, m.aspect, m.logoAt, m.burned, s.kind, m.cover]);
+    const key = JSON.stringify([s.id, m.yt, m.video, m.aspect, m.logoAt, m.start, m.end, m.burned, s.kind, m.cover]);
     if (songKey !== key) {           // don't restart a playing video when nothing about it changed
       songKey = key;
       // one song player for the whole visit (like RageAgain's): each song's video is loaded into it, so it starts fast
@@ -1625,6 +1627,7 @@ ol.steps a { color: var(--accent) }
       $("f-cover").value = m.cover || "";
       $("f-cover").placeholder = s.kind === "clip" ? "Clips don't show album art: this entry uses a frame from its video" : "Cover image link (leave empty to use the YouTube thumbnail)";
       $("f-aspect").value = m.aspect || "16:9";
+      $("f-start").value = m.start || ""; $("f-end").value = m.end || "";
       $("f-logo").value = m.logoAt != null ? m.logoAt : 8.2;
       $("f-burned").checked = !!m.burned; $("f-logo").disabled = !!m.burned; $("f-verified").checked = !!m.verified; $("f-lowq").checked = !!m.lowq;
     }
@@ -1698,7 +1701,7 @@ ol.steps a { color: var(--accent) }
     $("tv-now").innerHTML = `rage<small>Next: ${esc(nx.a)} – ${esc(nx.t)}</small>`;
     $("tv-prev").disabled = false;
   }
-  const introMedia = x => ({ yt: x.yt, video: x.video, start: x.start, end: x.end, bare: !x.logo, logoAt: (x.start || 0) + 8.2 });
+  const introMedia = x => ({ yt: x.yt, video: x.video, start: x.start, end: x.end, bare: !x.logo, logoAt: 8.2 });
   function play(p, autoplay, noIntro) {
     if (!tv) return;
     tv.sting = false;
@@ -1780,11 +1783,14 @@ ol.steps a { color: var(--accent) }
     if (coverRaw && !safeLink(coverRaw)) { status("The cover link should start with https://", "err"); return; }
     const logo = +$("f-logo").value;
     if (!Number.isFinite(logo) || logo < 0) { status("Enter the logo time in seconds, like 8.2", "err"); return; }
+    const st = $("f-start").value === "" ? 0 : +$("f-start").value, en = $("f-end").value === "" ? 0 : +$("f-end").value;
+    if (!Number.isFinite(st) || !Number.isFinite(en) || st < 0 || en < 0 || (en && en <= st)) { status("Check the start and stop times (stop has to be after start).", "err"); return; }
     const entry = { artist: s.a, title: s.t };
     if (id) entry.yt = id; else if (direct) entry.video = direct;
     if (coverRaw) entry.cover = coverRaw;
     if ($("f-aspect").value !== "16:9") entry.aspect = $("f-aspect").value;
     if (logo !== 8.2) entry.logoAt = logo;
+    if (st && (id || direct)) entry.start = st; if (en && (id || direct)) entry.end = en;
     if ($("f-burned").checked) entry.burned = true;
     if ($("f-verified").checked) entry.verified = true;
     if ($("f-lowq").checked) entry.lowq = true;
