@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-20T15:20:29.000Z",
+ "saved": "2026-11-20T15:24:24.201Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1242,7 +1242,7 @@
    "artist": "Bicep ft. Kehina",
    "title": "Equarium",
    "yt": "b6S7JzBmVaE",
-   "cover": "https://f4.bcbits.com/img/a1898131572_10.jpg",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/e0/a4/99/e0a499af-8d3e-40a7-01fc-a810e164e03e/888072847927.png/6000x6000bb-100.jpg",
    "logoAt": 7,
    "verified": true
   },
@@ -1597,6 +1597,15 @@
    "yt": "lXgkuM2NhYI",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/e2/65/b2/e265b2ae-48d5-9dd8-0251-6cd6c6c4eb53/190295842826.jpg/4000x4000bb-100.jpg",
    "aspect": "4:3-in-16:9",
+   "logoAt": 7,
+   "verified": true
+  },
+  "eabe0d54f642": {
+   "artist": "Bicep ft. Lauren Duffus & Soarr",
+   "title": "Gas",
+   "yt": "ydRyOr3KYD0",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/e0/a4/99/e0a499af-8d3e-40a7-01fc-a810e164e03e/888072847927.png/6000x6000bb-100.jpg",
+   "aspect": "4:3",
    "logoAt": 7,
    "verified": true
   }
@@ -2808,20 +2817,11 @@
     "Rock"
    ]
   },
-  "bd4a60812f2c": {
-   "a": "A$AP Ferg"
-  },
-  "3d881c1a7c59": {
-   "a": "A$AP Mob ft. A$AP Rocky, Playboi Carti, Quavo"
-  },
-  "4e6ac66ae3ed": {
-   "a": "A$AP Mob ft. A$AP Rocky & A$AP Ferg"
-  },
-  "c97d69b20a25": {
-   "a": "A$AP Rocky"
-  },
-  "9a30f54893c4": {
-   "a": "A$AP Twelvyy ft. A$AP Ferg"
+  "eabe0d54f642": {
+   "yr": 2027,
+   "g": [
+    "Electronic"
+   ]
   }
  },
  "includes": {
