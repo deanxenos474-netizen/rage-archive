@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-20T16:01:14.734Z",
+ "saved": "2026-11-20T16:02:24.165Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1447,7 +1447,8 @@
    "yt": "i-jdhorGtQI",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/3e/1d/91/3e1d916b-f9bd-f4a3-6a82-61780a4d0a92/mzi.labpvvki.jpg/600x608bb-100.jpg",
    "aspect": "4:3",
-   "logoAt": 7
+   "logoAt": 7,
+   "verified": true
   },
   "bbe572e3c688": {
    "artist": "Wham",
@@ -1463,7 +1464,8 @@
    "title": "Never Ending Story",
    "yt": "1bRWlG3Y4sw",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/4c/e1/31/4ce131b3-30b3-b541-440f-ba8183aaed32/5099930948259.jpg/2400x2400bb-100.jpg",
-   "logoAt": 7
+   "logoAt": 7,
+   "verified": true
   },
   "2b0c3c32c9f9": {
    "artist": "Kate Bush",
