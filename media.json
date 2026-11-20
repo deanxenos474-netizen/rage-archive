@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-20T14:08:41.355Z",
+ "saved": "2026-11-20T14:10:26.203Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -154,11 +154,9 @@
    "yt": "sOnqjkJTMaA",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/32/4f/fd/324ffda2-9e51-8f6a-0c2d-c6fd2b41ac55/074643811224.jpg/1500x1500bb-100.jpg",
    "aspect": "4:3",
-   "logoAt": 26,
-   "start": 253.167,
-   "end": 721.429,
-   "fade": 0.929,
-   "verified": true
+   "logoAt": 24,
+   "verified": true,
+   "ads": true
   },
   "c4c1974b3374": {
    "artist": "Rockwell",
@@ -1525,7 +1523,9 @@
   "6e3bcbe473ea": "ffff7995e2e6",
   "83ba254cf06d": "b1f003214c32",
   "8ea69846015c": "85750d57866b",
-  "a21432a3f7a4": "9b4bdf572ef6"
+  "a21432a3f7a4": "9b4bdf572ef6",
+  "bd9c66b0b611": "1163a3db4e31",
+  "1163a3db4e31": "3b998e452ded"
  },
  "edits": {
   "7f9c6325842c": {
