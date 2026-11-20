@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-20T14:10:26.203Z",
+ "saved": "2026-11-20T14:13:41.148Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1510,6 +1510,15 @@
    "aspect": "4:3",
    "logoAt": 7,
    "verified": true
+  },
+  "a76b0319248d": {
+   "artist": "Siouxsie & The Banshees",
+   "title": "Spellbound",
+   "yt": "TjvvK-Rj0WI",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/32/44/01/32440139-f4aa-0be8-cb1d-51742508c535/00602498369142.rgb.jpg/1423x1411bb-100.jpg",
+   "aspect": "4:3-in-16:9",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -2655,6 +2664,12 @@
   },
   "916913dc45e6": {
    "yr": 1983,
+   "g": [
+    "Rock"
+   ]
+  },
+  "a76b0319248d": {
+   "yr": 1981,
    "g": [
     "Rock"
    ]
