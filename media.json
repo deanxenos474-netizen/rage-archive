@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-20T15:58:22.749Z",
+ "saved": "2026-11-20T15:59:14.901Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1256,7 +1256,8 @@
    "yt": "5jhocSCSZzk",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/1b/ba/5c/1bba5c8d-ba79-9b11-3406-0bbddc5bcb97/603497979752.jpg/4000x4000bb-100.jpg",
    "aspect": "4:3-in-16:9",
-   "logoAt": 10
+   "logoAt": 10,
+   "verified": true
   },
   "8925585ffca4": {
    "artist": "Joy Division",
