@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-20T16:19:36.081Z",
+ "saved": "2026-11-20T16:32:25.335Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1684,6 +1684,15 @@
    "aspect": "4:3",
    "logoAt": 17,
    "verified": true
+  },
+  "bf5768cbb77d": {
+   "artist": "The Bangles",
+   "title": "Hazy Shade Of Winter",
+   "video": "https://dn721608.ca.archive.org/0/items/the-bangles-hazy-shade-of-winter-video-version-480p-3.00x-1920x-1440-thd-3/The%20Bangles%20%20Hazy%20Shade%20of%20Winter%20Video%20Version_480p_3.00x_1920x1440_thd-3.ia.mp4",
+   "cover": "https://i.discogs.com/mM_E1WZp9_mmuThus56l27fgvzLSItQvp4idfNfbQLw/rs:fit/g:sm/q:90/h:593/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE5MzI0/MzQtMTI5MjAyNjkz/OC5qcGVn.jpeg",
+   "aspect": "4:3",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -2956,6 +2965,12 @@
   },
   "ef288d0b80a6": {
    "yr": 1977,
+   "g": [
+    "Rock"
+   ]
+  },
+  "bf5768cbb77d": {
+   "yr": 1987,
    "g": [
     "Rock"
    ]
