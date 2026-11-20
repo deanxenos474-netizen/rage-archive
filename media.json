@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-20T15:55:19.089Z",
+ "saved": "2026-11-20T15:58:22.749Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1095,6 +1095,7 @@
    "aspect": "4:3",
    "logoAt": 7,
    "start": 58,
+   "fadeIn": 3,
    "verified": true
   },
   "7d078b5cc080": {
