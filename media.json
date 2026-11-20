@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-20T14:13:41.148Z",
+ "saved": "2026-11-20T14:19:17.690Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1519,6 +1519,15 @@
    "aspect": "4:3-in-16:9",
    "logoAt": 7,
    "verified": true
+  },
+  "35aab000342c": {
+   "artist": "Psychedelic Furs",
+   "title": "Pretty In Pink",
+   "yt": "nu0sYQRECkY",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Features/b1/c3/2e/dj.jifbvltc.jpg/600x600bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -2669,6 +2678,12 @@
    ]
   },
   "a76b0319248d": {
+   "yr": 1981,
+   "g": [
+    "Rock"
+   ]
+  },
+  "35aab000342c": {
    "yr": 1981,
    "g": [
     "Rock"
