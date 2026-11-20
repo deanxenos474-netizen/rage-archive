@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-20T15:34:11.815Z",
+ "saved": "2026-11-20T15:36:06.245Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1634,6 +1634,14 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/58/99/f1/5899f1b4-674b-3033-9e12-14348a9de396/196873986029.jpg/3000x3000bb-100.jpg",
    "logoAt": 7,
    "verified": true
+  },
+  "0eecfb1e71b7": {
+   "artist": "Fontaines D.C.",
+   "title": "Japan",
+   "yt": "GPNbnromGgk",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/24/10/8c/24108c9c-845b-40f3-6175-9effb95e1d5c/191404167373.png/4000x4000bb-100.jpg",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -2878,6 +2886,11 @@
    "yr": 2027,
    "g": [
     "Electronic"
+   ]
+  },
+  "0eecfb1e71b7": {
+   "g": [
+    "Indie"
    ]
   }
  },
