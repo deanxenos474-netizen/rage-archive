@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-20T15:42:24.025Z",
+ "saved": "2026-11-20T15:44:10.000Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1641,7 +1641,8 @@
    "yt": "GPNbnromGgk",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/24/10/8c/24108c9c-845b-40f3-6175-9effb95e1d5c/191404167373.png/4000x4000bb-100.jpg",
    "logoAt": 7,
-   "verified": true
+   "verified": true,
+   "aspect": "3:2-in-16:9"
   },
   "f57cd501daf4": {
    "artist": "April Elwyn",
