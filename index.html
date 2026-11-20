@@ -1083,14 +1083,15 @@ ol.steps a { color: var(--accent) }
     // 4:3 measured from a real 4:3 broadcast (Led Zeppelin, Immigrant Song): logo and caption overlaid pixel for pixel
     "4:3":  { W: 1440, logo: { x: 139, y: 823.4, width: 423.2, height: 155 },
               l1: { x: 135.6, y: 909, size: 69.3, sx: 0.775 }, l2: { x: 134.8, y: 974, size: 54.7, sx: 0.947 } },
-    "16:9": { W: 1920, logo: { x: 195, y: 836, width: 458, height: 152 },
+    // logo re-measured 21 Nov 2026 from two more 16:9 broadcasts (colours span x 198-651, y 838-988): it was ~6% too narrow and ~13% too short
+    "16:9": { W: 1920, logo: { x: 180, y: 828, width: 486, height: 174 },
               l1: { x: 195, y: 886, size: 77.1, sx: 0.79 },  l2: { x: 197, y: 965.5, size: 58.8, sx: 0.944 } },
     // wide film letterboxed in a 16:9 broadcast, measured from a real one (Santana, Soul Sacrifice), then moved down 29px because a 2.20:1 picture reaches lower than that 2.35:1 one
     // very wide film (2.76:1) letterboxed in 16:9, measured from a real broadcast (Dominic Fike, Pangea, 2026):
     // the picture is 696 high from y 192; logo, caption and their sizes taken off air
     // a 3:2 picture pillarboxed in 16:9, measured from a real broadcast (Fontaines D.C., Japan, 2026): same sizes and
     // heights as 16:9, but the logo and caption sit about 100px further right, inside the picture
-    "3:2-in-16:9": { W: 1920, logo: { x: 295, y: 836, width: 458, height: 152 },
+    "3:2-in-16:9": { W: 1920, logo: { x: 281, y: 827, width: 486, height: 174 },
               l1: { x: 297, y: 886, size: 77.1, sx: 0.79 },  l2: { x: 297, y: 965.5, size: 58.8, sx: 0.944 } },
     "2.76:1": { W: 1920, logo: { x: 178.8, y: 687.5, width: 485.8, height: 178.8 },
               l1: { x: 197, y: 747.6, size: 76.5, sx: 0.794 }, l2: { x: 197, y: 822.8, size: 58, sx: 0.92 } },
