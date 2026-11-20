@@ -432,6 +432,7 @@ ol.steps a { color: var(--accent) }
       <div class="line"><input type="url" id="f-link" autocomplete="off" placeholder="YouTube or Vimeo link (or a direct .mp4 link)" aria-label="Video link"></div>
       <label class="f" for="f-start">Start at <input type="number" id="f-start" autocomplete="off" min="0" step="any" placeholder="0"> seconds</label>
       <label class="f" for="f-end">Stop at <input type="number" id="f-end" autocomplete="off" min="0" step="any" placeholder="end"> seconds (decimals like 52.35 are fine; leave both empty to play the whole video)</label>
+      <label class="f" for="f-fade">Fade the sound out over the last <input type="number" id="f-fade" autocomplete="off" min="0" step="any" placeholder="0"> seconds (leave empty for no fade)</label>
       <div class="line"><input type="url" id="f-cover" autocomplete="off" placeholder="Cover image link (leave empty to use the YouTube thumbnail)" aria-label="Cover image link"></div>
       <label class="f" for="f-aspect" style="flex-wrap:wrap">Picture shape
         <select id="f-aspect">
@@ -1193,6 +1194,25 @@ ol.steps a { color: var(--accent) }
     };
     const now = () => P.kind === "yt" ? ytNow()
       : P.kind === "vimeo" ? (P.vt || 0) + (P.vPlaying ? (performance.now() - P.vtAt) / 1000 : 0) : v.currentTime;
+    /* sound fade-out over the last few seconds (like rage's copy of Thriller): m.fade seconds before the stop time,
+       or before the video's end. A player's volume is only touched for clips that fade, and put back to full after */
+    function fadeSync() {
+      const f = +P.m.fade; let pct = 100;
+      if (f > 0) {
+        let end = +P.m.end || 0;
+        if (!end) try { end = P.kind === "yt" && P.yt && P.ytReady ? P.yt.getDuration() : P.kind === "video" ? v.duration : 0; } catch {}
+        const t = now();
+        if (end > 0 && Number.isFinite(end) && t > 0) pct = Math.round(Math.max(0, Math.min(1, (end - t) / f)) * 100);
+      }
+      if (pct === P.vol) return;
+      try {
+        if (P.kind === "yt" && P.yt && P.ytReady && P.yt.setVolume) { if (pct < 100 || P.yt.faded) { P.yt.setVolume(pct); P.yt.faded = pct < 100; } }
+        else if (P.kind === "vimeo" && P.vm) { if (pct < 100 || P.vm.faded) { P.vm.setVolume(pct / 100).catch(() => {}); P.vm.faded = pct < 100; } }
+        else if (P.kind === "video") v.volume = pct / 100;
+        else return;
+      } catch { return; }
+      P.vol = pct;
+    }
     function layout() {
       const el = frameEl(); if (!el) return;
       const bw = el.clientWidth, bh = el.clientHeight; if (!bw || !bh) return;
@@ -1257,10 +1277,10 @@ ol.steps a { color: var(--accent) }
       const co = t < c0 ? 0 : t < c0 + .55 ? (t - c0) / .55 : t < c1 - .5 ? 1 : t < c1 ? (c1 - t) / .5 : 0;
       capg.setAttribute("opacity", co.toFixed(3));
     }
-    const loop = () => { if (P.stop) return; frame(); P.raf = requestAnimationFrame(loop); };
+    const loop = () => { if (P.stop) return; frame(); fadeSync(); P.raf = requestAnimationFrame(loop); };
     loop();
     P.iv = setInterval(() => {
-      if (P.stop) return; frame(); ytSync(); if (DEBUG) debugShow();
+      if (P.stop) return; frame(); ytSync(); fadeSync(); if (DEBUG) debugShow();
       if (P.kind === "video" && P.m.end && !P.endFired && v.currentTime >= +P.m.end) { P.endFired = true; v.pause(); setPlaying(false); opts.onEnded?.(); }   // stop time reached
     }, 150);     // keeps going when the tab is in the background
     /* Ads: YouTube plays an ad first on some videos (the owner's choice). While it runs, YouTube still calls the video
@@ -1321,7 +1341,7 @@ ol.steps a { color: var(--accent) }
       P.chart = song.rank && song.chart && !(m && (m.bare || m.burned)) ? +song.rank : 0; l0.textContent = P.chart ? `NO.${P.chart}` : "";
       img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0"); tfg.setAttribute("opacity", "0");
       P.reveal = null; setPlaying(false); setLoading(!!autoplay); showPoster(false); problem(""); wrap.classList.remove("paused"); wrap.classList.toggle("yt", !!P.m.yt);
-      P.want = !!autoplay; P.endFired = false; P.lastT = null; P.fresh = true; P.sawBuf = false; P.started = false; P.askAt = performance.now(); P.loadNo = (P.loadNo || 0) + 1; setAd(false);   // fresh: ignore "ended" until this video has started loading
+      P.want = !!autoplay; P.endFired = false; P.lastT = null; P.vol = null; P.fresh = true; P.sawBuf = false; P.started = false; P.askAt = performance.now(); P.loadNo = (P.loadNo || 0) + 1; setAd(false);   // fresh: ignore "ended" until this video has started loading
       const vm = !P.m.yt && vmId(P.m.video);
       if (P.sp && !spareSame(P.sp, P.m) && P.m.yt) spareDrop();
       if (!vm) vmStop();
@@ -1606,7 +1626,7 @@ ol.steps a { color: var(--accent) }
     const cov = $("d-cover"), src = coverSrc(m, s.kind === "clip");
     $("d-cover").closest(".d-head").classList.toggle("noart", s.kind === "clip");
     cov.innerHTML = src ? `<img src="${esc(src)}" alt="" onerror="this.remove()">` : esc((sortKey(s.a)[0] || "#").toUpperCase());
-    const key = JSON.stringify([s.id, m.yt, m.video, m.aspect, m.logoAt, m.start, m.end, m.burned, s.kind, m.cover]);
+    const key = JSON.stringify([s.id, m.yt, m.video, m.aspect, m.logoAt, m.start, m.end, m.fade, m.burned, s.kind, m.cover]);
     if (songKey !== key) {           // don't restart a playing video when nothing about it changed
       songKey = key;
       // one song player for the whole visit (like RageAgain's): each song's video is loaded into it, so it starts fast
@@ -1627,7 +1647,7 @@ ol.steps a { color: var(--accent) }
       $("f-cover").value = m.cover || "";
       $("f-cover").placeholder = s.kind === "clip" ? "Clips don't show album art: this entry uses a frame from its video" : "Cover image link (leave empty to use the YouTube thumbnail)";
       $("f-aspect").value = m.aspect || "16:9";
-      $("f-start").value = m.start || ""; $("f-end").value = m.end || "";
+      $("f-start").value = m.start || ""; $("f-end").value = m.end || ""; $("f-fade").value = m.fade || "";
       $("f-logo").value = m.logoAt != null ? m.logoAt : 8.2;
       $("f-burned").checked = !!m.burned; $("f-logo").disabled = !!m.burned; $("f-verified").checked = !!m.verified; $("f-lowq").checked = !!m.lowq;
     }
@@ -1791,6 +1811,9 @@ ol.steps a { color: var(--accent) }
     if ($("f-aspect").value !== "16:9") entry.aspect = $("f-aspect").value;
     if (logo !== 8.2) entry.logoAt = logo;
     if (st && (id || direct)) entry.start = st; if (en && (id || direct)) entry.end = en;
+    const fd = $("f-fade").value === "" ? 0 : +$("f-fade").value;
+    if (!Number.isFinite(fd) || fd < 0) { status("Enter the fade-out length in seconds, like 4.5", "err"); return; }
+    if (fd && (id || direct)) entry.fade = fd;
     if ($("f-burned").checked) entry.burned = true;
     if ($("f-verified").checked) entry.verified = true;
     if ($("f-lowq").checked) entry.lowq = true;
