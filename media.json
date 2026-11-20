@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-20T16:00:18.418Z",
+ "saved": "2026-11-20T16:01:14.734Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1311,7 +1311,8 @@
    "yt": "PQ4UZ0pc-IY",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/66/12/dc/6612dce1-5803-4130-accf-8101687d3ac4/00602567648161.rgb.jpg/3000x3000bb-100.jpg",
    "aspect": "4:3",
-   "logoAt": 7
+   "logoAt": 7,
+   "verified": true
   },
   "6010f17bd19d": {
    "artist": "Duran Duran",
