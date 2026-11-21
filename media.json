@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-21T08:27:29.794Z",
+ "saved": "2026-11-21T08:28:49.667Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1885,6 +1885,15 @@
    "aspect": "4:3",
    "logoAt": 7,
    "verified": true
+  },
+  "cb8402827283": {
+   "artist": "Sweetie",
+   "title": "Pay Rise",
+   "yt": "LWYcNN8rW4Y",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/c2/73/3e/c2733efb-3a5c-4e38-3c05-2ae36e35ae2e/cover.jpg/3000x3000bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -3294,6 +3303,12 @@
    ]
   },
   "99146b613922": {
+   "yr": 2026,
+   "g": [
+    "Indie"
+   ]
+  },
+  "cb8402827283": {
    "yr": 2026,
    "g": [
     "Indie"
