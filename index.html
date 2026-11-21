@@ -111,6 +111,8 @@ details.bc > summary:hover { background: var(--raise) }
 .bt small { display: block; font: 400 12px var(--mono); color: var(--muted); margin-top: 2px }
 .badge { display: inline-block; font: 500 10px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; border-radius: 4px; padding: 3px 5px; margin-right: 6px; vertical-align: 2px; color: var(--bg); background: var(--accent) }
 .badge.guest { background: var(--hot) }
+.sp-part { margin-right: 10px }
+.sp-part:last-of-type { margin-right: 0 }
 .dates button.sp { border-color: var(--hot) }
 .bn { font: 400 12px var(--mono); color: var(--muted); white-space: nowrap }
 details.bc[open] > summary { background: var(--raise) }
@@ -918,7 +920,27 @@ ol.steps a { color: var(--accent) }
   const linkOf = (b, up) => `${up ? "u" : "b"}-${b.date}-${b.ord}`;
   const fullLink = h => location.origin + location.pathname + "#" + h;
   let quietOpen = false;      // opening a broadcast from code (not a click) shouldn't rewrite the address
-  const spHTML = b => b.kind ? `<span class="badge${b.kind === 2 ? " guest" : ""}">${b.kind === 2 ? "Guest programmer" : "Special"}</span>${esc(b.sp)}<small>${esc(b.title || "Playlist")}</small>` : esc(b.title || "Playlist");
+  /* a guest night's label can also name other segments ("The VAULT: …, Party Dozen guest program rage"): split it so each part gets its own tag.
+     Pieces that don't name a segment ("Jack Johnson, Donavon Frankenreiter & G Love guest program") stay with the next one, or the last one at the end. */
+  const SEG = /special|tribute|vault|on rage|charts|guest[- ]?program|best of|retro|hottest|month|countdown|live at/i;
+  const spParts = b => {
+    if (b.kind !== 2) return b.kind ? [[1, b.sp]] : [];
+    const tok = b.sp.split(/(,?\s+followed by\s+|,\s*)/), out = [];
+    let buf = "", lead = "";
+    for (let i = 0; i < tok.length; i += 2) {
+      const sep = i ? tok[i - 1] : "";
+      if (buf) buf += sep; else lead = sep;
+      if (buf && SEG.test(tok[i]) && /^the vault:/i.test(out[out.length - 1] || "")) {   // "The VAULT: Punk, Rock, Metal '99, Body Type guest programs": the loose words belong to the Vault
+        out[out.length - 1] += lead + buf.slice(0, -sep.length); buf = ""; }
+      buf += tok[i];
+      if (SEG.test(tok[i])) { out.push(buf); buf = ""; }
+    }
+    if (buf) { if (out.length) out[out.length - 1] += lead + buf; else out.push(buf); }
+    return out.map(t => [/guest[- ]?program/i.test(t) ? 2 : 1, t]);
+  };
+  const spLabel = k => k === 2 ? "Guest programmer" : "Special";
+  const spText = b => spParts(b).map(([k, t]) => `${spLabel(k)}: ${t}`).join(" · ");
+  const spHTML = b => b.kind ? spParts(b).map(([k, t]) => `<span class="sp-part"><span class="badge${k === 2 ? " guest" : ""}">${spLabel(k)}</span>${esc(t)}</span>`).join(" ") + `<small>${esc(b.title || "Playlist")}</small>` : esc(b.title || "Playlist");
 
   // a broadcast's running order as display items (aired: song indexes; upcoming: rows with their own text)
   function itemsOf(b, upcoming) {
@@ -1674,7 +1696,7 @@ ol.steps a { color: var(--accent) }
       if (cur !== i) return;
       const ids = [...new Set([i, ...(members.get(i) || []), ...(includedBy.get(i) || [])].flatMap(j => plays.get(j) || []))].sort((a, b) => a - b);
       $("d-dates").innerHTML = ids.length ? ids.map(bi => { const b = B[bi];
-        return `<button data-b="${bi}"${b.kind ? ' class="sp"' : ""} title="${esc(b.kind ? `${b.kind === 2 ? "Guest programmer" : "Special"}: ${b.sp}` : b.title)}">${fmtDate(b.date)}</button>`; }).join("")
+        return `<button data-b="${bi}"${b.kind ? ' class="sp"' : ""} title="${esc(b.kind ? spText(b) : b.title)}">${fmtDate(b.date)}</button>`; }).join("")
         : '<span class="count">No broadcast listing found.</span>';
     }).catch(() => { $("d-dates").innerHTML = '<span class="count">The broadcast list didn’t load.</span>'; });
     if (!$("dlg").open) $("dlg").showModal();
