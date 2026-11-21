@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-21T13:01:53.888Z",
+ "saved": "2026-11-21T13:05:17.211Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2120,6 +2120,15 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music4/v4/d0/ae/49/d0ae4954-f3c0-934a-d742-25455f052880/00724354181153.jpg/1400x1400bb-100.jpg",
    "burned": true,
    "verified": true
+  },
+  "7ff726031ef3": {
+   "artist": "Fred Eaglesmith",
+   "title": "105",
+   "yt": "tuJEtXeApAc",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/4b/93/05/4b9305b4-df59-45d9-35b7-9338e0c8adc2/00793018283137.rgb.jpg/3000x3000bb-100.jpg",
+   "aspect": "4:3-in-16:9",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -3691,6 +3700,12 @@
    "yr": 2002,
    "g": [
     "Rock"
+   ]
+  },
+  "7ff726031ef3": {
+   "yr": 1997,
+   "g": [
+    "Country"
    ]
   }
  },
