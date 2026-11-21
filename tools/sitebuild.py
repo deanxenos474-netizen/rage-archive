@@ -45,7 +45,11 @@ def song_id(a, t):
 
 
 def is_caps(a):
-    core = CONN.sub("", a)
+    # all capitals, also counting older ABC spellings in half capitals: "The WEEKND", "PAUL McCARTNEY",
+    # "FOO FIGHTERS - Live from ..." (only the name before " - " counts; a leading "The" and Mc/Mac are ignored)
+    core = re.sub(r"(?i)^the\s+", "", a.split(" - ")[0])
+    core = re.sub(r"\bMa?c(?=[A-Z]{2})", "", core)
+    core = CONN.sub("", core)
     return core == core.upper()
 
 
@@ -57,6 +61,7 @@ def clean_row(r):
     artist, title = unsplit(artist, title)
     artist, title = NOTE.sub(" ", artist).strip(), NOTE.sub(" ", title).strip()   # "Shaggy   ***Please Note: ...***"
     artist = unthe(artist)   # "POGUES, THE ft. KIRSTY MacCOLL" -> "THE POGUES ft. KIRSTY MacCOLL"
+    artist = re.sub(r"\s*[,;:]+$", "", artist)   # "The WEEKND," (a stray comma left after the name)
     return artist, title, (label or "").strip()
 
 
@@ -278,26 +283,41 @@ def build(d, out_dir=ROOT):
         if not is_caps(a):
             mixed[norm(a)][a] += 1
 
+    # Mc/Mac names as written somewhere in the data ("TATE McRAE", "Angie McMahon"), so "TATE MCRAE" becomes Tate McRae too
+    mcmap = {}
+    for a, t, l, dt in plays:
+        for w in re.findall(r"\bMa?c[A-Z][A-Za-z']+", a):
+            k = 3 if w.startswith("Mac") else 2
+            mcmap.setdefault(w.lower(), w[:k] + w[k:].capitalize() if w[k:].isupper() else w)
+
     def smart_case(a):
         if not is_caps(a):
             return a
         m = mixed.get(norm(a))
         if m:
             return m.most_common(1)[0][0]
+        head, sep, tail = a.partition(" - ")   # "FOO FIGHTERS - Live from 'Skin And Bones' DVD": only the name changes
+        if tail == tail.upper():   # "THE VINES - LIVE ON TRIPLE J TV": all of it is in capitals, so all of it changes
+            head, sep, tail = a, "", ""
         out = []
-        for w in a.split(" "):
+        for w in head.split(" "):
             lw = w.lower()
             if lw in ("ft.", "ft", "feat.", "featuring", "and", "vs", "vs.", "x", "with"):
                 out.append(lw)
+            elif re.match(r"^Ma?c[A-Z]{2}", w):   # "McCARTNEY" -> McCartney, "MacCOLL" -> MacColl
+                k = 3 if w.startswith("Mac") else 2
+                out.append(w[:k] + w[k:].capitalize())
             elif out and lw in ("jr", "jr.", "sr", "sr."):   # "GARY CLARK JR" -> Gary Clark Jr. (not a first word: SR 71 is a band)
                 out.append(lw[:1].upper() + lw[1:2] + ".")
             elif re.search(r"[0-9/.$!]", w) or not re.search(r"[AEIOUY]", w) or len(w) <= 2 and w not in (
                     "OF", "IN", "ON", "TO", "MY", "ME", "WE", "BY", "AT", "IS", "IT", "OR", "NO", "SO", "DO", "GO",
                     "UP", "US", "OH", "AN", "AS", "BE", "HE", "DJ"):
                 out.append(w)
+            elif lw in mcmap:
+                out.append(mcmap[lw])
             else:
                 out.append(re.sub(r"(^|[-(\"'])([a-z])", lambda m: m.group(1) + m.group(2).upper(), lw))
-        s = " ".join(out)
+        s = " ".join(out) + sep + tail
         return s[:1].upper() + s[1:]
 
     groups, play_key = {}, []
