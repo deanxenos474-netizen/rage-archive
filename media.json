@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-21T16:17:13.635Z",
+ "saved": "2026-11-21T16:18:11.492Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3881,6 +3881,18 @@
   "b-20261106-1/6": {
    "sid": "28a19e66f921",
    "video": "https://github.com/deanxenos474-netizen/rage-archive/releases/download/clips-kasey-chambers/kasey-fallen-star-intro.mp4"
+  },
+  "b-20261106-1/7": {
+   "sid": "7ff726031ef3",
+   "video": "https://github.com/deanxenos474-netizen/rage-archive/releases/download/clips-kasey-chambers/kasey-youre-watching-rage.mp4",
+   "then": {
+    "video": "https://github.com/deanxenos474-netizen/rage-archive/releases/download/clips-kasey-chambers/kasey-105-intro.mp4"
+   },
+   "bumper": 2
+  },
+  "b-20020928-1/24": {
+   "sid": "7ff726031ef3",
+   "video": "https://github.com/deanxenos474-netizen/rage-archive/releases/download/clips-kasey-chambers/kasey-105-intro.mp4"
   }
  },
  "charts": {}
