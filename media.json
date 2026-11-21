@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-21T04:21:41.643Z",
+ "saved": "2026-11-21T05:18:06.981Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1764,6 +1764,15 @@
    "aspect": "4:3",
    "logoAt": 7,
    "verified": true
+  },
+  "bbf6848d80a8": {
+   "artist": "Zafty",
+   "title": "Glasses",
+   "yt": "Xxrds7TXI6Q",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/02/fd/ed/02fded9d-3830-c05e-0c3b-36cd2aa9965b/484250.jpg/3000x3000bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -3092,6 +3101,12 @@
    "yr": 2026,
    "g": [
     "Indie"
+   ]
+  },
+  "bbf6848d80a8": {
+   "yr": 2026,
+   "g": [
+    "Rock"
    ]
   }
  },
