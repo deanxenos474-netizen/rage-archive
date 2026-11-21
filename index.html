@@ -127,6 +127,11 @@ ol.tracks .tr::before { content: counter(tr); font: 400 12px var(--mono); color:
 dialog { width: min(600px, calc(100vw - 32px)); max-height: calc(100dvh - 48px); border: 1px solid var(--line); border-radius: 16px; background: var(--surface); color: var(--fg); padding: 0 }
 dialog.wide { width: min(980px, calc(100vw - 24px)) }
 #dlg { width: min(820px, calc(100vw - 32px)) }   /* the song window: room for a bigger video */
+.faq details { border-top: 1px solid var(--line); padding: 12px 0 }
+.faq details:last-of-type { border-bottom: 1px solid var(--line) }
+.faq summary { cursor: pointer; font-weight: 700; list-style-position: outside }
+.faq details p { margin: 8px 0 0; line-height: 1.5 }
+.faq .actions { margin-top: 10px }
 dialog::backdrop { background: rgb(5 6 14 / .6) }
 .d-in { padding: 22px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px }   /* minmax: the video can't push the window wider */
 .d-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: start }
@@ -375,6 +380,7 @@ ol.steps a { color: var(--accent) }
     <a href="https://www.abc.net.au/rage/playlist" target="_blank" rel="noopener">abc.net.au/rage/playlist</a> (2007 to now). For each week the fuller source was used.
     About 20 weeks between 2012 and 2023 are missing from both. Videos play from YouTube. A fan archive, not affiliated with the ABC.
     <span id="media-note"></span>
+    <a href="#faq" style="color:var(--accent)">FAQ</a> ·
     <a href="#wanted" style="color:var(--accent)">Got footage? Help fill the gaps</a> ·
     <button class="admin" id="adm-open" type="button">Admin login</button>
   </footer>
@@ -503,6 +509,48 @@ ol.steps a { color: var(--accent) }
         </div>
       </div>
       <div><p class="lbl" id="tv-qlbl">Running order</p><ol class="queue" id="tv-queue"></ol></div>
+    </div>
+  </div>
+</dialog>
+
+<!-- frequently asked questions -->
+<dialog id="faq" aria-labelledby="faq-title">
+  <div class="d-in">
+    <div class="d-head nocover">
+      <div><h2 id="faq-title">Frequently asked questions</h2></div>
+      <button class="x" id="faq-close" aria-label="Close">×</button>
+    </div>
+    <div class="faq">
+      <details open>
+        <summary>I have rage footage to send</summary>
+        <p>We accept all footage, whether it's from yesterday or a VHS from 1987. Home recordings are perfect, rage logo and all: tell us what you have and when it was recorded, and we'll get back to you by email.</p>
+        <div class="actions"><button class="btn primary" type="button" data-faq-send="footage">Tell us what you have</button></div>
+      </details>
+      <details>
+        <summary>A video labelled as the one rage showed is incorrect</summary>
+        <p>Open that song and press <b>"Wrong video? Send us the right one"</b>, or use the button below. Tell us which version rage actually aired and how you know (a recording, a date it was on, or what's different), and we'll check it and fix it.</p>
+        <div class="actions"><button class="btn" type="button" data-faq-send="wrong">Report a wrong video</button></div>
+      </details>
+      <details>
+        <summary>What does "✓ Verified" mean?</summary>
+        <p>It means we've checked the video against a real recording of rage, so it's the exact clip rage showed. Videos without it are our best guess: it may be a different edit, version or performance. You can see them all with the <b>Unconfirmed video</b> filter.</p>
+      </details>
+      <details>
+        <summary>A video won't play</summary>
+        <p>Some videos are taken down or blocked in some countries. The site reports most broken videos to us automatically, and we replace them as we find new copies. If one stays broken, use "Wrong video?" in the song window to let us know.</p>
+      </details>
+      <details>
+        <summary>A playlist or song is missing</summary>
+        <p>Playlists come from the ABC's rage website and RageAgain's archive. About 20 weeks between 2012 and 2023 aren't in either. If you have a playlist (or a recording) of a night that's missing, send it in and we'll add it.</p>
+      </details>
+      <details>
+        <summary>How often is the site updated?</summary>
+        <p>New playlists are added automatically twice a day. Ones the ABC posts ahead of time show under Upcoming and count as plays once they air.</p>
+      </details>
+      <details>
+        <summary>Is this run by the ABC?</summary>
+        <p>No. It's a fan archive and isn't affiliated with the ABC. The rage logo and captions on the videos are recreated to look like the broadcast. Videos play from YouTube and other video sites.</p>
+      </details>
     </div>
   </div>
 </dialog>
@@ -1072,6 +1120,7 @@ ol.steps a { color: var(--accent) }
     else if (h === "upcoming") setMode("upcoming", false);
     else if (h === "wanted") { setMode("songs", true); setType("need"); if (S.length) apply(); window.scrollTo({ top: 0 }); }
     else if (h === "unconfirmed") { setMode("songs", true); setType("unconf"); if (S.length) apply(); window.scrollTo({ top: 0 }); }
+    else if (h === "faq") { if (!$("faq").open) $("faq").showModal(); }
     else if (h === "songs" || !h) setMode("songs", true);
   }
   addEventListener("hashchange", routeHash);
@@ -2156,6 +2205,10 @@ ol.steps a { color: var(--accent) }
   $("wanted-go").onclick = () => openFootage("");
   $("unconf-go").onclick = () => openFootage("", true);
   $("ff-close").onclick = () => $("ff").close();
+  // FAQ: opened from the footer (#faq); closing it clears the hash so the link works again
+  $("faq-close").onclick = () => $("faq").close();
+  $("faq").addEventListener("close", () => { if (location.hash === "#faq") { history.replaceState(null, "", location.pathname + location.search); lastHash = ""; } });
+  $("faq").querySelectorAll("[data-faq-send]").forEach(b => b.onclick = () => { $("faq").close(); openFootage("", b.dataset.faqSend === "wrong"); });
   $("ff-form").addEventListener("submit", async e => {
     e.preventDefault();
     const url = formUrl(); if (!url) return;
