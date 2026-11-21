@@ -453,6 +453,7 @@ ol.steps a { color: var(--accent) }
           <option value="4:3-in-16:9">4:3 inside a 16:9 video (bars built into the video)</option>
           <option value="4:3-stretched">4:3 stretched to fill a 16:9 video (people look too wide)</option>
           <option value="4:3-blur">4:3 inside a 16:9 video with blurry copies at the sides</option>
+          <option value="5:3">5:3 (YouTube shows very narrow black bars at the sides)</option>
           <option value="3:2">3:2 (YouTube shows narrow black bars at the sides)</option>
           <option value="3:2-in-16:9">3:2 inside a 16:9 video (narrow black bars at the sides)</option>
           <option value="16:9-in-4:3">16:9 inside a 4:3 video (black bars top &amp; bottom)</option>
@@ -1169,6 +1170,10 @@ ol.steps a { color: var(--accent) }
     // heights as 16:9, but the logo and caption sit about 100px further right, inside the picture
     "3:2-in-16:9": { W: 1920, logo: { x: 281, y: 827, width: 486, height: 174 },
               l1: { x: 297, y: 886, size: 77.1, sx: 0.79 },  l2: { x: 297, y: 965.5, size: 58.8, sx: 0.944 } },
+    // a 5:3 picture pillarboxed in 16:9: not measured off air; worked out between 16:9 and 3:2-in-16:9 (the bars are 60px
+    // each side instead of 150, so the logo and caption move 40px right instead of about 100)
+    "5:3": { W: 1920, logo: { x: 220, y: 828, width: 486, height: 174 },
+              l1: { x: 235, y: 886, size: 77.1, sx: 0.79 },  l2: { x: 237, y: 965.5, size: 58.8, sx: 0.944 } },
     "2.76:1": { W: 1920, logo: { x: 178.8, y: 687.5, width: 485.8, height: 178.8 },
               l1: { x: 197, y: 747.6, size: 76.5, sx: 0.794 }, l2: { x: 197, y: 822.8, size: 58, sx: 0.92 } },
     "2.20:1": { W: 1920, logo: { x: 185, y: 706, width: 531, height: 195 },
@@ -1300,7 +1305,7 @@ ol.steps a { color: var(--accent) }
       const el = frameEl(); if (!el) return;
       const bw = el.clientWidth, bh = el.clientHeight; if (!bw || !bh) return;
       const shape = P.m.aspect || "16:9";
-      const fileAR = shape === "2.20:1" || shape === "2.76:1" ? 16 / 9 : P.kind === "yt" || P.kind === "vimeo" ? (shape === "4:3" || shape === "16:9-in-4:3" ? 4 / 3 : shape === "3:2" ? 1.47 : 16 / 9) : (v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : 16 / 9);
+      const fileAR = shape === "2.20:1" || shape === "2.76:1" ? 16 / 9 : P.kind === "yt" || P.kind === "vimeo" ? (shape === "4:3" || shape === "16:9-in-4:3" ? 4 / 3 : shape === "3:2" ? 1.47 : shape === "5:3" ? 1.65 : 16 / 9) : (v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : 16 / 9);
       const cw = Math.min(bw, bh * fileAR), ch = cw / fileAR;
       const ifr = P.kind === "yt" ? ytbox.querySelector(".yslot:not(.spare) iframe") : P.kind === "vimeo" && vmbox.querySelector("iframe");
       if (ifr && wrap.classList.contains("admode")) Object.assign(ifr.style, { width: bw + "px", height: bh + "px", left: "0px", top: "0px" });   // an ad: shown whole
@@ -1321,7 +1326,7 @@ ol.steps a { color: var(--accent) }
       if (shape === "4:3-in-16:9" || shape === "4:3-stretched" || shape === "4:3-blur") { w = h * 4 / 3; x += (cw - w) / 2; }
       if (shape === "16:9-in-4:3") { h = w * 9 / 16; y += (ch - h) / 2; }
       // a 3:2 file: rage showed it with bars at the sides of a 16:9 picture, so the logo goes where it does for 3:2-in-16:9
-      if (shape === "3:2") { w = h * 16 / 9; x -= (w - cw) / 2; }
+      if (shape === "3:2" || shape === "5:3") { w = h * 16 / 9; x -= (w - cw) / 2; }
       const G = shape.startsWith("4:3") ? GEO["4:3"] : GEO[shape === "3:2" ? "3:2-in-16:9" : shape] || GEO["16:9"];
       Object.assign(svg.style, { left: x + "px", top: y + "px", width: w + "px", height: h + "px" });
       svg.setAttribute("viewBox", `0 0 ${G.W} 1080`);

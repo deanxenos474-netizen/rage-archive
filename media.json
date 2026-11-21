@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-21T11:09:14.230Z",
+ "saved": "2026-11-21T11:10:44.000Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -334,6 +334,7 @@
    "title": "Jam",
    "yt": "JbHI1yI1Ndk",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/cf/68/f9/cf68f9d4-e395-9ced-3e50-8cf7f1f9d3e0/884977307832.jpg/1500x1500bb-100.jpg",
+   "aspect": "5:3",
    "logoAt": 19,
    "verified": true,
    "ads": true
@@ -1214,6 +1215,7 @@
    "title": "Rake",
    "yt": "IjNZI9aSKcw",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/75/cf/5e/75cf5eea-a856-d870-b815-7df79ea44f34/809236005632_cover.jpg/3000x3000bb-100.jpg",
+   "aspect": "5:3",
    "logoAt": 7,
    "verified": true
   },
@@ -1238,6 +1240,7 @@
    "title": "Mantra",
    "yt": "59Fom3Fic4s",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/a7/54/77/a75477a8-1f9f-ffd6-37c5-774c1ceb6cfb/5056556184614_cover.jpg/3500x3500bb-100.jpg",
+   "aspect": "5:3",
    "logoAt": 7,
    "verified": true
   },
@@ -1927,6 +1930,7 @@
    "title": "Blood On The Strings",
    "yt": "0YpigQdBxv4",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/8e/03/bc/8e03bcea-21da-1b2b-100a-d647310b5466/823375183297_Cover.jpg/1400x1400bb-100.jpg",
+   "aspect": "5:3",
    "logoAt": 11,
    "verified": true
   },
@@ -1996,6 +2000,7 @@
    "title": "stupid song",
    "yt": "Rt9tW3cMLhI",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/1d/1b/f9/1d1bf9b1-44c6-9a6c-6ffb-c158488c06ce/26UMGIM39303.rgb.jpg/4000x4000bb-100.jpg",
+   "aspect": "5:3",
    "logoAt": 7,
    "verified": true
   },
@@ -2021,6 +2026,7 @@
    "title": "Nicole Kidman",
    "yt": "3sB4Iv_tM7U",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/5d/77/7b/5d777b87-e796-0b3e-cef6-d37d993dd8fe/26UMGIM82371.rgb.jpg/3000x3000bb-100.jpg",
+   "aspect": "5:3",
    "logoAt": 7,
    "verified": true
   },
