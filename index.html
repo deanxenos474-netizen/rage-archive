@@ -1334,12 +1334,6 @@ ol.steps a { color: var(--accent) }
       l0.setAttribute("transform", `translate(${G.l1.x} ${G.l1.y}) scale(${G.l1.sx} 1)`); l0.setAttribute("font-size", G.l1.size);
       l1.setAttribute("transform", `translate(${G.l1.x + sh} ${G.l1.y}) scale(${G.l1.sx} 1)`); l1.setAttribute("font-size", G.l1.size);
       l2.setAttribute("transform", `translate(${G.l2.x + sh} ${G.l2.y}) scale(${G.l2.sx} 1)`); l2.setAttribute("font-size", G.l2.size);
-      // a caption too long for the picture (MAJOR LAZER FEATURING SANTIGOLD & MR LEXX in 4:3) is squeezed narrower so it
-      // ends as far from the right edge as it starts from the left, instead of running off the picture
-      [[l1, G.l1], [l2, G.l2]].forEach(([el, g]) => {
-        const n = el.textContent ? el.getComputedTextLength() : 0, room = G.W - 2 * g.x - sh;
-        if (n * g.sx > room) el.setAttribute("transform", `translate(${g.x + sh} ${g.y}) scale(${(room / n).toFixed(4)} 1)`);
-      });
       { const L = G.logo, vx = L.x + L.width * 17 / 552, vw = L.width * 526 / 552, vy = L.y + L.height * 10 / 203, k = vw / 371;
         Object.entries({ x: vx + vw + 93 * k, y: vy - 13 * k, width: 511 * k, height: 136 * k }).forEach(([a, v]) => tfa.setAttribute(a, v.toFixed(1))); }
     }
@@ -1431,7 +1425,6 @@ ol.steps a { color: var(--accent) }
       // capitals like rage's caption, but rage keeps "ft." (and "feat.") lower case: WHEELCHAIR SPORTS CAMP ft. JELLO BIAFRA
       l1.textContent = (song.a || "").toUpperCase().replace(/\b(FT|FEAT)(\.|(?= ))/g, m => m.toLowerCase()); l2.textContent = song.t || ""; P.noArt = song.kind === "clip";
       P.chart = song.rank && song.chart && !(m && (m.bare || m.burned)) ? +song.rank : 0; l0.textContent = P.chart ? `NO.${P.chart}` : "";
-      layout(); document.fonts?.ready.then(() => { if (!P.stop) layout(); });   // re-fit the caption to its new text (once the caption font has loaded)
       img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0"); tfg.setAttribute("opacity", "0");
       P.reveal = null; setPlaying(false); setLoading(!!autoplay); showPoster(false); problem(""); wrap.classList.remove("paused"); wrap.classList.toggle("yt", !!P.m.yt);
       P.want = !!autoplay; P.endFired = false; P.lastT = null; P.vol = null; P.fresh = true; P.sawBuf = false; P.started = false; P.askAt = performance.now(); P.loadNo = (P.loadNo || 0) + 1; setAd(false);   // fresh: ignore "ended" until this video has started loading
