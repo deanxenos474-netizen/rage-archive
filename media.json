@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-21T05:19:21.907Z",
+ "saved": "2026-11-21T05:21:41.684Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1781,6 +1781,15 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/cd/12/c3/cd12c359-3a60-108c-8c11-410abda85a39/TI175628_cover.jpg/3000x3000bb-100.jpg",
    "logoAt": 31,
    "verified": true
+  },
+  "c6709d551012": {
+   "artist": "Lulu",
+   "title": "Little Death!",
+   "yt": "BQbdis2HMXI",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/d7/f6/bf/d7f6bfb8-3729-d418-72f5-38e01a5e7d45/artwork.jpg/3000x3000bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 41,
+   "verified": true
   }
  },
  "merges": {
@@ -3118,6 +3127,12 @@
    ]
   },
   "7df213c37b4c": {
+   "yr": 2026,
+   "g": [
+    "Rock"
+   ]
+  },
+  "c6709d551012": {
    "yr": 2026,
    "g": [
     "Rock"
