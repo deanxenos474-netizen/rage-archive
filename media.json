@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-21T13:05:17.211Z",
+ "saved": "2026-11-21T13:09:15.257Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2129,6 +2129,14 @@
    "aspect": "4:3-in-16:9",
    "burned": true,
    "verified": true
+  },
+  "c33796a59164": {
+   "artist": "Steve Earle",
+   "title": "Telephone Road",
+   "yt": "07kF55OQIWY",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/39/5a/4e/mzi.qwgsbmwj.jpg/1440x1440bb-100.jpg",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -3703,6 +3711,12 @@
    ]
   },
   "7ff726031ef3": {
+   "yr": 1997,
+   "g": [
+    "Country"
+   ]
+  },
+  "c33796a59164": {
    "yr": 1997,
    "g": [
     "Country"
