@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-21T10:29:44.500Z",
+ "saved": "2026-11-21T10:30:47.555Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1993,6 +1993,14 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/1d/1b/f9/1d1bf9b1-44c6-9a6c-6ffb-c158488c06ce/26UMGIM39303.rgb.jpg/4000x4000bb-100.jpg",
    "logoAt": 7,
    "verified": true
+  },
+  "38c957bf78e2": {
+   "artist": "Taylor Swift",
+   "title": "Patient Zero",
+   "yt": "mw3kSNIxjqo",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/a0/dd/fd/a0ddfd72-ee9e-f046-6466-a5dbefc696fa/26UM1IM21436.rgb.jpg/3000x3000bb-100.jpg",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -3483,6 +3491,12 @@
    "t": "Rein Me In"
   },
   "8a4214ef2594": {
+   "yr": 2026,
+   "g": [
+    "Pop"
+   ]
+  },
+  "38c957bf78e2": {
    "yr": 2026,
    "g": [
     "Pop"
