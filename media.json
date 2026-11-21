@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-21T16:11:20.947Z",
+ "saved": "2026-11-21T16:12:39.253Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3825,6 +3825,22 @@
   "b-20261106-1/0": {
    "sid": "0d2aee3af4a1",
    "video": "https://github.com/deanxenos474-netizen/rage-archive/releases/download/clips-kasey-chambers/kasey-intro.mp4"
+  },
+  "b-20020928-1/0": {
+   "sid": "d61e353c6864",
+   "video": "https://github.com/deanxenos474-netizen/rage-archive/releases/download/clips-kasey-chambers/kasey-intro.mp4",
+   "then": {
+    "video": "https://github.com/deanxenos474-netizen/rage-archive/releases/download/clips-kasey-chambers/kasey-come-as-you-are-intro.mp4"
+   },
+   "bumper": 1
+  },
+  "b-20261106-1/4": {
+   "sid": "d61e353c6864",
+   "video": "https://github.com/deanxenos474-netizen/rage-archive/releases/download/clips-kasey-chambers/kasey-screaming-rage.mp4",
+   "then": {
+    "video": "https://github.com/deanxenos474-netizen/rage-archive/releases/download/clips-kasey-chambers/kasey-come-as-you-are-intro.mp4"
+   },
+   "bumper": 2
   }
  },
  "charts": {}
