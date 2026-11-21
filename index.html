@@ -52,6 +52,8 @@ h1 em { font-style: normal; background: linear-gradient(100deg, var(--accent), v
 .views { display: flex; gap: 4px; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none }
 .views button { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted); font-weight: 600; padding: 10px 14px; cursor: pointer; margin-bottom: -1px; white-space: nowrap }
 .views button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--hot) }
+.views a.faq-tab { margin-left: auto; align-self: center; color: var(--accent); font-weight: 600; padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; text-decoration: none; white-space: nowrap; position: sticky; right: 0; background: var(--bg); box-shadow: -12px 0 10px var(--bg) }   /* stays in view when the tabs scroll on a phone */
+.views a.faq-tab:hover { border-color: var(--accent) }
 .views .pill { font: 500 11px var(--mono); color: var(--bg); background: var(--hot); border-radius: 999px; padding: 1px 6px; margin-left: 6px; vertical-align: 1px }
 
 /* controls */
@@ -301,6 +303,7 @@ ol.steps a { color: var(--accent) }
     <button role="tab" id="v-songs" aria-selected="true">Songs A–Z</button>
     <button role="tab" id="v-bc" aria-selected="false">By broadcast date</button>
     <button role="tab" id="v-up" aria-selected="false">Upcoming<span class="pill" id="up-n" hidden></span></button>
+    <a class="faq-tab" href="#faq">FAQ</a>
   </nav>
 </div>
 
