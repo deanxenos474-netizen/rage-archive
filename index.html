@@ -489,6 +489,13 @@ ol.steps a { color: var(--accent) }
       <label class="f" for="n-start">Start at <input type="number" id="n-start" autocomplete="off" min="0" step="0.1"> seconds</label>
       <label class="f" for="n-end">Stop at <input type="number" id="n-end" autocomplete="off" min="0" step="0.1"> seconds (leave both empty to play the whole clip)</label>
       <label class="f" for="n-logo" style="text-transform:none;letter-spacing:0;font:13px/1.35 var(--body);align-items:flex-start"><input type="checkbox" id="n-logo" style="margin-top:2px"> Show the rage logo during the intro</label>
+      <p class="lbl">Second part (optional): plays after the first, then the song</p>
+      <div class="line"><input type="url" id="n-link2" autocomplete="off" placeholder="YouTube or Vimeo link (or a direct .mp4 link)" aria-label="Second part video link"></div>
+      <label class="f" for="n-start2">Start at <input type="number" id="n-start2" autocomplete="off" min="0" step="0.1"> seconds</label>
+      <label class="f" for="n-end2">Stop at <input type="number" id="n-end2" autocomplete="off" min="0" step="0.1"> seconds</label>
+      <label class="f" for="n-bump">Between the two parts
+        <select id="n-bump"><option value="1">rage bumper 1</option><option value="2">rage bumper 2</option><option value="0">nothing (straight on)</option></select>
+      </label>
       <p class="lbl">Plays on these broadcasts <button class="btn" type="button" id="n-new" hidden>New intro for another night</button></p>
       <div class="introdates" id="n-dates"><span class="count">Loading…</span></div>
       <div class="actions"><button class="btn primary" id="n-save" type="button">Save intro</button><button class="btn" id="n-del" type="button">Remove from ticked broadcasts</button></div>
@@ -1799,7 +1806,7 @@ ol.steps a { color: var(--accent) }
   function afterEnd() {
     if (!tv) return;
     if (tv.sting) return step(1);
-    if (tv.inIntro) return play(tv.pos, true, true);   // intro done: now the song
+    if (tv.inIntro) { const nx = introNext(tv.intros[tv.playable[tv.pos]], tv.inIntro); return nx ? play(tv.pos, true, false, nx) : play(tv.pos, true, true); }   // next part of the intro, or the song
     const it = tv.items[tv.playable[tv.pos]], nk = tv.playable[tv.pos + 1], nx = nk != null && tv.items[nk];
     const vidNo = tv.playable.slice(0, tv.pos + 1).filter(j => !tv.items[j].bumper).length;
     if (!it.bumper && nx && !nx.bumper && vidNo % STING_EVERY === 0) playSting(nx); else step(1);
@@ -1812,18 +1819,25 @@ ol.steps a { color: var(--accent) }
     $("tv-now").innerHTML = `rage<small>Next: ${esc(nx.a)} – ${esc(nx.t)}</small>`;
     $("tv-prev").disabled = false;
   }
-  const introMedia = x => ({ yt: x.yt, video: x.video, start: x.start, end: x.end, bare: !x.logo, logoAt: 8.2 });
-  function play(p, autoplay, noIntro) {
+  const introMedia = (x, logo) => ({ yt: x.yt, video: x.video, start: x.start, end: x.end, bare: !logo, logoAt: 8.2 });
+  /* an intro can come in two parts (x.then), with a rage bumper between them (x.bumper): tv.inIntro is the stage
+     playing, 1 = first part, 2 = the bumper, 3 = second part (0 = not in an intro) */
+  const bumpNo = x => x.bumper === true ? 1 : +x.bumper || 0;   // which bumper plays between the parts (true = 1, from before there was a choice)
+  const introNext = (x, stage) => stage === 1 && x.then ? (x.bumper ? 2 : 3) : stage === 2 ? 3 : 0;
+  function play(p, autoplay, noIntro, stage = 1) {
     if (!tv) return;
     tv.sting = false;
     tv.pos = Math.max(0, Math.min(tv.playable.length - 1, p));
     const k = tv.playable[tv.pos], it = tv.items[k];
     const intro = !noIntro && tv.intros[k];
-    tv.inIntro = !!intro;
+    tv.inIntro = intro ? stage : 0;
     if (intro) {
-      tv.player.load(introMedia(intro), { a: "", t: "" }, autoplay);
-      if (hasVideo(it)) tv.player.prepare(mediaFor(it.sid));
-      $("tv-now").innerHTML = `Intro<small>Then: ${esc(it.a)} – ${esc(it.t)}</small>`;
+      const m = stage === 2 ? { video: STINGS[bumpNo(intro) - 1] || STINGS[0], bare: true } : introMedia(stage === 3 ? intro.then : intro, intro.logo);
+      tv.player.load(m, { a: "", t: "" }, autoplay);
+      // get the next thing ready: the second part while the first part or the bumper plays, else the song
+      if (stage < 3 && intro.then) tv.player.prepare(introMedia(intro.then, intro.logo));
+      else if (hasVideo(it)) tv.player.prepare(mediaFor(it.sid));
+      $("tv-now").innerHTML = `${stage === 2 ? "rage" : intro.then ? `Intro, part ${stage === 3 ? 2 : 1} of 2` : "Intro"}<small>Then: ${esc(it.a)} – ${esc(it.t)}</small>`;
       $("tv-prev").disabled = tv.pos === 0; $("tv-next").disabled = false; $("tv-song").disabled = it.i == null;
       document.querySelectorAll("#tv-queue button").forEach(bt => bt.setAttribute("aria-current", String(+bt.dataset.k === k)));
       document.querySelector(`#tv-queue button[data-k="${k}"]`)?.scrollIntoView({ block: "nearest" });
@@ -1959,7 +1973,8 @@ ol.steps a { color: var(--accent) }
   /* ---------- intros: a guest programmer's or host's introduction before a song, on chosen broadcasts only ----------
      Stored in media.json "intros" by broadcast link and position in its running order: { "b-20090801-1/42": { sid, yt|video, start, end, logo } } */
   const introKey = (b, p) => `${linkOf(b, false)}/${p}`;
-  const sameIntro = (a, b) => a && b && (a.yt || "") === (b.yt || "") && (a.video || "") === (b.video || "") && (a.start || 0) === (b.start || 0) && (a.end || 0) === (b.end || 0);
+  const samePart = (a, b) => (a.yt || "") === (b.yt || "") && (a.video || "") === (b.video || "") && (a.start || 0) === (b.start || 0) && (a.end || 0) === (b.end || 0);
+  const sameIntro = (a, b) => a && b && samePart(a, b) && !a.then === !b.then && (!a.then || (samePart(a.then, b.then) && bumpNo(a) === bumpNo(b)));
   // every place this song sits in an aired broadcast's running order
   function introSpots(i) {
     const ids = [...new Set([i, ...(members.get(i) || []), ...(includedBy.get(i) || [])].flatMap(j => plays.get(j) || []))].sort((a, b) => a - b);
@@ -1981,6 +1996,10 @@ ol.steps a { color: var(--accent) }
       $("n-link").value = first ? (first.yt ? "https://www.youtube.com/watch?v=" + first.yt : first.video || "") : "";
       $("n-start").value = first && first.start ? first.start : ""; $("n-end").value = first && first.end ? first.end : "";
       $("n-logo").checked = !!(first && first.logo);
+      const t2 = first && first.then;
+      $("n-link2").value = t2 ? (t2.yt ? "https://www.youtube.com/watch?v=" + t2.yt : t2.video || "") : "";
+      $("n-start2").value = t2 && t2.start ? t2.start : ""; $("n-end2").value = t2 && t2.end ? t2.end : "";
+      $("n-bump").value = String(t2 ? bumpNo(first) : 1);
       const per = {}; spots.forEach(s => { per[s.b.i] = (per[s.b.i] || 0) + 1; });
       const nth = {}, ORD = ["1st", "2nd", "3rd", "4th", "5th"];
       $("n-dates").innerHTML = spots.length ? spots.map(s => {
@@ -2010,6 +2029,16 @@ ol.steps a { color: var(--accent) }
     if (id) entry.yt = id; else entry.video = direct;
     if (st) entry.start = st; if (en) entry.end = en;
     if ($("n-logo").checked) entry.logo = true;
+    const raw2 = $("n-link2").value.trim();
+    if (raw2) {
+      const id2 = ytId(raw2), direct2 = id2 ? null : safeLink(raw2);
+      if (!id2 && !direct2) { status("The second part's link isn't a YouTube or Vimeo link or a video file link.", "err"); return; }
+      const st2 = $("n-start2").value === "" ? 0 : +$("n-start2").value, en2 = $("n-end2").value === "" ? 0 : +$("n-end2").value;
+      if (!Number.isFinite(st2) || !Number.isFinite(en2) || st2 < 0 || en2 < 0 || (en2 && en2 <= st2)) { status("Check the second part's start and stop times (stop has to be after start).", "err"); return; }
+      entry.then = id2 ? { yt: id2 } : { video: direct2 };
+      if (st2) entry.then.start = st2; if (en2) entry.then.end = en2;
+      if (+$("n-bump").value) entry.bumper = +$("n-bump").value;
+    }
     for (const k of keys) drafts.intros[k] = entry;
     introPick = { i: cur, key: keys[0] };   // keep showing the intro just saved
     saveDrafts(); refreshAll(); renderIntroUI();
