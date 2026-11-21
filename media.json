@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-21T04:12:19.344Z",
+ "saved": "2026-11-21T04:13:48.962Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1747,6 +1747,14 @@
    "aspect": "4:3",
    "logoAt": 7,
    "verified": true
+  },
+  "6995357c2b65": {
+   "artist": "Current Joys",
+   "title": "Blood On The Stereo",
+   "yt": "j-lJwLnR5W8",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/b8/d2/e1/b8d2e103-75e5-5c3b-8592-aa0552fc341f/193436482677_ROSEBUD.jpg/3000x3000bb-100.jpg",
+   "logoAt": 18,
+   "verified": true
   }
  },
  "merges": {
@@ -3063,6 +3071,12 @@
    "yr": 2026,
    "g": [
     "Rock"
+   ]
+  },
+  "6995357c2b65": {
+   "yr": 2026,
+   "g": [
+    "Indie"
    ]
   }
  },
