@@ -53,6 +53,31 @@ def is_caps(a):
     return core == core.upper()
 
 
+# artists with a set spelling that the listings don't always use ("MALI JOSE", "Asap Rocky", "Ty Dolla Sign").
+# Applied to the shown name after the capitals are fixed, so song ids stay the same.
+STYLED = [(re.compile(p, re.I), r) for p, r in [
+    (r"\bmali jo[s$]e\b", "MALI JO$E"),
+    (r"\ba[s$]ap(?= )", "A$AP"),
+    (r"\btravi[s$] scott\b", "Travis Scott"),
+    (r"\bbbno[s$](?![\w$])", "bbno$"),
+    (r"\bty dolla (?:\$ign|sign)\b", "Ty Dolla $ign"),
+    (r"\bmanu crook[s$](?![\w$])", "Manu Crook$"),
+    (r"^angel du[s$]t\b", "Angel Du$t"),   # the band; "Savage featuring Angel Dust" is someone else
+    (r"\bbeyonc[eé](?! knowles)\b", "Beyoncé"),
+    (r"\br[oö]yksopp\b", "Röyksopp"),
+    (r"\bemeli sand[eé]\b", "Emeli Sandé"),
+    (r"(?<![\w])[aá]sgeir\b", "Ásgeir"),
+    (r"\btouch[eé] amor[eé]\b", "Touché Amoré"),
+    (r"\bgabriel garz.n-montano\b", "Gabriel Garzón-Montano"),
+]]
+
+
+def styled(a):
+    for rx, rep in STYLED:
+        a = rx.sub(lambda m, r=rep: r, a)
+    return a
+
+
 def clean_row(r):
     artist, title, label = (r + ["", "", ""])[:3]
     artist, title = (artist or "").strip(" -"), (title or "").strip(" -\"“”")
@@ -62,6 +87,7 @@ def clean_row(r):
     artist, title = NOTE.sub(" ", artist).strip(), NOTE.sub(" ", title).strip()   # "Shaggy   ***Please Note: ...***"
     artist = unthe(artist)   # "POGUES, THE ft. KIRSTY MacCOLL" -> "THE POGUES ft. KIRSTY MacCOLL"
     artist = re.sub(r"\s*[,;:]+$", "", artist)   # "The WEEKND," (a stray comma left after the name)
+    artist = re.sub(r"(?i)\bBeyonc(?=\s|$)", "Beyoncé", artist)   # a listing that cut off the "é"
     return artist, title, (label or "").strip()
 
 
@@ -329,7 +355,7 @@ def build(d, out_dir=ROOT):
             g = groups[k] = {"a": collections.Counter(), "t": collections.Counter(), "l": collections.Counter(),
                              "n": 0, "first": dt, "last": dt, "y": collections.Counter()}
         g["y"][int(dt[:4])] += 1
-        g["a"][smart_case(a)] += 1
+        g["a"][styled(smart_case(a))] += 1
         g["t"][t] += 1
         if l:
             g["l"][l] += 1
@@ -386,7 +412,7 @@ def build(d, out_dir=ROOT):
                 rank, a = split_rank(c[0])
                 trank, title = split_title_rank(c[1])
                 rank = rank or trank
-                rr.append([smart_case(a), title, c[2], song_id(a, title)] + ([rank] if rank else []))
+                rr.append([styled(smart_case(a)), title, c[2], song_id(a, title)] + ([rank] if rank else []))
         if rr:
             sp = p.get("sp")
             upcoming.append([int(p["date"].replace("-", "")), p.get("title") or "", p.get("url") or "", rr,
