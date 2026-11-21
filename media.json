@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-21T10:50:05.198Z",
+ "saved": "2026-11-21T10:51:27.000Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1639,6 +1639,7 @@
    "title": "Swat Team",
    "yt": "CG8_jqHjidc",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/58/99/f1/5899f1b4-674b-3033-9e12-14348a9de396/196873986029.jpg/3000x3000bb-100.jpg",
+   "aspect": "3:2",
    "logoAt": 7,
    "verified": true
   },
@@ -1672,6 +1673,7 @@
    "title": "Circles",
    "yt": "jQoZl3Yj1hQ",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/17/8e/2b/178e2b94-8f53-74b8-3642-7ef36502d5f5/1200214944070.jpg/4000x4000bb-100.jpg",
+   "aspect": "3:2",
    "logoAt": 7,
    "verified": true
   },
@@ -1752,6 +1754,7 @@
    "title": "Blood On The Stereo",
    "yt": "j-lJwLnR5W8",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/b8/d2/e1/b8d2e103-75e5-5c3b-8592-aa0552fc341f/193436482677_ROSEBUD.jpg/3000x3000bb-100.jpg",
+   "aspect": "3:2",
    "logoAt": 18,
    "verified": true
   },
@@ -1932,6 +1935,7 @@
    "title": "Lil' Obsession",
    "yt": "d3TvoiRmer4",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/4f/2a/14/4f2a1428-5a81-29b1-130d-d67214334fe2/1200214269661.jpg/3679x3679bb-100.jpg",
+   "aspect": "3:2",
    "logoAt": 7,
    "verified": true
   },
@@ -1949,6 +1953,7 @@
    "title": "Red Room",
    "yt": "p46Tm9-7i7E",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/11/a3/70/11a37079-8d3b-a414-0319-9426b70bab2a/5054429148053.png/4078x4078bb-100.jpg",
+   "aspect": "3:2",
    "logoAt": 19,
    "verified": true
   },
@@ -2032,6 +2037,7 @@
    "title": "Man I Need",
    "yt": "oIv_Y2RPQ_A",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/08/e2/21/08e22164-7c0b-1522-818f-e0e74f62dc49/25UMGIM69703.rgb.jpg/3000x3000bb-100.jpg",
+   "aspect": "3:2",
    "logoAt": 14,
    "verified": true
   },
