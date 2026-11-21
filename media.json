@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-21T04:16:36.093Z",
+ "saved": "2026-11-21T04:21:41.643Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -1755,6 +1755,15 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/b8/d2/e1/b8d2e103-75e5-5c3b-8592-aa0552fc341f/193436482677_ROSEBUD.jpg/3000x3000bb-100.jpg",
    "logoAt": 18,
    "verified": true
+  },
+  "10941b2e6069": {
+   "artist": "Current Joys",
+   "title": "Knight Of Swords",
+   "yt": "agtzn80TuxQ",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/b8/d2/e1/b8d2e103-75e5-5c3b-8592-aa0552fc341f/193436482677_ROSEBUD.jpg/3000x3000bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -3074,6 +3083,12 @@
    ]
   },
   "6995357c2b65": {
+   "yr": 2026,
+   "g": [
+    "Indie"
+   ]
+  },
+  "10941b2e6069": {
    "yr": 2026,
    "g": [
     "Indie"
