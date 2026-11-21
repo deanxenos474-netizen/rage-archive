@@ -1464,7 +1464,9 @@ ol.steps a { color: var(--accent) }
         // always a 16:9 box, like YouTube's: a 4:3 file sits in the middle with black at the sides (and the box is the
         // right size before the file has loaded, so the cover doesn't jump)
         v.style.aspectRatio = "16 / 9";
-        v.hidden = false; v.src = P.m.video; if (autoplay) v.play().catch(() => {}); else showPoster(true);   // the album cover until play is pressed, like YouTube videos
+        // playing straight on: plain black until the new file's first frame is up (the "playing" event lifts it), else
+        // the element keeps showing the last frame of whatever it played before (another broadcast, the last clip)
+        v.hidden = false; v.src = P.m.video; if (autoplay) { showPoster(true, true); v.play().catch(() => { if (P.kind === "video" && v.paused) showPoster(true); }); } else showPoster(true);   // the album cover until play is pressed, like YouTube videos
         if (P.m.start) v.addEventListener("loadedmetadata", () => { if (P.kind === "video") v.currentTime = +P.m.start; }, { once: true });
       }
       requestAnimationFrame(layout);
