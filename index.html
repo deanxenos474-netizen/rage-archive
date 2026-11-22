@@ -815,6 +815,7 @@ ol.steps a { color: var(--accent) }
       const c = canon(i), cid = S[c].id;
       if (!media.has(cid) || cid === sid) media.set(cid, x);
     }
+    setTimeout(coverEarly, 0);
   }
 
   /* ---------- thumbnails ---------- */
@@ -824,6 +825,8 @@ ol.steps a { color: var(--accent) }
     const play = m && (m.yt || m.video) ? '<span class="play" aria-label="Has video"></span>' : "";
     const src = coverSrc(m, isClipId(sid));
     const letter = esc((sortKey(artist)[0] || "#").toUpperCase());
+    // no preview to be had (not an Apple cover): the cover itself straight away, over the letter, without queueing
+    if (src && src === m.cover && !coverPrev(src)) return `<span class="thumb">${letter}<img class="full" src="${esc(src)}" alt="" onerror="this.remove()">${play}</span>`;
     if (src && src === m.cover) return `<span class="thumb" data-full="${esc(src)}">${coverFirst(src, letter, true)}${play}</span>`;
     if (src) return `<span class="thumb"><img src="${esc(src)}" alt="" loading="lazy" onerror="this.remove()">${play}</span>`;
     return `<span class="thumb" aria-hidden="true">${letter}${play}</span>`;
@@ -846,6 +849,20 @@ ol.steps a { color: var(--accent) }
   function coverFirst(u, letter, lazy) {
     const p = coverPrev(u);
     return p ? `<img src="${esc(p)}" alt=""${lazy ? ' loading="lazy"' : ""} onerror="this.remove()">` : letter;
+  }
+  /* covers with no preview are fetched in the background as soon as the site opens, three at a time, so they're already
+     in when their row is drawn (up to 60 of them; the pictures are kept so the browser doesn't drop them) */
+  const earlyGot = new Map(); let earlyQ = [], earlyBusy = 0;
+  function coverEarly() {
+    for (const m of media.values()) {
+      if (earlyGot.size >= 60) break;
+      if (m.cover && safeLink(m.cover) && !earlyGot.has(m.cover) && !coverPrev(m.cover)) { earlyGot.set(m.cover, null); earlyQ.push(m.cover); }
+    }
+    while (earlyBusy < 3 && earlyQ.length) {
+      const u = earlyQ.shift(), im = new Image(); earlyBusy++; earlyGot.set(u, im);
+      im.onload = im.onerror = () => { earlyBusy--; coverEarly(); };
+      im.src = u;
+    }
   }
   const fullGot = new Map(), fullQ = new Set();   // fullGot: link -> promise of its loaded picture
   let fullBusy = 0;
