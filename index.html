@@ -1463,12 +1463,19 @@ ol.steps a { color: var(--accent) }
       if (P.kind !== "yt" || !P.yt || !P.ytReady || !P.yt.getCurrentTime) return;
       let t, st; try { t = P.yt.getCurrentTime() || 0; st = P.yt.getPlayerState(); } catch { return; }
       const moving = P.lastT != null && t > P.lastT + 0.03; P.lastT = t;
+      /* starting or resuming, YouTube says "buffering" for a moment after the video's own time has begun to move. Taken
+         for an ad, that uncropped YouTube's title and channel picture for a fifth of a second. So while it's buffering,
+         time has to keep moving (3 looks in a row), and not just carry on from where the real video was paused */
+      P.movN = moving ? (P.movN || 0) + 1 : 0;
+      if (st === 1) P.realT = t;
+      const carryOn = P.started && P.realT != null && t >= P.realT - 0.5 && t < P.realT + 2;
+      const adTime = moving && (st !== 3 || P.movN >= 3 && !carryOn);
       if (st === 1 || st === 3) P.fresh = false;
       if (st === 3) P.sawBuf = true;
       if (st === 1) {
         P.started = true; setAd(false);
         if (P.want && !wrap.classList.contains("playing")) { setPlaying(true); revealSoon(); problem(""); wrap.classList.remove("paused"); }
-      } else if (P.want && st !== 2 && st !== 0 && st !== 5 && P.playOnCue == null && (moving || st === -1 && P.sawBuf || !P.started && performance.now() - (P.askAt || 0) > 1500)) setAd(true);
+      } else if (P.want && st !== 2 && st !== 0 && st !== 5 && P.playOnCue == null && (adTime || st === -1 && P.sawBuf || !P.started && performance.now() - (P.askAt || 0) > 1500)) setAd(true);
       /* an ad: time moves, or YouTube goes back to "not started" after loading, or (some ads report nothing useful)
          the video still hasn't started 1.5s after play was asked for: then step aside and show whatever YouTube shows */
       if (st === 0 && P.want && !P.endFired && !P.fresh) { P.endFired = true; P.want = false; setAd(false); setPlaying(false); showPoster(true); opts.onEnded?.(); }
@@ -1508,7 +1515,7 @@ ol.steps a { color: var(--accent) }
       P.chart = song.rank && song.chart && !(m && (m.bare || m.burned)) ? +song.rank : 0; l0.textContent = P.chart ? `NO.${P.chart}` : "";
       img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0"); tfg.setAttribute("opacity", "0");
       P.reveal = null; setPlaying(false); setLoading(!!autoplay); showPoster(false); problem(""); wrap.classList.remove("paused"); wrap.classList.toggle("yt", !!P.m.yt);
-      P.want = !!autoplay; P.endFired = false; P.lastT = null; P.vol = null; P.fresh = true; P.sawBuf = false; P.started = false; P.askAt = performance.now(); P.loadNo = (P.loadNo || 0) + 1; setAd(false);   // fresh: ignore "ended" until this video has started loading
+      P.want = !!autoplay; P.endFired = false; P.lastT = null; P.movN = 0; P.realT = null; P.vol = null; P.fresh = true; P.sawBuf = false; P.started = false; P.askAt = performance.now(); P.loadNo = (P.loadNo || 0) + 1; setAd(false);   // fresh: ignore "ended" until this video has started loading
       const vm = !P.m.yt && vmId(P.m.video);
       if (P.sp && !spareSame(P.sp, P.m) && P.m.yt) spareDrop();
       if (!vm) vmStop();
