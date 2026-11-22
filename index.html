@@ -81,6 +81,7 @@ label.f { display: flex; align-items: center; gap: 8px; font: 500 12px var(--mon
 .item:hover { background: var(--raise) }
 .thumb { width: 40px; height: 40px; border-radius: 6px; background: var(--raise); display: grid; place-items: center; overflow: hidden; font: 600 15px var(--display); color: var(--muted); position: relative }
 .thumb img { width: 100%; height: 100%; object-fit: cover; display: block }
+.thumb .full, .d-cover .full { position: absolute; inset: 0 }   /* the full-quality cover, over its preview */
 .thumb .play { position: absolute; right: 2px; bottom: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--hot); display: grid; place-items: center }
 .thumb .play::after { content: ""; border-left: 5px solid #fff; border-top: 3px solid transparent; border-bottom: 3px solid transparent; margin-left: 1px }
 .t { min-width: 0 }
@@ -140,7 +141,7 @@ dialog::backdrop { background: rgb(5 6 14 / .6) }
 .d-in { padding: 22px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px }   /* minmax: the video can't push the window wider */
 .d-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: start }
 .d-head.nocover { grid-template-columns: minmax(0, 1fr) auto }
-.d-cover { width: 96px; height: 96px; border-radius: 10px; background: var(--raise); overflow: hidden; display: grid; place-items: center; font: 800 34px var(--display); color: var(--muted) }
+.d-cover { position: relative; width: 96px; height: 96px; border-radius: 10px; background: var(--raise); overflow: hidden; display: grid; place-items: center; font: 800 34px var(--display); color: var(--muted) }
 .d-cover img { width: 100%; height: 100%; object-fit: cover; display: block }
 .d-head h2 { font: 800 24px/1.1 var(--display); margin: 0; text-wrap: balance; overflow-wrap: anywhere }
 .d-head p { margin: 4px 0 0; color: var(--muted) }
@@ -822,9 +823,76 @@ ol.steps a { color: var(--accent) }
     const m = mediaFor(sid);
     const play = m && (m.yt || m.video) ? '<span class="play" aria-label="Has video"></span>' : "";
     const src = coverSrc(m, isClipId(sid));
+    const letter = esc((sortKey(artist)[0] || "#").toUpperCase());
+    if (src && src === m.cover) return `<span class="thumb" data-full="${esc(src)}">${coverFirst(src, letter, true)}${play}</span>`;
     if (src) return `<span class="thumb"><img src="${esc(src)}" alt="" loading="lazy" onerror="this.remove()">${play}</span>`;
-    return `<span class="thumb" aria-hidden="true">${esc((sortKey(artist)[0] || "#").toUpperCase())}${play}</span>`;
+    return `<span class="thumb" aria-hidden="true">${letter}${play}</span>`;
   }
+  /* Covers are saved at full size (3 MB each, up to 25 MB), so a small preview (or the artist's letter) fills the square
+     first and the full cover, exactly as saved, goes over it once it has loaded. Anything with data-full gets it: rows
+     only while on screen, a few at a time; the song window's cover straight away. A full cover that fails is tried
+     again twice; the preview stays meanwhile. */
+  function coverPrev(u) {
+    let x; try { x = new URL(u); } catch { return null; }
+    if (/(^|\.)mzstatic\.com$/.test(x.hostname)) {         // Apple: any size of the same picture can be asked for
+      const t = /^(\/image\/thumb\/.+)\/[^/]+$/.exec(x.pathname);
+      if (t) return `${x.origin}${t[1]}/300x300bb.jpg`;
+      const r = /^\/(?:[a-z]{2}\/)?r\d+\/(?:0\/)?(.+)$/.exec(x.pathname);   // the original upload (a1.mzstatic.com/r40/...)
+      return r ? `https://is1-ssl.mzstatic.com/image/thumb/${r[1]}/300x300bb.jpg` : null;
+    }
+    if (/\/cdn\/shop\/|(^|\.)cdn\.shopify\.com/.test(x.hostname + x.pathname)) { x.searchParams.set("width", "300"); x.pathname = x.pathname.replace(/_\d+x\d*(?=\.\w+$)/, ""); return x.href; }   // Shopify record shops
+    return null;                                             // anywhere else: the letter until the cover is in
+  }
+  function coverFirst(u, letter, lazy) {
+    const p = coverPrev(u);
+    return p ? `<img src="${esc(p)}" alt=""${lazy ? ' loading="lazy"' : ""} onerror="this.remove()">` : letter;
+  }
+  const fullGot = new Map(), fullQ = new Set();   // fullGot: link -> promise of its loaded picture
+  let fullBusy = 0;
+  function fullLoad(u, tries = 3) {
+    if (!fullGot.has(u)) {
+      const go = n => new Promise((ok, no) => {
+        const im = new Image(); im.alt = ""; im.className = "full"; im.decoding = "async";
+        im.onload = () => ok(im);
+        im.onerror = () => n > 1 ? setTimeout(() => go(n - 1).then(ok, no), 3000) : no();
+        im.src = u;
+      });
+      const pr = go(tries).then(im => ({ im }), () => { fullGot.delete(u); return null; });
+      fullGot.set(u, pr);
+    }
+    return fullGot.get(u);
+  }
+  function fullShow(el) {
+    const u = el.dataset.full;
+    return fullLoad(u).then(got => {
+      if (!got || !el.isConnected || el.dataset.full !== u || el.querySelector(".full")) return;
+      let im = got.im; got.im = null;             // the loaded picture itself goes in the first place it's needed, copies (from the browser's cache) in others
+      if (!im) { im = new Image(); im.alt = ""; im.className = "full"; im.decoding = "async"; im.onerror = () => im.remove(); im.src = u; }
+      el.insertBefore(im, el.querySelector(".play"));
+    });
+  }
+  function fullPump() {
+    while (fullBusy < 4 && fullQ.size) {
+      const top = document.querySelector("dialog[open]"), all = [...fullQ];
+      const el = (top && all.find(e => top.contains(e))) || all[0]; fullQ.delete(el);   // an open window's covers go before the list behind it
+      if (!el.isConnected) continue;
+      fullIO.unobserve(el); fullBusy++;
+      let held = true; const free = () => { if (held) { held = false; fullBusy--; fullPump(); } };
+      setTimeout(free, 12000);                    // one huge cover doesn't hold up the rest
+      fullShow(el).then(free, free);
+    }
+  }
+  const fullIO = new IntersectionObserver(es => { for (const e of es) {
+    if (!e.isIntersecting) fullQ.delete(e.target);
+    else if (fullGot.has(e.target.dataset.full)) { fullIO.unobserve(e.target); fullShow(e.target); }   // already loaded or on its way: no need to queue
+    else fullQ.add(e.target);
+  } fullPump(); }, { rootMargin: "80px" });
+  new MutationObserver(ms => {
+    for (const mu of ms) {
+      for (const n of mu.addedNodes) if (n.nodeType === 1) { if (n.matches(".thumb[data-full]")) fullIO.observe(n); for (const t of n.querySelectorAll(".thumb[data-full]")) fullIO.observe(t); }
+      for (const n of mu.removedNodes) if (n.nodeType === 1) { if (n.matches(".thumb[data-full]")) { fullIO.unobserve(n); fullQ.delete(n); } for (const t of n.querySelectorAll(".thumb[data-full]")) { fullIO.unobserve(t); fullQ.delete(t); } }
+    }
+  }).observe(document.body, { childList: true, subtree: true });
 
   /* ---------- song list ---------- */
   function apply() {
@@ -1228,7 +1296,8 @@ ol.steps a { color: var(--accent) }
     // covers YouTube's own title/thumbnail screen before it starts and its suggestions screen after it ends
     function showPoster(on, black) {
       if (on && black) { poster.hidden = false; poster.style.backgroundImage = "none"; return; }   // just black over YouTube's own loading screen
-      const src = on && coverSrc(P.m, P.noArt); poster.hidden = !src; if (src) poster.style.backgroundImage = `url("${src.replace(/"/g, "%22")}")`; }
+      const src = on && coverSrc(P.m, P.noArt), pv = src && src === P.m.cover && coverPrev(src), css = u => `url("${u.replace(/"/g, "%22")}")`;
+      poster.hidden = !src; if (src) poster.style.backgroundImage = css(src) + (pv ? ", " + css(pv) : ""); }   // the preview shows behind until the full cover is in
     // a plain message over the picture when a video can't play, with a way to watch it elsewhere
     const pmsg = wrap.querySelector(".pmsg");
     function problem(text) {
@@ -1725,7 +1794,9 @@ ol.steps a { color: var(--accent) }
     const s = S[cur], m = media.get(s.id) || {};
     const cov = $("d-cover"), src = coverSrc(m, s.kind === "clip");
     $("d-cover").closest(".d-head").classList.toggle("noart", s.kind === "clip");
-    cov.innerHTML = src ? `<img src="${esc(src)}" alt="" onerror="this.remove()">` : esc((sortKey(s.a)[0] || "#").toUpperCase());
+    const letter = esc((sortKey(s.a)[0] || "#").toUpperCase());
+    if (src && src === m.cover) { if (cov.dataset.full !== src || !cov.firstChild) { cov.dataset.full = src; cov.innerHTML = coverFirst(src, letter); fullShow(cov); } }
+    else { delete cov.dataset.full; cov.innerHTML = src ? `<img src="${esc(src)}" alt="" onerror="this.remove()">` : letter; }
     const key = JSON.stringify([s.id, m.yt, m.video, m.aspect, m.logoAt, m.start, m.end, m.fade, m.fadeIn, m.burned, s.kind, m.cover]);
     if (songKey !== key) {           // don't restart a playing video when nothing about it changed
       songKey = key;
