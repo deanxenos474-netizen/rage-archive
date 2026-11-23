@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-23T13:18:34.380Z",
+ "saved": "2026-11-23T13:19:53.192Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2593,6 +2593,15 @@
    "yt": "1qEEIooYX3k",
    "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
    "aspect": "4:3",
+   "burned": true,
+   "verified": true
+  },
+  "112f5a6d8efb": {
+   "artist": "Kate Bush",
+   "title": "Interviewed on Countdown, 1979",
+   "yt": "467E8ufwFm8",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
+   "aspect": "4:3-in-16:9",
    "burned": true,
    "verified": true
   }
