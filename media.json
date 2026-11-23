@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-23T14:32:09.362Z",
+ "saved": "2026-11-23T14:40:03.526Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2668,6 +2668,15 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "4523396add35": {
+   "artist": "Public Image LTD",
+   "title": "Public Image (Live)",
+   "yt": "KX0t595Y3XI",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/04/65/2f/mzi.lqqldfpo.jpg/1500x1500bb-100.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -4532,6 +4541,12 @@
   },
   "24b4b2784fc3": {
    "yr": 1980,
+   "g": [
+    "Rock"
+   ]
+  },
+  "4523396add35": {
+   "yr": 1978,
    "g": [
     "Rock"
    ]
