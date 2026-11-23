@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-23T11:30:16.031Z",
+ "saved": "2026-11-23T11:31:48.877Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2397,6 +2397,14 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/5a/8e/4b/5a8e4b64-b670-1bcb-ac89-3e6035630533/5063807108787_cover.jpg/3000x3000bb-100.jpg",
    "logoAt": 7,
    "verified": true
+  },
+  "f021eefcc666": {
+   "artist": "Pacific Avenue",
+   "title": "Lucy",
+   "yt": "akRTS72H7k8",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/a3/bc/8b/a3bc8bf1-ebb4-e4af-9d26-a7de80f84553/4099964132762.jpg/4000x4000bb-100.jpg",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -4130,6 +4138,12 @@
    "yr": 2025,
    "g": [
     "Metal"
+   ]
+  },
+  "f021eefcc666": {
+   "yr": 2024,
+   "g": [
+    "Indie"
    ]
   }
  },
