@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-23T11:35:30.933Z",
+ "saved": "2026-11-23T11:39:33.417Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2421,6 +2421,14 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/5d/28/e1/5d28e100-c707-fff7-8caf-74e6c69bfffd/8721465967180.png/6000x6000bb-100.jpg",
    "logoAt": 7,
    "verified": true
+  },
+  "23b4829104e1": {
+   "artist": "Parcels",
+   "title": "Leaveyourlove",
+   "yt": "SW4GXi4v3DU",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/17/dc/43/17dc433f-27cb-3cd7-1469-2184ae99b7b2/5056556160120_cover.jpg/3000x3000bb-100.jpg",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -4172,6 +4180,12 @@
    "yr": 2026,
    "g": [
     "Rock"
+   ]
+  },
+  "23b4829104e1": {
+   "yr": 2025,
+   "g": [
+    "Indie"
    ]
   }
  },
