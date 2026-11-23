@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-23T13:54:07.023Z",
+ "saved": "2026-11-23T13:58:48.723Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2645,7 +2645,11 @@
   "077f210b0d82": {
    "artist": "The Angels",
    "title": "Out Of The Blue (Live On Countdown, 1979)",
-   "cover": "https://www.sanity.com.au/media/Images/fullimage/424152/SDC_2349847_2018-26-1--00-16-16.jpg"
+   "yt": "tSykXrHegdg",
+   "cover": "https://www.sanity.com.au/media/Images/fullimage/424152/SDC_2349847_2018-26-1--00-16-16.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
