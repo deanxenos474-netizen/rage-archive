@@ -370,9 +370,9 @@ ol.steps a { color: var(--accent) }
   </section>
   <section class="wanted" id="wanted" hidden aria-labelledby="wanted-h">
     <h2 id="wanted-h">Got footage? Help fill the gaps</h2>
-    <p>Everything listed below has no video on this site yet. If you have any of it, especially <b>off-air recordings of rage or Countdown, without archive watermarks</b>, we'd love to hear from you. Home tapes are perfect: the rage logo is fine, watermarks and timers from footage libraries aren't.</p>
+    <p>Everything listed below has no video on this site yet. What helps most is <b>recordings of rage broadcasts</b>: a whole night, or even part of one, taped or recorded off air. One recording can fill in dozens of songs at once and shows exactly which version rage played. Home tapes are perfect: the rage logo is fine, watermarks and timers from footage libraries aren't. (Single videos already on YouTube we can usually find ourselves.)</p>
     <p><b>Spotted a wrong video?</b> Some clips here are our best guess at what rage showed. If you know a video on the site isn't the one rage played, open that song and press <b>"Wrong video? Send us the right one"</b>, or use the button below.</p>
-    <div class="actions"><button class="btn primary" id="wanted-go" type="button">Tell us what you have</button><span class="count" id="wanted-n"></span></div>
+    <div class="actions"><button class="btn primary" id="wanted-go" type="button">Tell us about your recording</button><span class="count" id="wanted-n"></span></div>
     <div class="edit" id="wanted-admin" hidden>
       <h3>Contact form (admin)</h3>
       <p class="hint">Make a free form at <a href="https://formspree.io" target="_blank" rel="noopener" style="color:var(--accent)">formspree.io</a> and paste its link here (it looks like https://formspree.io/f/abcdwxyz). Messages then go to the email address you signed up with. It isn't shown on the site. Save, then Publish.</p>
@@ -414,7 +414,7 @@ ol.steps a { color: var(--accent) }
     <div id="d-video"></div>
     <p class="verified" id="d-verified" hidden>✓ Verified: this is the clip rage showed.</p>
     <p class="lowq" id="d-lowq" hidden>This is a low quality video. <button type="button" id="d-lowq-msg">Message us</button> if you have a high quality one.</p>
-    <button class="flag" id="d-help" type="button" hidden>Have this clip? Let us know</button>
+    <button class="flag" id="d-help" type="button" hidden>Got a recording of this on rage? Let us know</button>
     <dl class="facts">
       <div><dt>Plays</dt><dd id="d-n"></dd></div>
       <div><dt>First</dt><dd id="d-first"></dd></div>
@@ -542,8 +542,8 @@ ol.steps a { color: var(--accent) }
     <div class="faq">
       <details open>
         <summary>I have rage footage to send</summary>
-        <p>We accept all footage, whether it's from yesterday or a VHS from 1987. Home recordings are perfect, rage logo and all: tell us what you have and when it was recorded, and we'll get back to you by email.</p>
-        <div class="actions"><button class="btn primary" type="button" data-faq-send="footage">Tell us what you have</button></div>
+        <p>We're mainly after recordings of rage broadcasts, whether it's last weekend or a VHS from 1987: a whole night is best, but part of one helps too. Home recordings are perfect, rage logo and all. Tell us which broadcast it is and how you recorded it, and we'll get back to you by email.</p>
+        <div class="actions"><button class="btn primary" type="button" data-faq-send="footage">Tell us about your recording</button></div>
       </details>
       <details>
         <summary>What does "✓ Verified" mean?</summary>
@@ -578,13 +578,17 @@ ol.steps a { color: var(--accent) }
 <dialog id="ff" aria-labelledby="ff-title">
   <div class="d-in">
     <div class="d-head nocover">
-      <div><h2 id="ff-title">Tell us what you have</h2><p>We read every message and reply by email.</p></div>
+      <div><h2 id="ff-title">Got a rage recording?</h2><p id="ff-sub">Recordings of whole broadcasts help us most. We read every message and reply by email.</p></div>
       <button class="x" id="ff-close" aria-label="Close">×</button>
     </div>
     <form class="edit" id="ff-form">
-      <label class="lbl2" for="ff-entry">Which entry or broadcast?<input type="text" id="ff-entry" name="entry" autocomplete="off" required maxlength="300"></label>
-      <label class="lbl2" for="ff-what">What do you have? (where it's from, e.g. taped off rage in 2009, and the quality)<textarea id="ff-what" name="message" rows="4" required maxlength="3000"></textarea></label>
-      <label class="lbl2" for="ff-link">Link to it, if it's online (optional)<input type="url" id="ff-link" name="link" autocomplete="off" maxlength="500"></label>
+      <label class="lbl2" for="ff-entry"><span id="ff-entry-l">Which broadcast? (the date, or roughly when, and anything you remember: a guest programmer, a special, Friday or Saturday night)</span><input type="text" id="ff-entry" name="entry" autocomplete="off" required maxlength="300"></label>
+      <div id="ff-rec" style="display:grid;gap:10px">
+        <label class="lbl2" for="ff-how-much">How much of it is there?<select id="ff-how-much" name="how_much"><option value="">Choose…</option><option>The whole broadcast</option><option>Part of a broadcast</option><option>A few clips</option><option>Not sure</option></select></label>
+        <label class="lbl2" for="ff-format">What is it on?<select id="ff-format" name="format"><option value="">Choose…</option><option>VHS or other tape</option><option>DVD recorder</option><option>Recorded file (TV tuner, PVR, IPTV)</option><option>Already uploaded online</option><option>Something else</option></select></label>
+      </div>
+      <label class="lbl2" for="ff-what"><span id="ff-what-l">Tell us more (how long it runs, the picture quality, anything that stands out)</span><textarea id="ff-what" name="message" rows="4" required maxlength="3000"></textarea></label>
+      <label class="lbl2" for="ff-link"><span id="ff-link-l">Link to it, if it's uploaded somewhere (archive.org, Google Drive, YouTube…) (optional)</span><input type="url" id="ff-link" name="link" autocomplete="off" maxlength="500"></label>
       <label class="lbl2" for="ff-name">Your name<input type="text" id="ff-name" name="name" autocomplete="name" maxlength="100"></label>
       <label class="lbl2" for="ff-email">Your email, so we can reply<input type="email" id="ff-email" name="email" autocomplete="email" required maxlength="200"></label>
       <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true">
@@ -1810,7 +1814,7 @@ ol.steps a { color: var(--accent) }
       $("d-lowq").hidden = !(has && m.lowq);
       $("d-lowq-msg").onclick = () => openFootage(`${s.a} – ${s.t}${s.l ? ` (${s.l})` : ""} [HIGHER QUALITY]`, false);
       $("d-help").hidden = ok;
-      $("d-help").textContent = has ? "Wrong video? Send us the right one" : "Have this clip? Let us know";
+      $("d-help").textContent = has ? "Wrong video? Send us the right one" : "Got a recording of this on rage? Let us know";
       $("d-help").onclick = () => openFootage(`${s.a} – ${s.t}${s.l ? ` (${s.l})` : ""}`, has); }
     $("d-meta").onclick = ev => { const b = ev.target.closest("[data-genre],[data-year]"); if (!b) return;
       qTouched = true; $("q").value = b.dataset.genre ? "genre: " + b.dataset.genre : "year: " + b.dataset.year; $("dlg").close(); setType("all"); setMode("songs"); apply(); window.scrollTo({ top: 0 }); };
@@ -2379,14 +2383,19 @@ ol.steps a { color: var(--accent) }
     let n = 0, total = 0; for (const s of S) { if (s.hidden) continue; total++; const m = media.get(s.id); if (!(m && (m.yt || m.video))) n++; }
     $("wanted-n").textContent = total ? `${fmt(n)} of ${fmt(total)} entries still need a video` : "";
     $("wanted-go").disabled = !formUrl();
-    $("wanted-go").textContent = formUrl() ? "Tell us what you have" : "Contact form coming soon";
+    $("wanted-go").textContent = formUrl() ? "Tell us about your recording" : "Contact form coming soon";
     $("wanted-admin").hidden = !admin;
     if (admin) $("wanted-form").value = effective("settings").formUrl || "";
   }
   function openFootage(entry, wrong) {
     if (!formUrl()) { if ($("dlg").open) $("dlg").close(); location.hash = "wanted"; return; }
     $("ff-form").reset(); $("ff-entry").value = entry ? entry + (wrong ? " [WRONG VIDEO]" : "") : ""; $("ff-status").textContent = ""; $("ff-status").className = "status"; $("ff-send").disabled = false;
-    $("ff-title").textContent = wrong ? "Wrong video? Tell us the right one" : "Tell us what you have";
+    $("ff-title").textContent = wrong ? "Wrong video? Tell us the right one" : "Got a rage recording?";
+    $("ff-sub").textContent = wrong ? "We read every message and reply by email." : "Recordings of whole broadcasts help us most. We read every message and reply by email.";
+    $("ff-rec").hidden = !!wrong; $("ff-rec").style.display = wrong ? "none" : "grid";
+    $("ff-entry-l").textContent = wrong ? "Which song or clip?" : entry ? "Which broadcast was it on? (the date, or roughly when, if you know it)" : "Which broadcast? (the date, or roughly when, and anything you remember: a guest programmer, a special, Friday or Saturday night)";
+    $("ff-what-l").textContent = wrong ? "Which video did rage actually show?" : "Tell us more (how long it runs, the picture quality, anything that stands out)";
+    $("ff-link-l").textContent = wrong ? "Link to the right video, if it's online (optional)" : "Link to it, if it's uploaded somewhere (archive.org, Google Drive, YouTube…) (optional)";
     $("ff-what").placeholder = wrong ? "Which video did rage actually show, and how do you know?" : "";
     if ($("dlg").open) $("dlg").close();
     $("ff").showModal(); (entry ? $("ff-what") : $("ff-entry")).focus();
