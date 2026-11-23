@@ -2572,6 +2572,34 @@
     ]
    ],
    "why": "Countdown special repeat: owner's call that the AC/DC 1976 Countdown interview played before (Baby) Please Don't Go here too, as on 16 Nov (not seen; no recording found)"
+  },
+  {
+   "date": "2026-06-20",
+   "from": [
+    "PUBLIC IMAGE LTD",
+    "Public Image",
+    "Live"
+   ],
+   "to": [
+    "PUBLIC IMAGE LTD",
+    "Public Image (Live)",
+    ""
+   ],
+   "why": "Daniel Avery guest program: the ABC put (Live) in the label column; the morning airing the same day lists Public Image (Live)"
+  },
+  {
+   "date": "2026-06-22",
+   "from": [
+    "PUBLIC IMAGE LTD",
+    "(missing label)",
+    "Live"
+   ],
+   "to": [
+    "PUBLIC IMAGE LTD",
+    "Public Image (Live)",
+    ""
+   ],
+   "why": "Daniel Avery guest program repeat: the ABC's page lost the title and put (Live) in the label column; the 20 June airings list Public Image (Live)"
   }
  ]
 }
