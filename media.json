@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-23T12:12:42.442Z",
+ "saved": "2026-11-23T12:24:12.524Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2487,6 +2487,16 @@
    "aspect": "4:3",
    "logoAt": 7,
    "verified": true
+  },
+  "2a7ab2e8ef21": {
+   "artist": "Sex Pistols",
+   "title": "Anarchy In The U.K.",
+   "yt": "BFZbfqJoOTA",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/4c/16/50/mzi.cipyvpqz.jpg/1449x1446bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 7,
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -4286,6 +4296,12 @@
    "yr": 2025,
    "g": [
     "Indie"
+   ]
+  },
+  "2a7ab2e8ef21": {
+   "yr": 1977,
+   "g": [
+    "Rock"
    ]
   }
  },
