@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-23T12:41:05.753Z",
+ "saved": "2026-11-23T12:43:23.363Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2531,6 +2531,15 @@
    "yt": "8b0pb6yHovo",
    "cover": "https://www.sanity.com.au/media/Images/fullimage/424152/SDC_2349847_2018-26-1--00-16-16.jpg",
    "aspect": "4:3-in-16:9",
+   "burned": true,
+   "verified": true
+  },
+  "aa93803d7c03": {
+   "artist": "Judas Priest",
+   "title": "Interview on Countdown, 1977",
+   "yt": "JBhuKOuIUCo",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
+   "aspect": "4:3",
    "burned": true,
    "verified": true
   }
