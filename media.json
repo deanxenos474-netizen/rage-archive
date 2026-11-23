@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-23T15:07:57.880Z",
+ "saved": "2026-11-23T15:24:37.788Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2713,6 +2713,15 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "966154f894d8": {
+   "artist": "Bob Marley",
+   "title": "Get Up, Stand Up",
+   "yt": "-3nhEj_2IKQ",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/30/24/ec/3024ec9b-fbf5-f7dd-60c5-5a5b697b4546/06UMGIM41501.rgb.jpg/1500x1500bb-100.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -4609,6 +4618,12 @@
    "yr": 1979,
    "g": [
     "Rock"
+   ]
+  },
+  "966154f894d8": {
+   "yr": 1973,
+   "g": [
+    "R&B"
    ]
   }
  },
