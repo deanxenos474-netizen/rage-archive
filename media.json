@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-22T15:20:49.477Z",
+ "saved": "2026-11-23T05:44:03.081Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2180,6 +2180,15 @@
    "aspect": "5:3",
    "logoAt": 7,
    "verified": true
+  },
+  "c14365cd0642": {
+   "artist": "The Gnomes",
+   "title": "Batteries",
+   "yt": "GbDk-alYryQ",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/7d/34/61/7d346100-27e9-a88c-19f9-a19557d00837/859749126430_cover.jpg/1400x1400bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -3793,6 +3802,12 @@
    "yr": 2003,
    "g": [
     "Country"
+   ]
+  },
+  "c14365cd0642": {
+   "yr": 2026,
+   "g": [
+    "Rock"
    ]
   }
  },
