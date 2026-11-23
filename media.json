@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-23T10:08:28.181Z",
+ "saved": "2026-11-23T10:11:10.118Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2298,6 +2298,13 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/7d/bd/e9/7dbde97e-b97d-8cc3-0203-218b687408a9/196872555059.jpg/3000x3000bb-100.jpg",
    "aspect": "4:3",
    "logoAt": 7,
+   "verified": true
+  },
+  "d30fe53c6013": {
+   "artist": "The Sweet",
+   "title": "Interviewed on Countdown, 1975",
+   "yt": "mr5TANYqH_I",
+   "burned": true,
    "verified": true
   }
  },
