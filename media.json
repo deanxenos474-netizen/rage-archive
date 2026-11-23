@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-23T13:01:09.025Z",
+ "saved": "2026-11-23T13:11:59.404Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2568,6 +2568,15 @@
    "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
    "burned": true,
    "verified": true
+  },
+  "06f67a7c1ee5": {
+   "artist": "Generation X",
+   "title": "Wild Youth",
+   "yt": "6zeSLchY3tk",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/b0/fe/96/b0fe9610-737c-baad-ae11-368c74d8ae7f/5054526645684.png/1772x1772bb-100.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -4397,7 +4406,11 @@
    "a": "Generation X"
   },
   "06f67a7c1ee5": {
-   "a": "Generation X"
+   "a": "Generation X",
+   "yr": 1978,
+   "g": [
+    "Rock"
+   ]
   }
  },
  "includes": {
