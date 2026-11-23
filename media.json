@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-23T13:58:48.723Z",
+ "saved": "2026-11-23T14:04:11.461Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2650,6 +2650,15 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "24b4b2784fc3": {
+   "artist": "Australian Crawl",
+   "title": "Beautiful People",
+   "yt": "Mv_hJkvw4vY",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/22/b0/47/22b04718-9717-7f7d-7014-d8c496674b10/13UAAIM12789.rgb.jpg/1500x1500bb-100.jpg",
+   "aspect": "4:3-in-16:9",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -2665,7 +2674,8 @@
   "a21432a3f7a4": "9b4bdf572ef6",
   "bd9c66b0b611": "1163a3db4e31",
   "1163a3db4e31": "3b998e452ded",
-  "598672ead2c6": "33cd08feb3f2"
+  "598672ead2c6": "33cd08feb3f2",
+  "0325be95f281": "24b4b2784fc3"
  },
  "edits": {
   "7f9c6325842c": {
@@ -4506,6 +4516,12 @@
   },
   "077f210b0d82": {
    "yr": 1979,
+   "g": [
+    "Rock"
+   ]
+  },
+  "24b4b2784fc3": {
+   "yr": 1980,
    "g": [
     "Rock"
    ]
