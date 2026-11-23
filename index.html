@@ -1320,8 +1320,9 @@ ol.steps a { color: var(--accent) }
     const setLoading = on => wrap.classList.toggle("loading", on);   // pressed play, video not moving yet: show a spinner
     // covers YouTube's own title/thumbnail screen before it starts and its suggestions screen after it ends
     function showPoster(on, black) {
-      if (on && (black || P.noArt)) { poster.hidden = false; poster.style.backgroundImage = "none"; return; }   // just black over YouTube's own loading screen; clips never get a picture before they play
-      const src = on && coverSrc(P.m, P.noArt), pv = src && src === P.m.cover && coverPrev(src), css = u => `url("${u.replace(/"/g, "%22")}")`;
+      const own = P.noArt && P.m.cover && safeLink(P.m.cover) ? P.m.cover : null;   // clips: only a thumbnail the owner set, never YouTube's
+      if (on && (black || (P.noArt && !own))) { poster.hidden = false; poster.style.backgroundImage = "none"; return; }   // just black over YouTube's own loading screen
+      const src = on && (own || coverSrc(P.m, P.noArt)), pv = src && src === P.m.cover && coverPrev(src), css = u => `url("${u.replace(/"/g, "%22")}")`;
       poster.hidden = !src; if (src) poster.style.backgroundImage = css(src) + (pv ? ", " + css(pv) : ""); }   // the preview shows behind until the full cover is in
     // a plain message over the picture when a video can't play, with a way to watch it elsewhere
     const pmsg = wrap.querySelector(".pmsg");
@@ -1848,7 +1849,7 @@ ol.steps a { color: var(--accent) }
       $("i-reset").disabled = !changed;
       $("f-link").value = m.yt ? "https://www.youtube.com/watch?v=" + m.yt : (m.video || "");
       $("f-cover").value = m.cover || "";
-      $("f-cover").placeholder = s.kind === "clip" ? "Clips don't show album art: this entry uses a frame from its video" : "Cover image link (leave empty to use the YouTube thumbnail)";
+      $("f-cover").placeholder = s.kind === "clip" ? "Thumbnail link: shown in the player before the clip plays, nowhere else (leave empty for plain black)" : "Cover image link (leave empty to use the YouTube thumbnail)";
       $("f-aspect").value = m.aspect || "16:9";
       $("f-start").value = m.start || ""; $("f-end").value = m.end || ""; $("f-fade").value = m.fade || ""; $("f-fadein").value = m.fadeIn || "";
       $("f-logo").value = m.logoAt != null ? m.logoAt : 8.2;
