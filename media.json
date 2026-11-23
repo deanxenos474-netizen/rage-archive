@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-23T13:22:14.948Z",
+ "saved": "2026-11-23T13:32:53.639Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2613,6 +2613,14 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/98/e4/22/98e422e9-b728-bdec-bd49-6c31a5557a95/cover.jpg/1400x1400bb-100.jpg",
    "aspect": "4:3",
    "logoAt": 8,
+   "verified": true
+  },
+  "d2f85e4c4533": {
+   "artist": "Countdown",
+   "title": "Interview with David Bowie, November 10th, 1978",
+   "yt": "BoPWlCYW-WA",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
+   "burned": true,
    "verified": true
   }
  },
