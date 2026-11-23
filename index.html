@@ -1872,6 +1872,10 @@ ol.steps a { color: var(--accent) }
   };
   // rage's short station bumpers, played between songs after every 3rd video (not listed in the running order)
   const STINGS = ["clips/bumper1.mp4", "clips/bumper2.mp4"], STING_EVERY = 3;
+  // rage's "SPECIAL" card (from the Vault): on a night billed as a special it plays straight after the opening titles,
+  // like a bumper (not listed in the running order)
+  const SPECIAL_CARD = "clips/Rage%20Special%20Logo.mp4";
+  const isSpecialNight = b => !!b.kind && /special/i.test(b.sp || "");
   const canPlay = it => it.bumper ? true : hasVideo(it);
   const tvThumb = it => it.bumper ? '<span class="thumb bumper" aria-hidden="true"><img src="rage-logo.png" alt=""></span>' : thumbHTML(it.sid, it.a);
   let tv = null;
@@ -1891,7 +1895,7 @@ ol.steps a { color: var(--accent) }
     $("tv-sub").textContent = `${up ? "Upcoming · " : ""}${dow(b.date)} ${fmtDate(b.date)} · ${nv} of ${songs.length} songs have videos`;
     $("tv-queue").innerHTML = items.map((it, k) => `<li><button data-k="${k}"${!it.bumper && it.kind === "clip" ? ' class="noart"' : ""}${canPlay(it) || intros[k] ? "" : " disabled"}>${tvThumb(it)}<span class="t"><span class="a">${esc(it.a)}</span><span class="s">${esc(it.t)}${intros[k] ? " · with intro" : ""}${canPlay(it) ? "" : " · no video yet"}</span></span></button></li>`).join("");
     if (tv) tv.player.pause();
-    tv = { items, playable, nsongs: songs.length, nv, pos: 0, sting: false, nSting: 0, intros, inIntro: false, player: tvPlayerGet() };
+    tv = { items, special: isSpecialNight(b), playable, nsongs: songs.length, nv, pos: 0, sting: false, nSting: 0, intros, inIntro: false, player: tvPlayerGet() };
     $("tv-fs").textContent = "⛶ Fullscreen";
     if (!$("tv").open) $("tv").showModal();
     play(0, true);
@@ -1910,6 +1914,7 @@ ol.steps a { color: var(--accent) }
     if (tv.sting) return step(1);
     if (tv.inIntro) { const nx = introNext(tv.intros[tv.playable[tv.pos]], tv.inIntro); return nx ? play(tv.pos, true, false, nx) : play(tv.pos, true, true); }   // next part of the intro, or the song
     const it = tv.items[tv.playable[tv.pos]], nk = tv.playable[tv.pos + 1], nx = nk != null && tv.items[nk];
+    if (it.bumper === "intro" && tv.special && nx && !nx.bumper) return playSpecialCard(nx);
     const vidNo = tv.playable.slice(0, tv.pos + 1).filter(j => !tv.items[j].bumper).length;
     if (!it.bumper && nx && !nx.bumper && vidNo % STING_EVERY === 0) playSting(nx); else step(1);
   }
@@ -1919,6 +1924,13 @@ ol.steps a { color: var(--accent) }
     tv.player.load(m, { a: "", t: "" }, true);
     tv.player.prepare(mediaFor(nx.sid));
     $("tv-now").innerHTML = `rage<small>Next: ${esc(nx.a)} – ${esc(nx.t)}</small>`;
+    $("tv-prev").disabled = false;
+  }
+  function playSpecialCard(nx) {
+    tv.sting = true;   // plays and steps like a bumper: Next = the first song, Previous = the titles again
+    tv.player.load({ video: SPECIAL_CARD, bare: true }, { a: "", t: "" }, true);
+    if (!tv.intros[tv.playable[tv.pos + 1]]) tv.player.prepare(mediaFor(nx.sid));
+    $("tv-now").innerHTML = `rage – Special<small>Then ${tv.nv} music video${tv.nv === 1 ? "" : "s"}</small>`;
     $("tv-prev").disabled = false;
   }
   const introMedia = (x, logo) => ({ yt: x.yt, video: x.video, start: x.start, end: x.end, bare: !logo, logoAt: 8.2 });
