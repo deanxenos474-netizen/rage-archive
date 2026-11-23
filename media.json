@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-23T14:59:16.986Z",
+ "saved": "2026-11-23T15:01:00.153Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2695,6 +2695,15 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "396b67a28416": {
+   "artist": "Jon English",
+   "title": "Nights In Paradise (Live On Countdown, 1978)",
+   "yt": "G6l8OqLhluQ",
+   "cover": "https://www.sanity.com.au/media/Images/fullimage/424152/SDC_2349847_2018-26-1--00-16-16.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -4579,6 +4588,12 @@
    "yr": 1978,
    "g": [
     "R&B"
+   ]
+  },
+  "396b67a28416": {
+   "yr": 1978,
+   "g": [
+    "Rock"
    ]
   }
  },
