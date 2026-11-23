@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-23T14:51:18.894Z",
+ "saved": "2026-11-23T14:59:16.986Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2686,6 +2686,15 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "9ef0567c3ebe": {
+   "artist": "Marcia Hines",
+   "title": "Let The Music Play (Live On Countdown, 1978)",
+   "yt": "L7MS2J3bIIg",
+   "cover": "https://www.sanity.com.au/media/Images/fullimage/424152/SDC_2349847_2018-26-1--00-16-16.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -4564,6 +4573,12 @@
    "yr": 1978,
    "g": [
     "Rock"
+   ]
+  },
+  "9ef0567c3ebe": {
+   "yr": 1978,
+   "g": [
+    "R&B"
    ]
   }
  },
