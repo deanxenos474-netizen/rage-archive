@@ -11,6 +11,7 @@ CHART_NUMBERS = os.path.join(ROOT, "data", "chart_numbers.json")
 
 FEAT = re.compile(r"\s+(?:ft\.?|feat\.?|featuring|with)\s+", re.I)
 CONN = re.compile(r"\b(ft\.?|feat\.?|featuring|and|vs\.?|x|with|presents|pres\.?)\b")
+LINKS = re.compile(r"(?<!\S)(_and_|&&|from|of|on|versus|present|aka|a\.k\.a\.|f/|t\.|featuring\.?|feat|featuing|feauturing)(?!\S)")
 # non-song content: interviews, segments, promos etc. (not songs that merely contain these words)
 MISC = re.compile(r"(?i)\binterview|\bdocumentary\b|\bmontage\b|\bsegment\b|\bpromo\b|\bnews footage\b|"
                   r"\bident\b|\bpress conference\b|\bpremiere of\b")
@@ -50,6 +51,13 @@ def is_caps(a):
     core = re.sub(r"(?i)^the\s+", "", a.split(" - ")[0])
     core = re.sub(r"\bMa?c(?=[A-Z]{2})", "", core)
     core = CONN.sub("", core)
+    before = core == core.upper()
+    # small linking words the ABC writes in lower case between capitalised names ("JOHN LYDON _and_ JAH WOBBLE from
+    # PUBLIC IMAGE LTD", "B-REAL of CYPRESS HILL"), and words that are mixed case by design ("9th", "B.o.B", "A$AP")
+    core = LINKS.sub("", core)
+    core = " ".join(w for w in core.split() if not re.search(r"[0-9.$]", w))
+    if not re.search(r"[A-Za-z]", core):
+        return before
     return core == core.upper()
 
 
@@ -328,8 +336,12 @@ def build(d, out_dir=ROOT):
         out = []
         for w in head.split(" "):
             lw = w.lower()
-            if lw in ("ft.", "ft", "feat.", "featuring", "and", "vs", "vs.", "x", "with"):
-                out.append(lw)
+            if lw in ("ft.", "ft", "feat.", "featuring", "and", "vs", "vs.", "x", "with") or w in (
+                    "_and_", "from", "of", "on", "versus", "present", "aka", "a.k.a.", "f/", "t.",
+                    "featuring.", "feat", "featuing", "feauturing"):   # written in lower case in the listing: stays so
+                out.append({"_and_": "and", "_&_": "&"}.get(lw, lw))   # the ABC's "_and_" stands in for "and"
+            elif w == "_&_":
+                out.append("&")
             elif re.match(r"^Ma?c[A-Z]{2}", w):   # "McCARTNEY" -> McCartney, "MacCOLL" -> MacColl
                 k = 3 if w.startswith("Mac") else 2
                 out.append(w[:k] + w[k:].capitalize())
@@ -342,7 +354,8 @@ def build(d, out_dir=ROOT):
             elif lw in mcmap:
                 out.append(mcmap[lw])
             else:
-                out.append(re.sub(r"(^|[-(\"'])([a-z])", lambda m: m.group(1) + m.group(2).upper(), lw))
+                # capital after a hyphen, bracket, quote or apostrophe (O'Brien, Kee'Ahn), but not in "'s", "n't", "'ll"
+                out.append(re.sub(r"(^|[-(\"]|'(?!(?:s|t|d|m|ll|re|ve)\b))([a-z])", lambda m: m.group(1) + m.group(2).upper(), lw))
         s = " ".join(out) + sep + tail
         return s[:1].upper() + s[1:]
 
