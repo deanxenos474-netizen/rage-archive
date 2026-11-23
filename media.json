@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-23T11:39:33.417Z",
+ "saved": "2026-11-23T11:41:29.442Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2429,6 +2429,14 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/17/dc/43/17dc433f-27cb-3cd7-1469-2184ae99b7b2/5056556160120_cover.jpg/3000x3000bb-100.jpg",
    "logoAt": 7,
    "verified": true
+  },
+  "b77b1042e80a": {
+   "artist": "The Maes",
+   "title": "Loretta",
+   "yt": "D9a90Xl-Io0",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/65/dc/21/65dc21e6-7a23-ffab-e4a5-c28727276e9f/324753.jpg/3000x3000bb-100.jpg",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -4186,6 +4194,12 @@
    "yr": 2025,
    "g": [
     "Indie"
+   ]
+  },
+  "b77b1042e80a": {
+   "yr": 2025,
+   "g": [
+    "Country"
    ]
   }
  },
