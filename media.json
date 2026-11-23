@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-23T15:01:00.153Z",
+ "saved": "2026-11-23T15:04:43.521Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2704,6 +2704,14 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "80277af8da85": {
+   "artist": "Hello Sailor",
+   "title": "Gutter Black (Live on Countdown, 1979)",
+   "cover": "https://www.sanity.com.au/media/Images/fullimage/424152/SDC_2349847_2018-26-1--00-16-16.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -4592,6 +4600,12 @@
   },
   "396b67a28416": {
    "yr": 1978,
+   "g": [
+    "Rock"
+   ]
+  },
+  "80277af8da85": {
+   "yr": 1979,
    "g": [
     "Rock"
    ]
