@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Every Song on rage</title>
-<meta name="description" content="Every song, interview and clip played on ABC's rage since 1998, with play counts, every broadcast's playlist, and the music videos.">
+<title>Rage On! · Every song on rage</title>
+<meta name="description" content="Rage On! Every song, interview and clip played on ABC's rage since 1998, with play counts, every broadcast's playlist, and the music videos.">
 <link rel="icon" href="rage-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://www.youtube.com">
@@ -41,6 +41,7 @@ button { font: inherit }
 header { padding-block: 36px 18px; display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); align-items: end }
 .kicker { font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px }
 h1 { font: 800 clamp(40px, 7vw, 72px)/.92 var(--display); letter-spacing: -.02em; margin: 0; text-wrap: balance }
+.tagline { font: 700 clamp(17px, 2.4vw, 22px)/1.2 var(--display); color: var(--muted); margin: 10px 0 0 }
 h1 em { font-style: normal; background: linear-gradient(100deg, var(--accent), var(--hot)); -webkit-background-clip: text; background-clip: text; color: transparent }
 .stats { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 16px 0 0; font: 400 13px var(--mono); color: var(--muted) }
 .stats b { color: var(--fg); font-weight: 500; font-variant-numeric: tabular-nums }
@@ -294,7 +295,8 @@ ol.steps a { color: var(--accent) }
   <header>
     <div>
       <p class="kicker">ABC rage playlists · Jan 1998 to now<span id="s-upd"></span></p>
-      <h1>Every song on <em>rage</em></h1>
+      <h1>Rage <em>On!</em></h1>
+      <p class="tagline">Every song on rage</p>
       <p class="stats"><span><b id="s-songs">61,036</b> songs &amp; clips</span><span><b id="s-plays">436,016</b> plays</span><span><b id="s-lists">5,852</b> broadcasts</span><span><b id="s-vids">0/61,036</b> with videos</span></p>
     </div>
     <figure class="signal">
@@ -2391,7 +2393,7 @@ ol.steps a { color: var(--accent) }
     const st = (t, k) => { $("ff-status").textContent = t; $("ff-status").className = "status" + (k ? " " + k : ""); };
     $("ff-send").disabled = true; st("Sending…");
     try {
-      const fd = new FormData($("ff-form")); fd.append("_subject", "rage archive footage: " + ($("ff-entry").value || "general"));
+      const fd = new FormData($("ff-form")); fd.append("_subject", "Rage On! footage: " + ($("ff-entry").value || "general"));
       const r = await fetch(url, { method: "POST", body: fd, headers: { Accept: "application/json" } });
       if (!r.ok) throw new Error(r.status);
       st("Thanks! Your message has been sent. We'll get back to you by email.", "ok");
