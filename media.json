@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-23T12:31:34.298Z",
+ "saved": "2026-11-23T12:38:59.908Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2514,6 +2514,15 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/53/52/84/535284ca-ffeb-e464-0d6f-de91ea3493cd/14CMGIM01145.rgb.jpg/3000x3000bb-100.jpg",
    "aspect": "4:3-in-16:9",
    "logoAt": 7,
+   "verified": true
+  },
+  "4c1af9a51fab": {
+   "artist": "Paul McCartney and Linda Eastman",
+   "title": "Interviewed on Countdown, 1977",
+   "yt": "ZfTu380Fuyk",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
+   "aspect": "4:3",
+   "burned": true,
    "verified": true
   }
  },
