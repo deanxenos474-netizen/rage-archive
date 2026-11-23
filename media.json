@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-23T13:17:16.805Z",
+ "saved": "2026-11-23T13:18:34.380Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2583,6 +2583,15 @@
    "title": "Hammer Horror (Live on Countdown, 1978)",
    "yt": "eJOm-C69akg",
    "cover": "https://www.sanity.com.au/media/Images/fullimage/424152/SDC_2349847_2018-26-1--00-16-16.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
+  },
+  "8532b92fbcf0": {
+   "artist": "Kate Bush",
+   "title": "Interviewed on Countdown (October 15, 1978)",
+   "yt": "1qEEIooYX3k",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
    "aspect": "4:3",
    "burned": true,
    "verified": true
