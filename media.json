@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-23T10:14:34.085Z",
+ "saved": "2026-11-23T10:15:08.051Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -56,6 +56,7 @@
    "artist": "Michael Jackson - 1977",
    "title": "Countdown Interview With Molly Meldrum",
    "yt": "2URqbYND7gE",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
    "aspect": "4:3",
    "burned": true,
    "verified": true,
@@ -92,9 +93,10 @@
    "ads": true
   },
   "35ce5e3fdbbe": {
-   "artist": "COUNTDOWN - 23rd March 1980",
+   "artist": "Countdown - 23rd March 1980",
    "title": "Molly Meldrum interviews Michael Jackson",
    "yt": "fKoLuMDOTc0",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
    "aspect": "4:3",
    "burned": true,
    "verified": true,
