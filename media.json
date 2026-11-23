@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-23T15:44:49.746Z",
+ "saved": "2026-11-23T15:53:17.527Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2768,6 +2768,15 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "769e71c5e9c1": {
+   "artist": "Roxy Music",
+   "title": "Virginia Plain",
+   "yt": "BonWfTW7jKc",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/b0/5b/22/b05b22d2-7944-7916-40df-6b2eda0e8245/13ULAIM49419.rgb.jpg/1447x1447bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 8,
+   "verified": true
   }
  },
  "merges": {
@@ -4682,6 +4691,12 @@
    "yr": 1975,
    "g": [
     "Pop"
+   ]
+  },
+  "769e71c5e9c1": {
+   "yr": 1972,
+   "g": [
+    "Rock"
    ]
   }
  },
