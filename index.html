@@ -1364,7 +1364,7 @@ ol.steps a { color: var(--accent) }
     // play/pause follows what the viewer asked for (P.want), not YouTube's in-between states,
     // so a second press while it's still starting doesn't pause it
     function ytPlay() {
-      P.want = true; setLoading(true); watchStart(); P.askAt = performance.now();
+      P.want = true; setLoading(true); watchStart(); P.askAt = performance.now(); P.nudges = 0; P.nudgeAt = 0;
       if (!P.yt || !P.ytReady) { if (P.pending) P.pending.autoplay = true; return; }
       try { P.yt.unMute(); P.mutedByUs = false; } catch {}   // there's no volume control here, so real plays are never muted
       P.endFired = false;
@@ -1520,6 +1520,14 @@ ol.steps a { color: var(--accent) }
       } else if (P.want && st !== 2 && st !== 0 && st !== 5 && P.playOnCue == null && (adTime || st === -1 && P.sawBuf || !P.started && performance.now() - (P.askAt || 0) > 1500)) setAd(true);
       /* an ad: time moves, or YouTube goes back to "not started" after loading, or (some ads report nothing useful)
          the video still hasn't started 1.5s after play was asked for: then step aside and show whatever YouTube shows */
+      /* YouTube sometimes ignores "play" and sits "not started" or "cued" (time not moving): behind the cover with a
+         spinner, or, once taken for an ad, on its own title-and-play-button screen. Press play again for it, a few
+         times, 2s apart.
+         A real ad isn't touched: pressing play while one runs does nothing */
+      if (P.want && !P.started && (st === -1 || st === 5) && !moving && P.playOnCue == null
+          && (P.nudges || 0) < 3 && performance.now() - (P.nudgeAt || P.askAt || 0) > 2000) {
+        P.nudges = (P.nudges || 0) + 1; P.nudgeAt = performance.now(); try { P.yt.playVideo(); } catch {}
+      }
       if (st === 0 && P.want && !P.endFired && !P.fresh) { P.endFired = true; P.want = false; setAd(false); setPlaying(false); showPoster(true); opts.onEnded?.(); }
     }
     v.addEventListener("loadedmetadata", layout);
@@ -1557,7 +1565,7 @@ ol.steps a { color: var(--accent) }
       P.chart = song.rank && song.chart && !(m && (m.bare || m.burned)) ? +song.rank : 0; l0.textContent = P.chart ? `NO.${P.chart}` : "";
       img.setAttribute("opacity", "0"); capg.setAttribute("opacity", "0"); tfg.setAttribute("opacity", "0");
       P.reveal = null; setPlaying(false); setLoading(!!autoplay); showPoster(false); problem(""); wrap.classList.remove("paused"); wrap.classList.toggle("yt", !!P.m.yt);
-      P.want = !!autoplay; P.endFired = false; P.lastT = null; P.movN = 0; P.realT = null; P.vol = null; P.fresh = true; P.sawBuf = false; P.started = false; P.askAt = performance.now(); P.loadNo = (P.loadNo || 0) + 1; setAd(false);   // fresh: ignore "ended" until this video has started loading
+      P.want = !!autoplay; P.endFired = false; P.lastT = null; P.movN = 0; P.realT = null; P.vol = null; P.fresh = true; P.sawBuf = false; P.started = false; P.askAt = performance.now(); P.nudges = 0; P.nudgeAt = 0; P.loadNo = (P.loadNo || 0) + 1; setAd(false);   // fresh: ignore "ended" until this video has started loading
       const vm = !P.m.yt && vmId(P.m.video);
       if (P.sp && !spareSame(P.sp, P.m) && P.m.yt) spareDrop();
       if (!vm) vmStop();
