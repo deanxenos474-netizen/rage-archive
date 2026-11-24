@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T14:18:51.266Z",
+ "saved": "2026-11-24T14:22:32.804Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3177,6 +3177,15 @@
    "artist": "Madonna",
    "title": "Interviewed on Countdown, October 1984",
    "yt": "P9cWo1udCa0",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
+  },
+  "edbf3736f237": {
+   "artist": "Countdown",
+   "title": "Magazine Promo 26-9-84",
+   "yt": "i7oze0487yg",
    "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
    "aspect": "4:3",
    "burned": true,
