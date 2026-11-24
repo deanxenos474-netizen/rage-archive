@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T11:17:42.821Z",
+ "saved": "2026-11-24T11:22:08.363Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2976,6 +2976,15 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "0a3750220aa3": {
+   "artist": "Roxy Music",
+   "title": "Same Old Scene (Live On Countdown, 1981)",
+   "yt": "A2OWlgw2J2M",
+   "cover": "https://www.sanity.com.au/media/Images/fullimage/424152/SDC_2349847_2018-26-1--00-16-16.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -4979,6 +4988,12 @@
    ]
   },
   "cbebabc11067": {
+   "yr": 1981,
+   "g": [
+    "Rock"
+   ]
+  },
+  "0a3750220aa3": {
    "yr": 1981,
    "g": [
     "Rock"
