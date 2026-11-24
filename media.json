@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T16:06:22.335Z",
+ "saved": "2026-11-24T16:11:49.109Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3331,6 +3331,15 @@
    "artist": "Sean Kelly from Models",
    "title": "Interviewed On Countdown, 1986",
    "yt": "qSMu5BJGt3E",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
+  },
+  "bb8dab80cee5": {
+   "artist": "Martin Plaza from Mental As Anything",
+   "title": "Interviewed On Countdown, 1986",
+   "yt": "W4lyaYl9rYE",
    "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
    "aspect": "4:3",
    "burned": true,
