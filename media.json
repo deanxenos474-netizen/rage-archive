@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T07:19:31.042Z",
+ "saved": "2026-11-24T07:32:57.430Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2812,6 +2812,15 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/cd/90/b5/cd90b5c4-9379-92ae-da01-4b27ea00697b/886443775787.jpg/1500x1500bb-100.jpg",
    "aspect": "4:3",
    "logoAt": 7,
+   "verified": true
+  },
+  "b8c3cbaa7e73": {
+   "artist": "Meat Loaf",
+   "title": "Interviewed by Molly Meldrum, 1980",
+   "yt": "Qawhp3WLiGw",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
+   "aspect": "4:3",
+   "burned": true,
    "verified": true
   }
  },
