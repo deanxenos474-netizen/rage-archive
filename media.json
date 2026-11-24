@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T07:12:50.450Z",
+ "saved": "2026-11-24T07:19:31.042Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2804,6 +2804,15 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "8318a74f6121": {
+   "artist": "Meat Loaf",
+   "title": "Bat Out Of Hell",
+   "yt": "3QGMCSCFoKA",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/cd/90/b5/cd90b5c4-9379-92ae-da01-4b27ea00697b/886443775787.jpg/1500x1500bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 7,
+   "verified": true
   }
  },
  "merges": {
@@ -4734,6 +4743,12 @@
   },
   "ce59393a9b01": {
    "yr": 1980,
+   "g": [
+    "Rock"
+   ]
+  },
+  "8318a74f6121": {
+   "yr": 1977,
    "g": [
     "Rock"
    ]
