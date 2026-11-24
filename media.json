@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T15:44:27.863Z",
+ "saved": "2026-11-24T15:50:18.708Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3308,6 +3308,15 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "56820101623c": {
+   "artist": "John Farnham",
+   "title": "You're The Voice (Live on Countdown, 1986)",
+   "yt": "vzC5bE2mrKI",
+   "cover": "https://www.sanity.com.au/media/Images/fullimage/424152/SDC_2349847_2018-26-1--00-16-16.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -5455,6 +5464,12 @@
    ]
   },
   "acdcf8213e95": {
+   "yr": 1986,
+   "g": [
+    "Rock"
+   ]
+  },
+  "56820101623c": {
    "yr": 1986,
    "g": [
     "Rock"
