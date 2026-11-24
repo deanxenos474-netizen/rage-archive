@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T15:10:42.497Z",
+ "saved": "2026-11-24T15:16:17.655Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3262,6 +3262,15 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "23606634dc32": {
+   "artist": "Stevie Nicks",
+   "title": "Talk To Me",
+   "yt": "UQl62w71Ets",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/88/1e/84/881e84ed-c6bf-f884-4eee-620d2f2ce465/mzi.puxsqrxo.jpg/1425x1425bb-100.jpg",
+   "aspect": "4:3-in-16:9",
+   "logoAt": 8,
+   "verified": true
   }
  },
  "merges": {
@@ -5389,6 +5398,12 @@
   },
   "f9d5d7d3e861": {
    "yr": 1984,
+   "g": [
+    "Rock"
+   ]
+  },
+  "23606634dc32": {
+   "yr": 1985,
    "g": [
     "Rock"
    ]
