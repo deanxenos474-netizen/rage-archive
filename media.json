@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T14:47:47.248Z",
+ "saved": "2026-11-24T14:51:58.598Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3217,6 +3217,15 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "caf1832f9e38": {
+   "artist": "The Eurythmics",
+   "title": "Would I Lie To You?",
+   "yt": "Uhpu2N4rQZM",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/64/2b/49/642b49d4-b46c-4098-a4ec-0fd19251eea5/886447030196.jpg/1500x1500bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 8,
+   "verified": true
   }
  },
  "merges": {
@@ -5332,6 +5341,12 @@
   },
   "dd89601aa206": {
    "yr": 1984,
+   "g": [
+    "Rock"
+   ]
+  },
+  "caf1832f9e38": {
+   "yr": 1985,
    "g": [
     "Rock"
    ]
