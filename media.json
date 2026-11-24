@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T13:34:42.038Z",
+ "saved": "2026-11-24T13:46:00.554Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3121,6 +3121,23 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "9dea3ae800d7": {
+   "artist": "The Go-Betweens",
+   "title": "Cattle And Cane (Live on Countdown, 1983)",
+   "cover": "https://www.sanity.com.au/media/Images/fullimage/424152/SDC_2349847_2018-26-1--00-16-16.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
+  },
+  "3213df1cf8f7": {
+   "artist": "Dear Enemy",
+   "title": "Computer One (On Countdown, 1983)",
+   "yt": "ZRX6p99a30o",
+   "cover": "https://www.sanity.com.au/media/Images/fullimage/424152/SDC_2349847_2018-26-1--00-16-16.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -5195,6 +5212,18 @@
    "yr": 1983,
    "g": [
     "Electronic"
+   ]
+  },
+  "9dea3ae800d7": {
+   "yr": 1983,
+   "g": [
+    "Rock"
+   ]
+  },
+  "3213df1cf8f7": {
+   "yr": 1983,
+   "g": [
+    "Pop"
    ]
   }
  },
