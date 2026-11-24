@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T15:05:51.376Z",
+ "saved": "2026-11-24T15:10:42.497Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3249,6 +3249,15 @@
    "artist": "Tina Turner",
    "title": "Interviewed on Countdown (1985)",
    "yt": "DHOBMQ-etLU",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
+  },
+  "e0245da498ad": {
+   "artist": "Countdown",
+   "title": "Magazine Promo (September, 1986)",
+   "yt": "dxN4ZiBL8wY",
    "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
    "aspect": "4:3",
    "burned": true,
