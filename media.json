@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T12:11:33.417Z",
+ "saved": "2026-11-24T12:15:51.709Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3064,6 +3064,15 @@
    "title": "Solid Rock (Live on Countdown, 1982)",
    "yt": "1ZQp4J0PRMQ",
    "cover": "https://www.sanity.com.au/media/Images/fullimage/424152/SDC_2349847_2018-26-1--00-16-16.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
+  },
+  "207e48d43274": {
+   "artist": "Bryan Ferry",
+   "title": "Interviewed on Countdown (June 11, 1986)",
+   "yt": "G1vS2pPgPkM",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
    "aspect": "4:3",
    "burned": true,
    "verified": true
