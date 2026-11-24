@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T13:56:43.366Z",
+ "saved": "2026-11-24T14:00:35.749Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3145,6 +3145,15 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "087817223ef4": {
+   "artist": "Madonna",
+   "title": "Burning Up",
+   "yt": "pufec0Hps00",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/y2005/m09/d19/h20/mzi.ykiinwgl.jpg/1447x1435bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 8,
+   "verified": true
   }
  },
  "merges": {
@@ -5238,6 +5247,12 @@
    "yr": 1983,
    "g": [
     "Rock"
+   ]
+  },
+  "087817223ef4": {
+   "yr": 1983,
+   "g": [
+    "Pop"
    ]
   }
  },
