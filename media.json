@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T08:24:37.703Z",
+ "saved": "2026-11-24T08:26:50.491Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2839,6 +2839,15 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/2e/50/a1/2e50a171-3ec4-f0f9-a965-336c88e753e9/0888072392809.jpg/3000x3000bb-100.jpg",
    "aspect": "4:3-in-16:9",
    "verified": true
+  },
+  "0fb351757405": {
+   "artist": "Olivia Newton-John",
+   "title": "Xanadu (Live On Countdown, 1980)",
+   "yt": "VD_ANzSqO3w",
+   "cover": "https://www.sanity.com.au/media/Images/fullimage/424152/SDC_2349847_2018-26-1--00-16-16.jpg",
+   "aspect": "3:2",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -4784,6 +4793,12 @@
    "yr": 1988,
    "g": [
     "Rock"
+   ]
+  },
+  "0fb351757405": {
+   "yr": 1980,
+   "g": [
+    "Pop"
    ]
   }
  },
