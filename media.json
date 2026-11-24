@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T11:34:41.130Z",
+ "saved": "2026-11-24T11:38:49.012Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3021,6 +3021,15 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/87/5f/5b/mzi.zzquknhm.jpg/1425x1425bb-100.jpg",
    "aspect": "4:3",
    "logoAt": 13,
+   "verified": true
+  },
+  "ca1054b7f943": {
+   "artist": "Wendy Stapleton",
+   "title": "Interviewed on Countdown, 1982",
+   "yt": "N-0NE16u7J0",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
+   "aspect": "4:3",
+   "burned": true,
    "verified": true
   }
  },
