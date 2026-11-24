@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T15:19:34.777Z",
+ "saved": "2026-11-24T15:21:47.746Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3270,6 +3270,15 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/88/1e/84/881e84ed-c6bf-f884-4eee-620d2f2ce465/mzi.puxsqrxo.jpg/1425x1425bb-100.jpg",
    "aspect": "4:3-in-16:9",
    "logoAt": 8,
+   "verified": true
+  },
+  "6df63d6c8acf": {
+   "artist": "Stevie Nicks",
+   "title": "Interviewed on Countdown, 1986",
+   "yt": "P2fu6Naz-nM",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
+   "aspect": "4:3",
+   "burned": true,
    "verified": true
   }
  },
