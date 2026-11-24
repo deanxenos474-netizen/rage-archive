@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T11:38:49.012Z",
+ "saved": "2026-11-24T11:43:05.722Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3031,6 +3031,15 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "85abd50dc125": {
+   "artist": "Wendy and The Rocketts",
+   "title": "Your Place Or Mine",
+   "yt": "HBgu1Y6b4-0",
+   "cover": "https://i.discogs.com/rOKy9p6zgy-4uZzsGJ4Tnyma80uUY4cx6vSTUPi1vns/rs:fit/g:sm/q:90/h:600/w:595/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTc5MDE4/MDktMTQ1MTI5Njcz/Ni03MzIzLmpwZWc.jpeg",
+   "aspect": "4:3",
+   "logoAt": 8,
+   "verified": true
   }
  },
  "merges": {
@@ -5059,6 +5068,12 @@
   },
   "10ef54493c0c": {
    "yr": 1980,
+   "g": [
+    "Rock"
+   ]
+  },
+  "85abd50dc125": {
+   "yr": 1982,
    "g": [
     "Rock"
    ]
