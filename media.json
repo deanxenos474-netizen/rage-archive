@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T07:32:57.430Z",
+ "saved": "2026-11-24T07:50:02.293Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2818,6 +2818,15 @@
    "artist": "Meat Loaf",
    "title": "Interviewed by Molly Meldrum, 1980",
    "yt": "Qawhp3WLiGw",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
+  },
+  "6149740b91c7": {
+   "artist": "Tom Petty & The Heartbreakers",
+   "title": "Interviewed on Countdown (1980)",
+   "yt": "fDkvw4ZQ46A",
    "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
    "aspect": "4:3",
    "burned": true,
