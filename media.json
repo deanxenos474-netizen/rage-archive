@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T10:39:37.165Z",
+ "saved": "2026-11-24T10:53:40.978Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2936,6 +2936,15 @@
    "artist": "Midge Ure and Chris Cross from Ultravox",
    "title": "Interviewed On Countdown (1981)",
    "yt": "IVSCepzeSmg",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
+  },
+  "bf3d4ed39a23": {
+   "artist": "Stray Cats",
+   "title": "Interviewed on Countdown, 1981",
+   "yt": "rUZY0AjMo-U",
    "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
    "aspect": "4:3",
    "burned": true,
