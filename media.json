@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T14:27:29.455Z",
+ "saved": "2026-11-24T14:32:18.166Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3198,6 +3198,15 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/6f/cf/a3/6fcfa350-12f5-b3ce-e7ef-01746b1f0b8d/5061017252474.jpg/3500x3500bb-100.jpg",
    "aspect": "4:3-in-16:9",
    "logoAt": 8,
+   "verified": true
+  },
+  "03226985bc66": {
+   "artist": "Bronski Beat",
+   "title": "Interviewed on Countdown, 1984",
+   "yt": "GFktOXNyAKo",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
+   "aspect": "4:3",
+   "burned": true,
    "verified": true
   }
  },
