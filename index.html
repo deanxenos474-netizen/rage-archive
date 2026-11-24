@@ -1522,9 +1522,11 @@ ol.steps a { color: var(--accent) }
       if (st === 1) {
         P.started = true; setAd(false);
         if (P.want && !wrap.classList.contains("playing")) { setPlaying(true); revealSoon(); problem(""); wrap.classList.remove("paused"); }
-      } else if (P.want && st !== 2 && st !== 0 && st !== 5 && P.playOnCue == null && (adTime || st === -1 && P.sawBuf || !P.started && performance.now() - (P.askAt || 0) > 1500)) setAd(true);
+      } else if (P.want && st !== 2 && st !== 0 && st !== 5 && P.playOnCue == null && (adTime || st === -1 && P.sawBuf || !P.started && st !== 3 && performance.now() - (P.askAt || 0) > 1500)) setAd(true);
       /* an ad: time moves, or YouTube goes back to "not started" after loading, or (some ads report nothing useful)
-         the video still hasn't started 1.5s after play was asked for: then step aside and show whatever YouTube shows */
+         the video still hasn't started 1.5s after play was asked for: then step aside and show whatever YouTube shows.
+         Not while YouTube is just loading ("buffering", time still): a slow start isn't an ad, and taking it for one
+         flashed YouTube's title bar and buttons up uncropped. An ad that's actually running is caught by its time moving */
       /* YouTube sometimes ignores "play" and sits "not started" or "cued" (time not moving): behind the cover with a
          spinner, or, once taken for an ad, on its own title-and-play-button screen. Press play again for it,
          every 2s until the "didn't start" message comes up (YouTube can ignore it for longer than a few tries).
