@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T07:07:36.219Z",
+ "saved": "2026-11-24T07:12:50.450Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2795,6 +2795,15 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "ce59393a9b01": {
+   "artist": "The Rolling Stones",
+   "title": "Emotional Rescue",
+   "yt": "JeMT3tIWgfU",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/6c/12/aa/6c12aab8-9306-691a-8eee-2e762ae3e445/08UMGIM17006.rgb.jpg/1512x1524bb-100.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -4719,6 +4728,12 @@
   },
   "7aa5a9c5c4a6": {
    "yr": 1987,
+   "g": [
+    "Rock"
+   ]
+  },
+  "ce59393a9b01": {
+   "yr": 1980,
    "g": [
     "Rock"
    ]
