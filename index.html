@@ -461,7 +461,7 @@ ol.steps a { color: var(--accent) }
           <option value="16:10">16:10 (YouTube shows narrow black bars at the sides)</option>
           <option value="3:2">3:2 (YouTube shows narrow black bars at the sides)</option>
           <option value="3:2-in-16:9">3:2 inside a 16:9 video (narrow black bars at the sides)</option>
-          <option value="16:9-in-4:3">16:9 inside a 4:3 video (black bars top &amp; bottom)</option>
+          <option value="16:9-in-4:3">16:9 inside a 4:3 video (black bars top &amp; bottom: zoomed to fill)</option>
           <option value="2.20:1">Wide film 2.20:1 or 2.35:1 (black bars top &amp; bottom)</option>
           <option value="2.76:1">Very wide film 2.76:1 (thick black bars top &amp; bottom)</option>
         </select>
@@ -1420,18 +1420,22 @@ ol.steps a { color: var(--accent) }
       const el = frameEl(); if (!el) return;
       const bw = el.clientWidth, bh = el.clientHeight; if (!bw || !bh) return;
       const shape = P.m.aspect || "16:9";
-      const fileAR = shape === "2.20:1" || shape === "2.76:1" ? 16 / 9 : P.kind === "yt" || P.kind === "vimeo" ? (shape === "4:3" || shape === "16:9-in-4:3" ? 4 / 3 : shape === "3:2" ? 1.47 : shape === "5:3" ? 1.65 : shape === "16:10" ? 1.6 : 16 / 9) : (v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : 16 / 9);
+      // a 16:9 picture with black bars top and bottom of a 4:3 video: zoomed so the picture fills the player, bars cropped off
+      const zoom = shape === "16:9-in-4:3" && !wrap.classList.contains("admode");
+      const fileAR = zoom || shape === "2.20:1" || shape === "2.76:1" ? 16 / 9 : P.kind === "yt" || P.kind === "vimeo" ? (shape === "4:3" || shape === "16:9-in-4:3" ? 4 / 3 : shape === "3:2" ? 1.47 : shape === "5:3" ? 1.65 : shape === "16:10" ? 1.6 : 16 / 9) : (v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : 16 / 9);
       const cw = Math.min(bw, bh * fileAR), ch = cw / fileAR;
       const ifr = P.kind === "yt" ? ytbox.querySelector(".yslot:not(.spare) iframe") : P.kind === "vimeo" && vmbox.querySelector("iframe");
       if (ifr && wrap.classList.contains("admode")) Object.assign(ifr.style, { width: bw + "px", height: bh + "px", left: "0px", top: "0px" });   // an ad: shown whole
       else if (ifr) {   // exactly the picture's width, with an extra strip above and below for YouTube's overlays to fall into
-        const pad = Math.round(Math.max(90, ch * 0.22));
-        Object.assign(ifr.style, { width: cw + "px", height: (ch + 2 * pad) + "px", left: ((bw - cw) / 2) + "px", top: ((bh - ch) / 2 - pad) + "px" });
+        const ih = zoom ? cw * 3 / 4 : ch;   // zoomed: the whole 4:3 frame, taller than the box, its bars cut off by the box
+        const pad = Math.round(Math.max(90, ih * 0.22));
+        Object.assign(ifr.style, { width: cw + "px", height: (ih + 2 * pad) + "px", left: ((bw - cw) / 2) + "px", top: ((bh - ih) / 2 - pad) + "px" });
       }
       // a 4:3 picture someone stretched to fill 16:9: squeeze it back to 4:3 (not during an ad)
       const squeeze = shape === "4:3-stretched" && !wrap.classList.contains("admode") ? "scaleX(0.75)" : "";
       if (ifr) ifr.style.transform = squeeze;
       v.style.transform = P.kind === "video" ? squeeze : "";
+      v.style.objectFit = P.kind === "video" && zoom ? "cover" : "";
       // a 4:3 picture with blurred copies filling the sides of a 16:9 video: black out the sides (the picture itself isn't cut)
       const blur = shape === "4:3-blur" && !wrap.classList.contains("admode");
       const side = (cw - ch * 4 / 3) / 2;   // width of each blurred strip
@@ -1439,7 +1443,6 @@ ol.steps a { color: var(--accent) }
       v.style.clipPath = P.kind === "video" && blur ? `inset(0 ${(bw - cw) / 2 + side}px 0 ${(bw - cw) / 2 + side}px)` : "";
       let x = el.offsetLeft + (bw - cw) / 2, y = el.offsetTop + (bh - ch) / 2, w = cw, h = ch;
       if (shape === "4:3-in-16:9" || shape === "4:3-stretched" || shape === "4:3-blur") { w = h * 4 / 3; x += (cw - w) / 2; }
-      if (shape === "16:9-in-4:3") { h = w * 9 / 16; y += (ch - h) / 2; }
       // a 3:2 file: rage showed it with bars at the sides of a 16:9 picture, so the logo goes where it does for 3:2-in-16:9
       if (shape === "3:2" || shape === "5:3" || shape === "16:10") { w = h * 16 / 9; x -= (w - cw) / 2; }
       const G = shape.startsWith("4:3") ? GEO["4:3"] : GEO[shape === "3:2" ? "3:2-in-16:9" : shape] || GEO["16:9"];
