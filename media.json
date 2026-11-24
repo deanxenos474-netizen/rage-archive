@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T14:55:06.732Z",
+ "saved": "2026-11-24T14:56:42.045Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3226,6 +3226,15 @@
    "aspect": "4:3",
    "logoAt": 8,
    "start": 60.204,
+   "verified": true
+  },
+  "5cef7e796d8f": {
+   "artist": "Annie Lennox from Eurythmics",
+   "title": "Interviewed on Countdown, 1985",
+   "yt": "UUJ9LSpfvS8",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
+   "aspect": "4:3",
+   "burned": true,
    "verified": true
   }
  },
