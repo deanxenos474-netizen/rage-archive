@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T16:05:09.971Z",
+ "saved": "2026-11-24T16:06:22.335Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3325,6 +3325,15 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/31/0c/c8/mzi.zxupauac.jpg/1424x1424bb-100.jpg",
    "aspect": "4:3",
    "logoAt": 8,
+   "verified": true
+  },
+  "5cdec6fb6b13": {
+   "artist": "Sean Kelly from Models",
+   "title": "Interviewed On Countdown, 1986",
+   "yt": "qSMu5BJGt3E",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
+   "aspect": "4:3",
+   "burned": true,
    "verified": true
   }
  },
