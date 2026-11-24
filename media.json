@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T08:36:54.162Z",
+ "saved": "2026-11-24T08:55:50.089Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2866,6 +2866,17 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "405b7e7cf9e3": {
+   "artist": "Bette Midler",
+   "title": "Married Men",
+   "video": "https://ia801007.us.archive.org/33/items/saturday-night-live-season-4/20.%20Buck%20Henry%2C%20Bette%20Midler%20(05-26-1979).mp4",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/y2005/m07/d22/h05/mzi.wnjowxot.jpg/1425x1425bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 8,
+   "start": 1361,
+   "end": 1620,
+   "verified": true
   }
  },
  "merges": {
@@ -4817,6 +4828,12 @@
    "yr": 1980,
    "g": [
     "Pop"
+   ]
+  },
+  "405b7e7cf9e3": {
+   "yr": 1979,
+   "g": [
+    "R&B"
    ]
   }
  },
