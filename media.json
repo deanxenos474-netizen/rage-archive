@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T10:11:41.782Z",
+ "saved": "2026-11-24T10:19:36.580Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2895,6 +2895,15 @@
    "burned": true,
    "verified": true,
    "lowq": true
+  },
+  "80c8141719d3": {
+   "artist": "Devo - Live On Countdown",
+   "title": "Whip It",
+   "yt": "g-758X8Gt4k",
+   "cover": "https://www.sanity.com.au/media/Images/fullimage/424152/SDC_2349847_2018-26-1--00-16-16.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -4865,6 +4874,12 @@
    "yr": 1979,
    "g": [
     "R&B"
+   ]
+  },
+  "80c8141719d3": {
+   "yr": 1980,
+   "g": [
+    "Rock"
    ]
   }
  },
