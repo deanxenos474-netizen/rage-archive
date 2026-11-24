@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T09:01:07.682Z",
+ "saved": "2026-11-24T10:03:37.974Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2886,6 +2886,15 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "c7606dd8e048": {
+   "artist": "Devo",
+   "title": "Workin' In A Coalmine",
+   "yt": "DzYNO9IiQyc",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/0e/0f/08/0e0f089c-cf0f-77a0-a510-29113e73e16c/mzi.ghxlxicy.jpg/1390x1403bb-100.jpg",
+   "aspect": "4:3-in-16:9",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -2904,7 +2913,8 @@
   "598672ead2c6": "33cd08feb3f2",
   "0325be95f281": "24b4b2784fc3",
   "1dd1ea04a7ab": "fe6e8b9bad18",
-  "1d9aedea3f52": "0fb351757405"
+  "1d9aedea3f52": "0fb351757405",
+  "08303fe676d9": "c7606dd8e048"
  },
  "edits": {
   "7f9c6325842c": {
@@ -4843,6 +4853,12 @@
    "yr": 1979,
    "g": [
     "R&B"
+   ]
+  },
+  "c7606dd8e048": {
+   "yr": 1981,
+   "g": [
+    "Rock"
    ]
   }
  },
