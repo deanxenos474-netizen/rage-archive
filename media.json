@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T08:30:30.525Z",
+ "saved": "2026-11-24T08:36:54.162Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2853,6 +2853,15 @@
    "artist": "Olivia Newton-John",
    "title": "Interviewed On Countdown, 1980",
    "yt": "pj04F5J5xeM",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
+  },
+  "5c7390c743d2": {
+   "artist": "Bette Midler",
+   "title": "Interviewed on Countdown, 1980",
+   "yt": "-K_u2zibHpc",
    "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
    "aspect": "4:3",
    "burned": true,
