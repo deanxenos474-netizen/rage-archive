@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T14:09:10.178Z",
+ "saved": "2026-11-24T14:14:58.687Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3163,6 +3163,15 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "ba2386bea626": {
+   "artist": "Madonna",
+   "title": "Like A Virgin",
+   "yt": "s__rX_WL100",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/8e/80/32/8e803264-c925-14dd-3412-2d7652c3df7b/mzi.wxptosaa.jpg/1447x1435bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 8,
+   "verified": true
   }
  },
  "merges": {
@@ -5260,6 +5269,12 @@
   },
   "087817223ef4": {
    "yr": 1983,
+   "g": [
+    "Pop"
+   ]
+  },
+  "ba2386bea626": {
+   "yr": 1984,
    "g": [
     "Pop"
    ]
