@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T15:21:47.746Z",
+ "saved": "2026-11-24T15:26:29.810Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3276,6 +3276,15 @@
    "artist": "Stevie Nicks",
    "title": "Interviewed on Countdown, 1986",
    "yt": "P2fu6Naz-nM",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
+  },
+  "7ad956c04c75": {
+   "artist": "The Divinyls",
+   "title": "Countdown Outtakes, 1985",
+   "yt": "I6ZslvBSNMU",
    "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
    "aspect": "4:3",
    "burned": true,
