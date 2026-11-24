@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T11:28:28.950Z",
+ "saved": "2026-11-24T11:29:47.940Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2995,6 +2995,15 @@
    "burned": true,
    "verified": true,
    "lowq": true
+  },
+  "6fba8afe6fee": {
+   "artist": "Billy Thorpe & The Aztecs - Live on Countdown",
+   "title": "Just The Way I Like It",
+   "yt": "QwE1nWnQLBQ",
+   "cover": "https://www.sanity.com.au/media/Images/fullimage/424152/SDC_2349847_2018-26-1--00-16-16.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -5013,6 +5022,12 @@
    "yr": 1985,
    "g": [
     "R&B"
+   ]
+  },
+  "6fba8afe6fee": {
+   "yr": 1981,
+   "g": [
+    "Rock"
    ]
   }
  },
