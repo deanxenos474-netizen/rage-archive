@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T12:15:51.709Z",
+ "saved": "2026-11-24T12:23:06.463Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3076,6 +3076,15 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "17ad32e7aeb6": {
+   "artist": "Joan Jett & The Blackhearts",
+   "title": "I Love Rock 'N' Roll (Live on Countdown, 1982)",
+   "yt": "fZBTpShObTE",
+   "cover": "https://www.sanity.com.au/media/Images/fullimage/424152/SDC_2349847_2018-26-1--00-16-16.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -5129,6 +5138,12 @@
    ]
   },
   "95649873bdf8": {
+   "yr": 1982,
+   "g": [
+    "Rock"
+   ]
+  },
+  "17ad32e7aeb6": {
    "yr": 1982,
    "g": [
     "Rock"
