@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T13:18:37.138Z",
+ "saved": "2026-11-24T13:21:47.226Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3112,6 +3112,15 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "83f9b531b6f0": {
+   "artist": "Ignatius Jones",
+   "title": "Whispering Your Name",
+   "yt": "CmKhjS4908M",
+   "cover": "https://i.discogs.com/eFezBXslfdY8iqePV6ZWZza7uEwfep6HBmYEjVhyf0I/rs:fit/g:sm/q:90/h:562/w:567/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTEyMjAw/OTctMTIwMTYxOTg5/Mi5qcGVn.jpeg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -5180,6 +5189,12 @@
    "yr": 1983,
    "g": [
     "Rock"
+   ]
+  },
+  "83f9b531b6f0": {
+   "yr": 1983,
+   "g": [
+    "Electronic"
    ]
   }
  },
