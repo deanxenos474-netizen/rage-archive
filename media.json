@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T08:26:50.491Z",
+ "saved": "2026-11-24T08:30:30.525Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -2846,6 +2846,15 @@
    "yt": "VD_ANzSqO3w",
    "cover": "https://www.sanity.com.au/media/Images/fullimage/424152/SDC_2349847_2018-26-1--00-16-16.jpg",
    "aspect": "3:2",
+   "burned": true,
+   "verified": true
+  },
+  "226008ced0ff": {
+   "artist": "Olivia Newton-John",
+   "title": "Interviewed On Countdown, 1980",
+   "yt": "pj04F5J5xeM",
+   "cover": "https://cdn.iview.abc.net.au/thumbs/544/X0_60fe4b361bd4b_1920.jpg",
+   "aspect": "4:3",
    "burned": true,
    "verified": true
   }
