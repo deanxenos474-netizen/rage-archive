@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-24T11:54:12.764Z",
+ "saved": "2026-11-24T12:05:55.302Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3049,6 +3049,15 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "4fb0bd93de10": {
+   "artist": "Dragon",
+   "title": "Ramona",
+   "yt": "6T9wCxBAD4Y",
+   "cover": "https://i.discogs.com/YzqxtJTa9zJMA2AIJ6TRGD_aJ72kvej0vHzy-FHeHCM/rs:fit/g:sm/q:90/h:449/w:449/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE0MDEw/MzEtMTIxNjYxOTMx/MS5qcGVn.jpeg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -3068,7 +3077,8 @@
   "1dd1ea04a7ab": "fe6e8b9bad18",
   "1d9aedea3f52": "0fb351757405",
   "08303fe676d9": "c7606dd8e048",
-  "ffff7995e2e6": "6e3bcbe473ea"
+  "ffff7995e2e6": "6e3bcbe473ea",
+  "69595b7dbd31": "4fb0bd93de10"
  },
  "edits": {
   "7f9c6325842c": {
@@ -5091,6 +5101,13 @@
    "yr": 1982,
    "g": [
     "Pop"
+   ]
+  },
+  "4fb0bd93de10": {
+   "l": "EMI",
+   "yr": 1982,
+   "g": [
+    "Rock"
    ]
   }
  },
