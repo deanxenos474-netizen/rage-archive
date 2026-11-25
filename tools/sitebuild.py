@@ -78,6 +78,7 @@ STYLED = [(re.compile(p, re.I), r) for p, r in [
     (r"\btouch[eé] amor[eé]\b", "Touché Amoré"),
     (r"\bgabriel garz.n-montano\b", "Gabriel Garzón-Montano"),
     (r"^the models\b", "Models"),   # never "The Models" (a few old listings wrote it so)
+    (r"\b300skullsandcounting\b", "300SkullsAndCounting"),
 ]]
 
 
