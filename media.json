@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-25T13:53:45.871Z",
+ "saved": "2026-11-25T13:55:25.439Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3449,6 +3449,14 @@
    "aspect": "4:3-stretched",
    "logoAt": 15,
    "verified": true
+  },
+  "47a461b42c2b": {
+   "artist": "Selve",
+   "title": "Weekends",
+   "yt": "xJPmJW73SK8",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/18/80/80/188080e1-2559-caa4-9900-fc12f040e6ba/8721554908087.png/3000x3000bb-100.jpg",
+   "logoAt": 12,
+   "verified": true
   }
  },
  "merges": {
@@ -5686,6 +5694,12 @@
    ]
   },
   "653063eb69dc": {
+   "yr": 2026,
+   "g": [
+    "Indie"
+   ]
+  },
+  "47a461b42c2b": {
    "yr": 2026,
    "g": [
     "Indie"
