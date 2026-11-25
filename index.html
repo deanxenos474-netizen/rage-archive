@@ -84,6 +84,7 @@ label.f { display: flex; align-items: center; gap: 8px; font: 500 12px var(--mon
 .thumb { width: 40px; height: 40px; border-radius: 6px; background: var(--raise); display: grid; place-items: center; overflow: hidden; font: 600 15px var(--display); color: var(--muted); position: relative }
 .thumb img { width: 100%; height: 100%; object-fit: cover; display: block }
 .thumb .full, .d-cover .full, .thumb .prev, .d-cover .prev { position: absolute; inset: 0 }   /* the preview over the letter, the full-quality cover over both */
+html:not(.covers-in) .thumb img, html:not(.covers-in) .d-cover img { visibility: hidden }   /* every square shows its letter until every cover is in, then they all appear at once */
 .thumb .play { position: absolute; right: 2px; bottom: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--hot); display: grid; place-items: center }
 .thumb .play::after { content: ""; border-left: 5px solid #fff; border-top: 3px solid transparent; border-bottom: 3px solid transparent; margin-left: 1px }
 .t { min-width: 0 }
@@ -859,21 +860,25 @@ ol.steps a { color: var(--accent) }
   function coverFirst(u, letter, lazy) {
     const p = coverPrev(u);
     // the letter stays underneath until the preview arrives, so a slow connection shows the letter, not an empty square
-    return p ? `${letter}<img class="prev" src="${esc(p)}" alt=""${lazy ? ' loading="lazy"' : ""} fetchpriority="high" onerror="this.remove()">` : letter;
+    return p ? `${letter}<img class="prev" src="${esc(p)}" alt="" onerror="this.remove()">` : letter;
   }
-  /* covers with no preview are fetched in the background as soon as the site opens, three at a time, so they're already
-     in when their row is drawn (up to 60 of them; the pictures are kept so the browser doesn't drop them) */
-  const earlyGot = new Map(); let earlyQ = [], earlyBusy = 0;
+  /* Every cover appears at the same moment. As soon as the site opens, every cover is fetched at once (its small
+     preview where there is one, otherwise the cover itself) and kept; until all of them are in and ready to draw (or
+     15 s have passed) every square shows its letter, then they all appear together. The pictures are kept so the
+     browser doesn't drop them. */
+  const earlyGot = new Map(); let earlyLeft = 0, coversIn = false;
+  function coversShow() { if (!coversIn) { coversIn = true; document.documentElement.classList.add("covers-in"); } }
+  setTimeout(coversShow, 15000);
   function coverEarly() {
     for (const m of media.values()) {
-      if (earlyGot.size >= 60) break;
-      if (m.cover && safeLink(m.cover) && !earlyGot.has(m.cover) && !coverPrev(m.cover)) { earlyGot.set(m.cover, null); earlyQ.push(m.cover); }
-    }
-    while (earlyBusy < 3 && earlyQ.length) {
-      const u = earlyQ.shift(), im = new Image(); earlyBusy++; earlyGot.set(u, im);
-      im.onload = im.onerror = () => { earlyBusy--; coverEarly(); };
+      const u = m.cover && safeLink(m.cover) ? coverPrev(m.cover) || m.cover : null;
+      if (!u || earlyGot.has(u)) continue;
+      const im = new Image(); earlyGot.set(u, im); earlyLeft++;
+      const done = () => { if (--earlyLeft === 0) coversShow(); };
+      im.onload = () => im.decode().catch(() => {}).then(done); im.onerror = done;
       im.src = u;
     }
+    if (media.size && !earlyLeft) coversShow();
   }
   const fullGot = new Map(), fullQ = new Set();   // fullGot: link -> promise of its loaded picture
   let fullBusy = 0, fullFlying = 0;               // fullFlying: full covers actually downloading (a slot freed after 12 s may still be)
@@ -892,19 +897,30 @@ ol.steps a { color: var(--accent) }
     }
     return fullGot.get(u);
   }
+  /* the full-quality covers on screen go in all at once: each waits until every one being fetched is in (at most 8 s) */
+  let fullShowing = 0, fullBatch = [], fullTimer = 0;
+  function fullFlush() {
+    clearTimeout(fullTimer); fullTimer = 0;
+    const b = fullBatch; fullBatch = [];
+    for (const [el, im, u] of b) if (el.isConnected && el.dataset.full === u && !el.querySelector(".full")) el.insertBefore(im, el.querySelector(".play"));
+  }
+  function fullSoon() {
+    if (!fullBatch.length) return;
+    if (!fullShowing && !fullQ.size) fullFlush();
+    else if (!fullTimer) fullTimer = setTimeout(fullFlush, 8000);
+  }
   function fullShow(el) {
-    const u = el.dataset.full;
+    const u = el.dataset.full; fullShowing++;
     return fullLoad(u).then(got => {
       if (!got || !el.isConnected || el.dataset.full !== u || el.querySelector(".full")) return;
       let im = got.im; got.im = null;             // the loaded picture itself goes in the first place it's needed, copies (from the browser's cache) in others
-      if (!im) { im = new Image(); im.alt = ""; im.className = "full"; im.decoding = "async"; im.onerror = () => im.remove(); im.src = u; }
-      el.insertBefore(im, el.querySelector(".play"));
-    });
+      if (!im) { im = new Image(); im.alt = ""; im.className = "full"; im.decoding = "async"; im.src = u; }
+      return im.decode().then(() => { fullBatch.push([el, im, u]); }, () => {});
+    }).finally(() => { fullShowing--; fullSoon(); });
   }
   function fullPump() {
-    // never more than 6 big downloads at once: on a slow connection, slots freed after 12 s would otherwise keep adding
-    // downloads until the small previews (and the next covers) can't get through
-    while (fullBusy < 4 && fullFlying < 6 && fullQ.size) {
+    // every cover on screen at once (the owner's call), but never more than 30 big downloads together
+    while (fullBusy < 30 && fullFlying < 30 && fullQ.size) {
       const top = document.querySelector("dialog[open]"), all = [...fullQ];
       const el = (top && all.find(e => top.contains(e))) || all[0]; fullQ.delete(el);   // an open window's covers go before the list behind it
       if (!el.isConnected) continue;
