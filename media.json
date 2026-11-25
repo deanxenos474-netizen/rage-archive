@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-25T13:52:17.182Z",
+ "saved": "2026-11-25T13:53:45.871Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3440,6 +3440,15 @@
    "aspect": "4:3",
    "logoAt": 13,
    "verified": true
+  },
+  "653063eb69dc": {
+   "artist": "Greg Freeman",
+   "title": "Loser's Prize",
+   "yt": "Z7SkaGN87zE",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/96/7d/98/967d98f0-752c-b745-a24b-a266f4eff2f9/8721555628380.png/3900x3900bb-100.jpg",
+   "aspect": "4:3-stretched",
+   "logoAt": 15,
+   "verified": true
   }
  },
  "merges": {
@@ -5671,6 +5680,12 @@
    ]
   },
   "e9ca22858495": {
+   "yr": 2026,
+   "g": [
+    "Indie"
+   ]
+  },
+  "653063eb69dc": {
    "yr": 2026,
    "g": [
     "Indie"
