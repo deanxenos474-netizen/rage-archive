@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-25T13:40:16.406Z",
+ "saved": "2026-11-25T13:47:18.091Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3420,6 +3420,7 @@
    "title": "The Hero Never Dies",
    "yt": "RL2Ue-oOyMo",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/82/ab/47/82ab475c-298d-f2fc-b50e-5c42228fc34d/16782.jpg/3000x3000bb-100.jpg",
+   "aspect": "2:1",
    "logoAt": 8,
    "verified": true
   }
