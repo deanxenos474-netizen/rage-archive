@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-25T13:50:07.743Z",
+ "saved": "2026-11-25T13:52:17.182Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3431,6 +3431,15 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/dd/be/bd/ddbebd59-78df-d3b6-bfca-5a743995f016/196874730430.jpg/3000x3000bb-100.jpg",
    "aspect": "3:2",
    "verified": true
+  },
+  "e9ca22858495": {
+   "artist": "This Is Lorelei",
+   "title": "The Kid With The Crown",
+   "yt": "_Wm7jdmS41Q",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/43/86/37/438637b7-d063-02d4-e1bd-5b3c6be6f9aa/191401221771.png/4000x4000bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 13,
+   "verified": true
   }
  },
  "merges": {
@@ -5656,6 +5665,12 @@
    ]
   },
   "f4a2e19759ab": {
+   "yr": 2026,
+   "g": [
+    "Indie"
+   ]
+  },
+  "e9ca22858495": {
    "yr": 2026,
    "g": [
     "Indie"
