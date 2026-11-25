@@ -859,21 +859,25 @@ ol.steps a { color: var(--accent) }
   function coverFirst(u, letter, lazy) {
     const p = coverPrev(u);
     // the letter stays underneath until the preview arrives, so a slow connection shows the letter, not an empty square
-    return p ? `${letter}<img class="prev" src="${esc(p)}" alt=""${lazy ? ' loading="lazy"' : ""} fetchpriority="high" onerror="this.remove()">` : letter;
+    return p ? `${letter}<img class="prev" src="${esc(p)}" alt="" fetchpriority="high" onerror="this.remove()">` : letter;
   }
-  /* covers with no preview are fetched in the background as soon as the site opens, three at a time, so they're already
-     in when their row is drawn (up to 60 of them; the pictures are kept so the browser doesn't drop them) */
-  const earlyGot = new Map(); let earlyQ = [], earlyBusy = 0;
+  /* Low quality first: as soon as the site opens, the small preview of every cover (or, with no preview, the cover
+     itself, once the previews are in) is fetched and kept, so each row's preview is already in when it's drawn. Each
+     shows the moment it's in; nothing waits for anything else. Full-quality covers in the list, and covers with no
+     preview, only start once every preview is in (or after 4 s), so they never slow the previews down. */
+  const earlyGot = new Map(); let earlyLeft = 0, prevsIn = false;
+  function prevsDone() { if (!prevsIn) { prevsIn = true; coverEarly(); fullPump(); } }
+  setTimeout(prevsDone, 4000);
   function coverEarly() {
     for (const m of media.values()) {
-      if (earlyGot.size >= 60) break;
-      if (m.cover && safeLink(m.cover) && !earlyGot.has(m.cover) && !coverPrev(m.cover)) { earlyGot.set(m.cover, null); earlyQ.push(m.cover); }
-    }
-    while (earlyBusy < 3 && earlyQ.length) {
-      const u = earlyQ.shift(), im = new Image(); earlyBusy++; earlyGot.set(u, im);
-      im.onload = im.onerror = () => { earlyBusy--; coverEarly(); };
+      if (!m.cover || !safeLink(m.cover)) continue;
+      const p = coverPrev(m.cover), u = p || m.cover;
+      if (earlyGot.has(u) || !p && !prevsIn) continue;
+      const im = new Image(); earlyGot.set(u, im);
+      if (p) { earlyLeft++; im.onload = im.onerror = () => { if (--earlyLeft === 0) prevsDone(); }; }
       im.src = u;
     }
+    if (media.size && !earlyLeft) prevsDone();
   }
   const fullGot = new Map(), fullQ = new Set();   // fullGot: link -> promise of its loaded picture
   let fullBusy = 0, fullFlying = 0;               // fullFlying: full covers actually downloading (a slot freed after 12 s may still be)
@@ -904,7 +908,7 @@ ol.steps a { color: var(--accent) }
   function fullPump() {
     // never more than 6 big downloads at once: on a slow connection, slots freed after 12 s would otherwise keep adding
     // downloads until the small previews (and the next covers) can't get through
-    while (fullBusy < 4 && fullFlying < 6 && fullQ.size) {
+    while (prevsIn && fullBusy < 4 && fullFlying < 6 && fullQ.size) {
       const top = document.querySelector("dialog[open]"), all = [...fullQ];
       const el = (top && all.find(e => top.contains(e))) || all[0]; fullQ.delete(el);   // an open window's covers go before the list behind it
       if (!el.isConnected) continue;
