@@ -463,6 +463,7 @@ ol.steps a { color: var(--accent) }
           <option value="3:2">3:2 (YouTube shows narrow black bars at the sides)</option>
           <option value="3:2-in-16:9">3:2 inside a 16:9 video (narrow black bars at the sides)</option>
           <option value="16:9-in-4:3">16:9 inside a 4:3 video (black bars top &amp; bottom: zoomed to fill)</option>
+          <option value="2:1">Wide 2:1 (thin black bars top &amp; bottom)</option>
           <option value="2.20:1">Wide film 2.20:1 or 2.35:1 (black bars top &amp; bottom)</option>
           <option value="2.76:1">Very wide film 2.76:1 (thick black bars top &amp; bottom)</option>
         </select>
@@ -1293,6 +1294,10 @@ ol.steps a { color: var(--accent) }
     // 3:2-in-16:9 the logo and caption move about two thirds of that (64px) right
     "16:10": { W: 1920, logo: { x: 244, y: 828, width: 486, height: 174 },
               l1: { x: 259, y: 886, size: 77.1, sx: 0.79 },  l2: { x: 261, y: 965.5, size: 58.8, sx: 0.944 } },
+    // a 2:1 picture letterboxed in 16:9: not measured off air; the bars are 60px top and bottom, so the logo and
+    // caption keep their 16:9 sizes and sit 60px higher, the same distance from the bottom of the picture
+    "2:1": { W: 1920, logo: { x: 180, y: 768, width: 486, height: 174 },
+              l1: { x: 195, y: 826, size: 77.1, sx: 0.79 },  l2: { x: 197, y: 905.5, size: 58.8, sx: 0.944 } },
     "2.76:1": { W: 1920, logo: { x: 178.8, y: 687.5, width: 485.8, height: 178.8 },
               l1: { x: 197, y: 747.6, size: 76.5, sx: 0.794 }, l2: { x: 197, y: 822.8, size: 58, sx: 0.92 } },
     "2.20:1": { W: 1920, logo: { x: 185, y: 706, width: 531, height: 195 },
@@ -1432,7 +1437,7 @@ ol.steps a { color: var(--accent) }
       const shape = P.m.aspect || "16:9";
       // a 16:9 picture with black bars top and bottom of a 4:3 video: zoomed so the picture fills the player, bars cropped off
       const zoom = shape === "16:9-in-4:3" && !wrap.classList.contains("admode");
-      const fileAR = zoom || shape === "2.20:1" || shape === "2.76:1" ? 16 / 9 : P.kind === "yt" || P.kind === "vimeo" ? (shape === "4:3" || shape === "16:9-in-4:3" ? 4 / 3 : shape === "3:2" ? 1.47 : shape === "5:3" ? 1.65 : shape === "16:10" ? 1.6 : 16 / 9) : (v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : 16 / 9);
+      const fileAR = zoom || shape === "2:1" || shape === "2.20:1" || shape === "2.76:1" ? 16 / 9 : P.kind === "yt" || P.kind === "vimeo" ? (shape === "4:3" || shape === "16:9-in-4:3" ? 4 / 3 : shape === "3:2" ? 1.47 : shape === "5:3" ? 1.65 : shape === "16:10" ? 1.6 : 16 / 9) : (v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : 16 / 9);
       const cw = Math.min(bw, bh * fileAR), ch = cw / fileAR;
       const ifr = P.kind === "yt" ? ytbox.querySelector(".yslot:not(.spare) iframe") : P.kind === "vimeo" && vmbox.querySelector("iframe");
       if (ifr && wrap.classList.contains("admode")) Object.assign(ifr.style, { width: bw + "px", height: bh + "px", left: "0px", top: "0px" });   // an ad: shown whole
