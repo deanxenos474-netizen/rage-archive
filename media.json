@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-25T13:29:44.593Z",
+ "saved": "2026-11-25T13:31:12.314Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3379,6 +3379,15 @@
    "yt": "p0-pdE1GmUA",
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/29/14/e1/2914e1f9-c60d-e61c-94d4-dda389880422/196874792193.jpg/3000x3000bb-100.jpg",
    "aspect": "3:2",
+   "logoAt": 8,
+   "verified": true
+  },
+  "41fcec61cb94": {
+   "artist": "Queens Of The Stone Age",
+   "title": "Where The Goth Girls At?",
+   "yt": "eAOIpDUDGX4",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/89/4a/62/894a62a0-230a-cff6-e25a-a7de7e95fb40/191401225373.png/4000x4000bb-100.jpg",
+   "logoAt": 8,
    "verified": true
   }
  },
@@ -5572,6 +5581,12 @@
    "yr": 2026,
    "g": [
     "Indie"
+   ]
+  },
+  "41fcec61cb94": {
+   "yr": 2026,
+   "g": [
+    "Rock"
    ]
   }
  },
