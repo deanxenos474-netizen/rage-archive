@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-26T09:11:01.227Z",
+ "saved": "2026-11-26T09:13:00.325Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3634,6 +3634,15 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/79/90/e9/7990e90b-1957-ed3c-6d1d-bea03d36f0c9/5050580856158.png/1400x1400bb-100.jpg",
    "logoAt": 12,
    "verified": true
+  },
+  "ba63c84ce3b4": {
+   "artist": "Presley Regier",
+   "title": "My Vice Is Misery",
+   "yt": "LMS3NdxfVX4",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/ab/13/30/ab13301a-a298-d774-bd0f-ea0438065c88/196874637180.jpg/3000x3000bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 8,
+   "verified": true
   }
  },
  "merges": {
@@ -6006,6 +6015,12 @@
    "yr": 2026,
    "g": [
     "Electronic"
+   ]
+  },
+  "ba63c84ce3b4": {
+   "yr": 2026,
+   "g": [
+    "Indie"
    ]
   }
  },
