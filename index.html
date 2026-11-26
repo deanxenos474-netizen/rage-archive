@@ -1644,7 +1644,9 @@ ol.steps a { color: var(--accent) }
       const token = P.vmToken = (P.vmToken || 0) + 1;
       const go = () => {
         if (P.stop || token !== P.vmToken || early || !P.vm) return;
-        const seek = P.m.start ? P.vm.setCurrentTime(+P.m.start) : Promise.resolve();
+        // always from the start (or the clip's start time): the player is kept between videos, so the same video opened
+        // again would otherwise carry on from where it was left, and Vimeo itself can remember a viewer's place
+        const seek = P.vm.setCurrentTime(+P.m.start || 0);
         if (autoplay) seek.then(() => P.vm.play()).catch(vmFail);
       };
       const fail = e => { if (!early && token === P.vmToken && P.kind === "vimeo") { vmFail(e); opts.onError?.(); } };
