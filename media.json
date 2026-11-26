@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-26T05:59:43.463Z",
+ "saved": "2026-11-26T06:37:48.711Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3558,6 +3558,15 @@
    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/47/f3/1f/47f31fc9-abaa-1fa0-e510-314d7c62c6b2/4648555.jpg/1400x1400bb-100.jpg",
    "logoAt": 8,
    "verified": true
+  },
+  "a18a87aa47e2": {
+   "artist": "Zoe Wees",
+   "title": "Rise Again",
+   "yt": "_wenfarVAt8",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/AMCArtistImages211/v4/01/d8/a1/01d8a150-7677-d732-34d7-0930c5ce099e/ami_U003aidentity_U003add0024d7987510e064c676d1e18378cd-2026-10-14T20-42-20.931Z_cropped.png/4000x4000bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 21,
+   "verified": true
   }
  },
  "merges": {
@@ -5873,6 +5882,12 @@
    ]
   },
   "05ef5ee92002": {
+   "yr": 2026,
+   "g": [
+    "Pop"
+   ]
+  },
+  "a18a87aa47e2": {
    "yr": 2026,
    "g": [
     "Pop"
