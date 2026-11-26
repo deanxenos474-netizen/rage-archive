@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-26T06:40:20.741Z",
+ "saved": "2026-11-26T06:41:32.489Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3584,6 +3584,15 @@
    "aspect": "4:3",
    "logoAt": 8,
    "verified": true
+  },
+  "9ad532b59f34": {
+   "artist": "Spike Fuck",
+   "title": "Bored To Death",
+   "yt": "MY9kQbkbfvo",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/82/cf/78/82cf7853-7b9c-d0bd-8932-3a0c992c7622/67029.jpg/3000x3000bb-100.jpg",
+   "aspect": "4:3",
+   "logoAt": 8,
+   "verified": true
   }
  },
  "merges": {
@@ -5917,6 +5926,12 @@
    ]
   },
   "7ad09ce1571c": {
+   "yr": 2026,
+   "g": [
+    "Indie"
+   ]
+  },
+  "9ad532b59f34": {
    "yr": 2026,
    "g": [
     "Indie"
