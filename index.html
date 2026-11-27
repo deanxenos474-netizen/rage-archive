@@ -114,6 +114,8 @@ details.bc > summary:hover { background: var(--raise) }
 .bt small { display: block; font: 400 12px var(--mono); color: var(--muted); margin-top: 2px }
 .badge { display: inline-block; font: 500 10px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; border-radius: 4px; padding: 3px 5px; margin-right: 6px; vertical-align: 2px; color: var(--bg); background: var(--accent) }
 .badge.guest { background: var(--hot) }
+.badge.charts { background: var(--warn) }
+.badge.newm { background: var(--ok) }
 .sp-part { margin-right: 10px }
 .sp-part:last-of-type { margin-right: 0 }
 .dates button.sp { border-color: var(--hot) }
@@ -1059,7 +1061,10 @@ ol.steps a { color: var(--accent) }
   const spLabel = k => k === 2 ? "Guest programmer" : "Special";
   const spText = b => spParts(b).map(([k, t]) => `${spLabel(k)}: ${t}`).join(" · ");
   const spHTML = b => b.kind ? spParts(b).map(([k, t]) => `<span class="sp-part"><span class="badge${k === 2 ? " guest" : ""}">${spLabel(k)}</span>${esc(t)}</span>`).join(" ") + `<small>${esc(b.title || "Playlist")}</small>`
-    : b.sp ? `${esc(b.sp)}<small>${esc(b.title || "Playlist")}</small>` : esc(b.title || "Playlist");   // a regular episode's name from the ABC ("Charts", "New Music Show"): shown, not tagged as a special
+    : b.sp ? showTags(b) + `<small>${esc(b.title || "Playlist")}</small>` : esc(b.title || "Playlist");
+  // a regular episode's tag: CHARTS / NEW MUSIC (like the SPECIAL tag), then its name
+  const showTags = b => [isCharts(b) && ["charts", "Charts"], isNew(b) && ["newm", "New Music"]].filter(Boolean)
+    .map(([c, t]) => `<span class="badge ${c}">${t}</span>`).join("") + esc(b.sp);   // a regular episode's name from the ABC ("Charts", "New Music Show"): shown, not tagged as a special
 
   // a broadcast's running order as display items (aired: song indexes; upcoming: rows with their own text)
   function itemsOf(b, upcoming) {
