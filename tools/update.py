@@ -143,10 +143,12 @@ def air_date(title, pub):
 
 def special_info(raw):
     s = re.sub(r"\s+", " ", (raw or "").replace("\xa0", " ")).strip(" ,.-")
-    if not s or re.fullmatch(r"(?i)\d{1,2}[:.]\d{2}\s*(am|pm)?", s):
+    TM = r"\d{1,2}(?:[:.]\d{2})?\s*(?:am|pm)?"
+    if not s or re.fullmatch(r"(?i)\d{1,2}[:.]\d{2}\s*(am|pm)?", s) or re.fullmatch(rf"(?i){TM}\s*[-–]\s*{TM}", s):   # a time or time range, not a name
         return None
     if re.match(r"(?i)^(friday|saturday|sunday|monday|tuesday|wednesday|thursday)\b.*\b(19|20)\d\d\b", s) and len(s) < 60:
         return None
+    label = s
     s = re.sub(r"(?i)\s*(and|&|\+)\s*(the\s+)?(best\s+)?new\s+music(\s+videos?)?\s*$", "", s)
 
     def routine(x):
@@ -154,11 +156,20 @@ def special_info(raw):
         return x in ROUTINE or x == "rage goes retro"
 
     keep = [x.strip() for x in s.split(",") if x.strip() and not routine(x)]
-    if not keep:
-        return None
+    if not keep:   # a regular episode ("Charts", "New Music Show"): keep its name to show, but it isn't a special
+        def canon(x):   # one spelling per name: "VAULT" / "The Vault" -> "The VAULT", "New music videos" -> "New Music Videos"
+            k = re.sub(r"^the\s+", "", re.sub(r"[^a-z0-9 ]", "", x.lower()).strip())
+            if k == "vault": return "The VAULT"
+            if k == "rage goes retro": return "rage Goes Retro"
+            if k == "playlist": return ""
+            return re.sub(r"\b[a-z]", lambda m: m.group().upper(), x) if x == x.lower() or x == x.upper() else \
+                re.sub(r"(?<=\s)(?!(?:and|of|the|on|in|from)\b)([a-z])", lambda m: m.group().upper(), x)
+        parts = [canon(x.strip()) for x in label.split(",") if x.strip()]
+        parts = [x for i, x in enumerate(parts) if x and x not in parts[:i]]
+        return ["Show", ", ".join(parts), ""] if parts else None
     text = ", ".join(keep)
     g = re.search(r"(?i)^(.*?)\s+guest[- ]?program", text)
-    if g or re.search(r"(?i)guest[- ]?program", text):
+    if g or re.search(r"(?i)guest[- ]?program|\bprograms? rage\b", text):   # "Ollie Olsen Programs rage" is a guest night too
         return ["Guest programmer", text, g.group(1).strip() if g else ""]
     return ["Special", text, ""]
 

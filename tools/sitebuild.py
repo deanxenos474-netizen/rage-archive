@@ -61,6 +61,10 @@ def is_caps(a):
     return core == core.upper()
 
 
+# a playlist's name type -> broadcasts.json kind: 0 = a regular episode's name ("Charts"), 1 = special, 2 = guest programmer
+KIND = {"Show": 0, "Special": 1, "Guest programmer": 2}
+
+
 # artists with a set spelling that the listings don't always use ("MALI JOSE", "Asap Rocky", "Ty Dolla Sign").
 # Applied to the shown name after the capitals are fixed, so song ids stay the same.
 STYLED = [(re.compile(p, re.I), r) for p, r in [
@@ -412,7 +416,7 @@ def build(d, out_dir=ROOT):
             continue
         sp = p.get("sp")
         lists.append([int(p["date"].replace("-", "")), p.get("title") or "", p.get("url") or "", tracks[pi],
-                      sp[1] if sp else "", (2 if sp[0] == "Guest programmer" else 1) if sp else 0]
+                      sp[1] if sp else "", KIND.get(sp[0], 1) if sp else 0]
                      + ([ranks[pi]] if ranks[pi] else []))
     lists.sort(key=lambda x: (x[0], x[1]))
 
@@ -433,7 +437,7 @@ def build(d, out_dir=ROOT):
         if rr:
             sp = p.get("sp")
             upcoming.append([int(p["date"].replace("-", "")), p.get("title") or "", p.get("url") or "", rr,
-                             sp[1] if sp else "", (2 if sp[0] == "Guest programmer" else 1) if sp else 0])
+                             sp[1] if sp else "", KIND.get(sp[0], 1) if sp else 0])
 
     yearly = collections.Counter(int(dt[:4]) for *_, dt in plays)
     meta = {"songs": len(rows), "plays": len(plays), "playlists": len(lists),

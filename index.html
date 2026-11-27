@@ -1035,7 +1035,7 @@ ol.steps a { color: var(--accent) }
   let quietOpen = false;      // opening a broadcast from code (not a click) shouldn't rewrite the address
   /* a guest night's label can also name other segments ("The VAULT: …, Party Dozen guest program rage"): split it so each part gets its own tag.
      Pieces that don't name a segment ("Jack Johnson, Donavon Frankenreiter & G Love guest program") stay with the next one, or the last one at the end. */
-  const SEG = /special|tribute|vault|on rage|charts|guest[- ]?program|best of|retro|hottest|month|countdown|live at/i;
+  const SEG = /special|tribute|vault|on rage|charts|guest[- ]?program|programs? rage|best of|retro|hottest|month|countdown|live at/i;
   const spParts = b => {
     if (b.kind !== 2) return b.kind ? [[1, b.sp]] : [];
     const tok = b.sp.split(/(,?\s+followed by\s+|,\s*)/), out = [];
@@ -1049,11 +1049,12 @@ ol.steps a { color: var(--accent) }
       if (SEG.test(tok[i])) { out.push(buf); buf = ""; }
     }
     if (buf) { if (out.length) out[out.length - 1] += lead + buf; else out.push(buf); }
-    return out.map(t => [/guest[- ]?program/i.test(t) ? 2 : 1, t]);
+    return out.map(t => [/guest[- ]?program|programs? rage/i.test(t) ? 2 : 1, t]);
   };
   const spLabel = k => k === 2 ? "Guest programmer" : "Special";
   const spText = b => spParts(b).map(([k, t]) => `${spLabel(k)}: ${t}`).join(" · ");
-  const spHTML = b => b.kind ? spParts(b).map(([k, t]) => `<span class="sp-part"><span class="badge${k === 2 ? " guest" : ""}">${spLabel(k)}</span>${esc(t)}</span>`).join(" ") + `<small>${esc(b.title || "Playlist")}</small>` : esc(b.title || "Playlist");
+  const spHTML = b => b.kind ? spParts(b).map(([k, t]) => `<span class="sp-part"><span class="badge${k === 2 ? " guest" : ""}">${spLabel(k)}</span>${esc(t)}</span>`).join(" ") + `<small>${esc(b.title || "Playlist")}</small>`
+    : b.sp ? `${esc(b.sp)}<small>${esc(b.title || "Playlist")}</small>` : esc(b.title || "Playlist");   // a regular episode's name from the ABC ("Charts", "New Music Show"): shown, not tagged as a special
 
   // a broadcast's running order as display items (aired: song indexes; upcoming: rows with their own text)
   function itemsOf(b, upcoming) {
@@ -1868,7 +1869,7 @@ ol.steps a { color: var(--accent) }
       if (cur !== i) return;
       const ids = [...new Set([i, ...(members.get(i) || []), ...(includedBy.get(i) || [])].flatMap(j => plays.get(j) || []))].sort((a, b) => a - b);
       $("d-dates").innerHTML = ids.length ? ids.map(bi => { const b = B[bi];
-        return `<button data-b="${bi}"${b.kind ? ' class="sp"' : ""} title="${esc(b.kind ? spText(b) : b.title)}">${fmtDate(b.date)}</button>`; }).join("")
+        return `<button data-b="${bi}"${b.kind ? ' class="sp"' : ""} title="${esc(b.kind ? spText(b) : b.sp ? `${b.sp} · ${b.title}` : b.title)}">${fmtDate(b.date)}</button>`; }).join("")
         : '<span class="count">No broadcast listing found.</span>';
     }).catch(() => { $("d-dates").innerHTML = '<span class="count">The broadcast list didn’t load.</span>'; });
     if (!$("dlg").open) $("dlg").showModal();
@@ -1948,7 +1949,7 @@ ol.steps a { color: var(--accent) }
     const allIntros = up ? {} : effective("intros"), intros = {};
     songs.forEach((it, p) => { const x = allIntros[introKey(b, p)]; if (x && x.sid === it.sid && (x.yt || x.video)) intros[p + 1] = x; });
     const playable = items.map((it, k) => canPlay(it) || intros[k] ? k : -1).filter(k => k >= 0);
-    $("tv-title").textContent = b.kind ? b.sp : (b.title || "Playlist");
+    $("tv-title").textContent = b.sp || b.title || "Playlist";
     $("tv-sub").textContent = `${up ? "Upcoming · " : ""}${dow(b.date)} ${fmtDate(b.date)} · ${nv} of ${songs.length} songs have videos`;
     $("tv-queue").innerHTML = items.map((it, k) => `<li><button data-k="${k}"${!it.bumper && it.kind === "clip" ? ' class="noart"' : ""}${canPlay(it) || intros[k] ? "" : " disabled"}>${tvThumb(it)}<span class="t"><span class="a">${esc(it.a)}</span><span class="s">${esc(it.t)}${intros[k] ? " · with intro" : ""}${canPlay(it) ? "" : " · no video yet"}</span></span></button></li>`).join("");
     if (tv) tv.player.pause();
@@ -2177,7 +2178,7 @@ ol.steps a { color: var(--accent) }
         nth[s.b.i] = (nth[s.b.i] || 0) + 1;
         const twice = per[s.b.i] > 1 ? ` · ${ORD[nth[s.b.i] - 1] || nth[s.b.i] + "th"} of ${per[s.b.i]} that night` : "";
         const has = all[s.key], mine = has && sameIntro(has, first), note = has ? (mine ? " · has this intro" : " · has a different intro") : "";
-        const what = s.b.kind ? s.b.sp : (s.b.title || "Playlist");
+        const what = s.b.sp || s.b.title || "Playlist";
         const edit = has && !mine ? `<button class="btn" type="button" data-edit="${esc(s.key)}">Edit</button>` : "";
         return `<div class="nrow"><label><input type="checkbox" data-k="${esc(s.key)}"${mine ? " checked" : ""}> ${dow(s.b.date)} ${fmtDate(s.b.date)}<small>${esc(what)} · song ${s.p + 1}${twice}${note}</small></label>${edit}</div>`;
       }).join("") : '<span class="count">No broadcast listing found.</span>';
