@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-27T14:38:13.721Z",
+ "saved": "2026-11-27T14:53:41.859Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3823,6 +3823,14 @@
    "aspect": "4:3-in-16:9",
    "logoAt": 8,
    "verified": true
+  },
+  "3fa84c895ac5": {
+   "artist": "Kamahl ft. Delilah, Jon English, Keith Lamb, Gary Twinn",
+   "title": "Hound Dog (Live on Flashez, 1976)",
+   "yt": "rRWK-ru10fA",
+   "aspect": "4:3-in-16:9",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -6349,7 +6357,11 @@
    ]
   },
   "3fa84c895ac5": {
-   "a": "Kamahl ft. Delilah, Jon English, Keith Lamb, Gary Twinn"
+   "a": "Kamahl ft. Delilah, Jon English, Keith Lamb, Gary Twinn",
+   "yr": 1976,
+   "g": [
+    "Rock"
+   ]
   }
  },
  "includes": {
