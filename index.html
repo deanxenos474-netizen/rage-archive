@@ -1034,7 +1034,8 @@ ol.steps a { color: var(--accent) }
 
   let bkind = "all";
   // the Charts and New Music tabs: episodes the ABC names that way ("Charts", "New Music Show", "Best New Music Videos"...)
-  const isCharts = b => /\bcharts?\b/i.test(b.sp || ""), isNew = b => /\bnew (music|release)/i.test(b.sp || "");
+  // regular Charts / New Music nights only: a special or guest night with "Chart" in its name ("rage Chart Toppers Special") isn't one
+  const isCharts = b => !b.kind && /\bcharts?\b/i.test(b.sp || ""), isNew = b => !b.kind && /\bnew (music|release)/i.test(b.sp || "");
   const BKINDS = [["k-all", "all"], ["k-sp", "sp"], ["k-guest", "guest"], ["k-charts", "charts"], ["k-new", "new"]];
   /* every broadcast has its own link: #b-YYYYMMDD-N (N = which broadcast that day), #u-... while it's upcoming */
   const linkOf = (b, up) => `${up ? "u" : "b"}-${b.date}-${b.ord}`;
