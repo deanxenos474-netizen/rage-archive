@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-27T06:09:58.274Z",
+ "saved": "2026-11-27T06:35:59.582Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3769,6 +3769,15 @@
    "aspect": "4:3",
    "logoAt": 7,
    "verified": true
+  },
+  "dd5df8f27d38": {
+   "artist": "Skyhooks",
+   "title": "Living In The '70s",
+   "yt": "Sw57Fwxjj6Y",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/22/05/b8/2205b8a1-4e06-841e-5fcb-926d5208fa0c/825646839414.jpg/1424x1424bb-100.jpg",
+   "aspect": "4:3",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -6256,6 +6265,12 @@
    "yr": 2026,
    "g": [
     "Pop"
+   ]
+  },
+  "dd5df8f27d38": {
+   "yr": 1974,
+   "g": [
+    "Rock"
    ]
   }
  },
