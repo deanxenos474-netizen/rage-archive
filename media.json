@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-27T10:26:13.919Z",
+ "saved": "2026-11-27T11:07:07.746Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3787,6 +3787,15 @@
    "aspect": "4:3-in-16:9",
    "burned": true,
    "verified": true
+  },
+  "dff761331b0e": {
+   "artist": "Daddy Cool",
+   "title": "Lollipop (Live on Eyeforce, 1971)",
+   "yt": "hT8fcT47TPY",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music/a3/05/6a/mzi.rhaadlos.jpg/605x600bb-100.jpg",
+   "aspect": "4:3-in-16:9",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -6286,6 +6295,12 @@
    "yr": 1972,
    "g": [
     "Rock"
+   ]
+  },
+  "dff761331b0e": {
+   "yr": 1971,
+   "g": [
+    "Pop"
    ]
   }
  },
