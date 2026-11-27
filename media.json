@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-27T14:57:29.524Z",
+ "saved": "2026-11-27T15:04:07.795Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3841,6 +3841,15 @@
    "aspect": "4:3",
    "burned": true,
    "verified": true
+  },
+  "78e1f71a7bd8": {
+   "artist": "The Angels",
+   "title": "Marseilles (Live on GTK)",
+   "yt": "KKv10CEVCu4",
+   "cover": "https://i.discogs.com/Uok5WYCzKeaWuhYeqnbAiOsyY-5tP463LDEXQXBG6_A/rs:fit/g:sm/q:90/h:600/w:597/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTEyMjA0/ODQ5LTE1MzA0NDY2/MDAtNzQ5Ni5qcGVn.jpeg",
+   "aspect": "4:3-in-16:9",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -6375,6 +6384,12 @@
   },
   "f75c24f63fa9": {
    "yr": 1974,
+   "g": [
+    "Rock"
+   ]
+  },
+  "78e1f71a7bd8": {
+   "yr": 1978,
    "g": [
     "Rock"
    ]
