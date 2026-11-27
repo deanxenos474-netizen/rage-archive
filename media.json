@@ -1,5 +1,5 @@
 {
- "saved": "2026-11-27T11:07:07.746Z",
+ "saved": "2026-11-27T11:11:12.081Z",
  "media": {
   "9abb18780994": {
    "artist": "The Jackson 5",
@@ -3796,6 +3796,15 @@
    "aspect": "4:3-in-16:9",
    "burned": true,
    "verified": true
+  },
+  "7ce895bd09ef": {
+   "artist": "Zoot",
+   "title": "Eleanor Rigby",
+   "yt": "iptr7i7sFkM",
+   "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/f9/64/20/f96420a6-ac91-9a05-2c8d-546102ebb025/00602577272806.rgb.jpg/3000x3000bb-100.jpg",
+   "aspect": "4:3-in-16:9",
+   "burned": true,
+   "verified": true
   }
  },
  "merges": {
@@ -6301,6 +6310,12 @@
    "yr": 1971,
    "g": [
     "Pop"
+   ]
+  },
+  "7ce895bd09ef": {
+   "yr": 1971,
+   "g": [
+    "Rock"
    ]
   }
  },
