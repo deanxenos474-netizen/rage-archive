@@ -151,8 +151,11 @@ def special_info(raw):
     label = s
     s = re.sub(r"(?i)\s*(and|&|\+)\s*(the\s+)?(best\s+)?new\s+music(\s+videos?)?\s*$", "", s)
 
-    def routine(x):
-        x = re.sub(r"^the\s+", "", re.sub(r"[^a-z0-9 ]", "", x.lower()).strip())
+    def routine(x):   # also "rage Charts", "Top 20 Music Video Charts", "Mini Charts", "New Music Clips", "New Music Show [REPEAT]"
+        x = re.sub(r"[^a-z0-9 ]", "", x.lower()).strip()
+        x = re.sub(r"\s*\b(repeat|encore)$|\s+only due to .*$", "", x)
+        x = re.sub(r"^(?:(?:the|rage|mini|top \d+)\s+)+", "", x)
+        x = re.sub(r"\s+", " ", x.replace("music video charts", "charts").replace("chart show", "charts").replace("clips", "videos")).strip()
         return x in ROUTINE or x == "rage goes retro"
 
     keep = [x.strip() for x in s.split(",") if x.strip() and not routine(x)]
