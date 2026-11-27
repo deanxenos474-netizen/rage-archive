@@ -353,6 +353,8 @@ ol.steps a { color: var(--accent) }
           <button class="chip" id="k-all" aria-pressed="true">All</button>
           <button class="chip" id="k-sp" aria-pressed="false">Specials</button>
           <button class="chip" id="k-guest" aria-pressed="false">Guest programmers</button>
+          <button class="chip" id="k-charts" aria-pressed="false">Charts</button>
+          <button class="chip" id="k-new" aria-pressed="false">New Music</button>
         </div>
       </div>
       <div class="count" id="bcount">Loading broadcasts…</div>
@@ -1029,6 +1031,9 @@ ol.steps a { color: var(--accent) }
   }
 
   let bkind = "all";
+  // the Charts and New Music tabs: episodes the ABC names that way ("Charts", "New Music Show", "Best New Music Videos"...)
+  const isCharts = b => /\bcharts?\b/i.test(b.sp || ""), isNew = b => /\bnew (music|release)/i.test(b.sp || "");
+  const BKINDS = [["k-all", "all"], ["k-sp", "sp"], ["k-guest", "guest"], ["k-charts", "charts"], ["k-new", "new"]];
   /* every broadcast has its own link: #b-YYYYMMDD-N (N = which broadcast that day), #u-... while it's upcoming */
   const linkOf = (b, up) => `${up ? "u" : "b"}-${b.date}-${b.ord}`;
   const fullLink = h => location.origin + location.pathname + "#" + h;
@@ -1049,7 +1054,7 @@ ol.steps a { color: var(--accent) }
       if (SEG.test(tok[i])) { out.push(buf); buf = ""; }
     }
     if (buf) { if (out.length) out[out.length - 1] += lead + buf; else out.push(buf); }
-    return out.map(t => [/guest[- ]?program|programs? rage/i.test(t) ? 2 : 1, t]);
+    return out.map(t => [/guest[- ]?program|\bprograms? rage\b/i.test(t) ? 2 : 1, t]);
   };
   const spLabel = k => k === 2 ? "Guest programmer" : "Special";
   const spText = b => spParts(b).map(([k, t]) => `${spLabel(k)}: ${t}`).join(" · ");
@@ -1130,10 +1135,10 @@ ol.steps a { color: var(--accent) }
     yearUI();
     const q = fold($("bq").value.trim()), inY = year == null ? "all years" : year;
     const items = B.filter(b => (year == null || Math.floor(b.date / 1e4) === year) && (!q || b.hay.includes(q))
-      && (bkind === "all" || (bkind === "sp" && b.kind) || (bkind === "guest" && b.kind === 2)));
+      && (bkind === "all" || (bkind === "sp" && b.kind) || (bkind === "guest" && b.kind === 2) || (bkind === "charts" && isCharts(b)) || (bkind === "new" && isNew(b))));
     const nsp = items.filter(b => b.kind).length;
     $("bcount").textContent = `${fmt(items.length)} broadcast${items.length === 1 ? "" : "s"} in ${inY} · ${fmt(nsp)} special${nsp === 1 ? "" : "s"} · ${fmt(items.reduce((t, b) => t + b.tr.length, 0))} plays`;
-    if (!items.length) { bEl.innerHTML = `<div class="empty">No ${bkind === "guest" ? "guest programmer nights" : bkind === "sp" ? "specials" : "broadcasts"} in ${inY}${q ? ` match “${esc($("bq").value)}”` : ""}.</div>`; return; }
+    if (!items.length) { bEl.innerHTML = `<div class="empty">No ${bkind === "guest" ? "guest programmer nights" : bkind === "sp" ? "specials" : bkind === "charts" ? "Charts episodes" : bkind === "new" ? "New Music episodes" : "broadcasts"} in ${inY}${q ? ` match “${esc($("bq").value)}”` : ""}.</div>`; return; }
     let html = "", curM = 0;
     const perMonth = {}, ym = b => Math.floor(b.date / 100);   // month headings carry their own year (All years lists every year)
     items.forEach(b => { perMonth[ym(b)] = (perMonth[ym(b)] || 0) + 1; });
@@ -1192,9 +1197,9 @@ ol.steps a { color: var(--accent) }
     });
   }
   $("year").addEventListener("change", () => { renderYear(selYear()); window.scrollTo({ top: 0 }); });
-  for (const [id, v] of [["k-all", "all"], ["k-sp", "sp"], ["k-guest", "guest"]]) $(id).onclick = () => {
+  for (const [id, v] of BKINDS) $(id).onclick = () => {
     bkind = v;
-    for (const [id2, v2] of [["k-all", "all"], ["k-sp", "sp"], ["k-guest", "guest"]]) $(id2).setAttribute("aria-pressed", String(v2 === v));
+    for (const [id2, v2] of BKINDS) $(id2).setAttribute("aria-pressed", String(v2 === v));
     renderYear(selYear()); window.scrollTo({ top: 0 });
   };
   let bdeb; $("bq").addEventListener("input", () => { clearTimeout(bdeb); bdeb = setTimeout(() => renderYear(selYear()), 140); });
