@@ -1,5 +1,5 @@
 {
- "note": "Corrections applied by tools/sitebuild.py on every rebuild (the stored playlist data is never changed). remove: wrongly dated copies; redate: real date (and corrected title) for a playlist ABC titled wrongly; add: full nights from the RageAgain archive missing from the site. Matched by date + page link + title. rows: single rows the ABC page split wrongly (from -> to), matched by date + exact row.",
+ "note": "Corrections applied by tools/sitebuild.py on every rebuild (the stored playlist data is never changed). remove: wrongly dated copies; redate: real date (and corrected title) for a playlist ABC titled wrongly; add: full nights from the RageAgain archive missing from the site. Matched by date + page link + title. rows: single rows the ABC page split wrongly (from -> to), matched by date + exact row. names: a name for a night the ABC left unnamed (with why).",
  "remove": [
   {
    "date": "1999-01-02",
@@ -2684,6 +2684,19 @@
     ]
    ],
    "why": "Countdown 50th Birthday Special: rage showed Divinyls Countdown outtakes (1985) just before Pleasure and Pain (seen by the owner in the Saturday night show), but the ABC's playlist leaves it out"
+  }
+ ],
+ "names": [
+  {
+   "date": "2025-04-13",
+   "url": "https://www.abc.net.au/rage/playlist/sunday-night-13-april-2025-on-abc-tv/105166358",
+   "title": "Sunday night 13 April 2025 on ABC TV",
+   "sp": [
+    "Special",
+    "Going Solo, Side Projects & Supergroups (Part. I) special",
+    ""
+   ],
+   "why": "owner's call (27 Nov 2026): the ABC page only says PLAYLIST; the full set of the special named on the Saturday morning 12 Apr 2025 page (same songs)"
   }
  ]
 }

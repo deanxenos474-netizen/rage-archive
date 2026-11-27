@@ -233,6 +233,13 @@ def corrected(playlists):
         out.append(p)
     for k in (drop | set(move)) - used:
         print("corrections.json: no playlist matched", k)
+    # names: a name for a night the ABC left unnamed, e.g. ["Special", "Going Solo...", ""] (matched like remove)
+    names, named = {key(e): e["sp"] for e in c.get("names", [])}, set()
+    for i, p in enumerate(out):
+        if key(p) in names:
+            named.add(key(p)); out[i] = dict(p, sp=names[key(p)])
+    for k in set(names) - named:
+        print("corrections.json: no playlist matched", k)
     # rows: single rows the ABC's page got wrong (e.g. the label glued to the artist), matched by date + exact row;
     # "to" is one row, or a list of rows to put in its place (to add songs the owner chose to add)
     fixes = {}
